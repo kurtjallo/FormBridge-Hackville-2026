@@ -61,3 +61,18 @@ export interface SaveSessionResponse {
   sessionId: string;
   message: string;
 }
+
+export interface ValidateRequest {
+  answers: Record<string, string | number | boolean>;
+}
+
+export interface ValidationIssue {
+  fieldId: string;
+  message: string;
+  severity: 'warning' | 'error';
+}
+
+export interface ValidateResponse {
+  valid: boolean;
+  issues: ValidationIssue[];
+}

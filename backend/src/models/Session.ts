@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface ISession extends Document {
+export interface ISession {
   _id: string;
   answers: Record<string, string | number | boolean>;
   conversations: Record<string, Array<{

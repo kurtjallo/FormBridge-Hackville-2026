@@ -5,6 +5,7 @@ import { corsMiddleware } from './middleware/cors';
 import { explainRouter } from './routes/explain';
 import { chatRouter } from './routes/chat';
 import { sessionRouter } from './routes/session';
+import { validateRouter } from './routes/validate';
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +30,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/explain', explainRouter);
 app.use('/chat', chatRouter);
 app.use('/session', sessionRouter);
+app.use('/validate', validateRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -63,6 +65,7 @@ app.listen(PORT, () => {
   console.log('  POST /chat     - Chat about a form question');
   console.log('  GET  /session/:id - Load session');
   console.log('  POST /session     - Save session');
+  console.log('  POST /validate    - Validate form answers');
 });
 
 export { app };
