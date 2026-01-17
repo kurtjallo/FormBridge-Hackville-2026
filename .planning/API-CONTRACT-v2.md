@@ -353,11 +353,14 @@ export function getPDFUrl(formId: string): string  // Returns URL for react-pdf
 
 ---
 
-## Questions to Resolve
+## Resolved Decisions
 
-1. **PDF Storage:** Where to store pre-loaded PDFs? (`/backend/public/pdfs/` or separate storage?)
+1. **PDF Storage:** ✅ Google Cloud Storage (GCS) for all PDFs
+   - Pre-loaded government forms: `gs://{bucket}/pdfs/{form-id}.pdf`
+   - User uploads: `gs://{bucket}/pdfs/{timestamp}-{filename}.pdf`
+   - Backend proxies PDFs from GCS (validates before serving)
 
-2. **Upload Storage:** Where to store user uploads? (Filesystem with cleanup? MongoDB GridFS?)
+2. **Upload Storage:** ✅ GCS bucket (same as pre-loaded PDFs)
 
 3. **Coordinate System:** Who converts coordinates — frontend or backend? (Recommendation: backend returns web coordinates)
 
