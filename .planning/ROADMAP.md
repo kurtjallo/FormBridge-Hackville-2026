@@ -8,7 +8,7 @@ Build an AI-powered Ontario Works form assistant in three phases: backend API wi
 
 - [x] **Phase 1: Backend API** - Express server with Gemini-powered /explain and /chat endpoints
 - [x] **Phase 2: Frontend Core** - Next.js form display with interactive chat panel and auto-fill
-- [ ] **Phase 3: Polish & Persistence** - Validation, progress bar, session persistence, mobile responsive
+- [x] **Phase 3: Polish & Persistence** - Validation, progress bar, session persistence, mobile responsive
 
 ## Phase Details
 
@@ -56,7 +56,7 @@ Plans:
 
 Plans:
 - [x] 03-01: MongoDB session persistence and /validate endpoint
-- [ ] 03-02: Progress bar, Canadian validation, mobile responsive
+- [x] 03-02: Progress bar, Canadian validation, mobile responsive
 
 ## Progress
 
@@ -64,4 +64,4 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Backend API | 2/2 | Complete | 2026-01-17 |
 | 2. Frontend Core | 3/3 | Complete | 2026-01-17 |
-| 3. Polish & Persistence | 1/2 | In progress | - |
+| 3. Polish & Persistence | 2/2 | Complete | 2026-01-17 |
