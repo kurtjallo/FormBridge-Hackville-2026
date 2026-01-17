@@ -39,8 +39,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Next.js setup with Tailwind, Zustand store, form data
-- [ ] 02-02: Form components (FormSection, FormQuestion, ProgressBar)
+- [x] 02-01: Next.js setup with Tailwind, Zustand store, form data
+- [x] 02-02: Form components (FormSection, FormQuestion, ProgressBar)
 - [ ] 02-03: Chat panel with API integration and auto-fill
 
 ### Phase 3: Polish & Persistence
@@ -63,5 +63,5 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Backend API | 2/2 | Complete | 2026-01-17 |
-| 2. Frontend Core | 0/3 | Not started | - |
+| 2. Frontend Core | 2/3 | In progress | - |
 | 3. Polish & Persistence | 0/2 | Not started | - |
