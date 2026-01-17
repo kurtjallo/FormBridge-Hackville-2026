@@ -6,6 +6,7 @@ import { explainRouter } from './routes/explain';
 import { chatRouter } from './routes/chat';
 import { sessionRouter } from './routes/session';
 import { validateRouter } from './routes/validate';
+import { supportChatRouter } from './routes/supportChat';
 import formsRouter from './routes/forms';
 import eligibilityRouter from './routes/eligibility';
 
@@ -29,12 +30,13 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // API routes
-app.use('/forms', formsRouter);
-app.use('/eligibility', eligibilityRouter);
-app.use('/explain', explainRouter);
-app.use('/chat', chatRouter);
-app.use('/session', sessionRouter);
-app.use('/validate', validateRouter);
+app.use('/api/forms', formsRouter);
+app.use('/api/eligibility', eligibilityRouter);
+app.use('/api/explain', explainRouter);
+app.use('/api/chat', chatRouter);
+app.use('/api/session', sessionRouter);
+app.use('/api/validate', validateRouter);
+app.use('/api/support-chat', supportChatRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
