@@ -672,7 +672,149 @@ export const ontarioWorksForm: FormTemplate = {
       ]
     },
 
-    // SECTION 6: Declaration
+    // SECTION 6: Employment History
+    {
+      id: "section-employment",
+      title: "Employment History",
+      description: "Tell us about your recent work history",
+      items: [
+        {
+          type: "instruction",
+          id: "inst-employment-intro",
+          originalText: "Provide information about your most recent employment. This helps us understand your work history and any barriers to employment.",
+          context: "Ontario Works requires you to be actively seeking work (unless exempt). Your employment history helps caseworkers connect you with the right support.",
+          commonConfusions: [
+            "If you've never worked, that's okay - just tell us",
+            "Include part-time and casual work",
+            "Gig work (Uber, DoorDash) counts as employment"
+          ]
+        },
+        {
+          type: "definition",
+          id: "def-employment-termination",
+          term: "Reason for Leaving Employment",
+          originalText: "The circumstances under which your last job ended, such as layoff, resignation, termination, or contract completion.",
+          context: "Why you left your last job matters for your application. Being laid off or having a contract end is different from quitting without reason.",
+          commonConfusions: [
+            "Laid off = employer ended your job (not your choice)",
+            "Quit = you chose to leave",
+            "Terminated = fired for cause",
+            "Contract ended = job had a set end date"
+          ]
+        },
+        {
+          type: "question",
+          id: "q-last-employer",
+          fieldId: "last_employer",
+          originalText: "What was the name of your most recent employer?",
+          fieldType: "text",
+          required: false,
+          placeholder: "Company or employer name",
+          context: "Enter the name of the last company or person you worked for. If you've never worked, leave this blank.",
+          commonConfusions: [
+            "Self-employed? Enter your business name or 'Self-employed'",
+            "Multiple jobs? Enter the most recent one"
+          ]
+        },
+        {
+          type: "question",
+          id: "q-last-job-title",
+          fieldId: "last_job_title",
+          originalText: "What was your job title or role?",
+          fieldType: "text",
+          required: false,
+          placeholder: "e.g., Cashier, Server, Office Assistant",
+          context: "Describe what you did at your last job.",
+          commonConfusions: []
+        },
+        {
+          type: "question",
+          id: "q-reason-for-leaving",
+          fieldId: "reason_for_leaving",
+          originalText: "Why did you leave your last job?",
+          fieldType: "select",
+          options: [
+            "Never employed",
+            "Laid off / Downsized",
+            "Contract or seasonal work ended",
+            "Quit - found better opportunity",
+            "Quit - personal or family reasons",
+            "Quit - health reasons",
+            "Terminated / Fired",
+            "Business closed",
+            "Retired",
+            "Other"
+          ],
+          required: true,
+          context: "Select the option that best describes why your last job ended. Be honest - there's no 'wrong' answer.",
+          commonConfusions: [
+            "Downsizing and layoff are the same thing",
+            "Quitting for health reasons is valid",
+            "If your hours were cut to zero, that's a layoff"
+          ]
+        },
+        {
+          type: "question",
+          id: "q-last-day-worked",
+          fieldId: "last_day_worked",
+          originalText: "What was your last day of work?",
+          fieldType: "date",
+          required: false,
+          placeholder: "YYYY-MM-DD",
+          context: "The last day you actually worked at any job. This helps determine your eligibility timing.",
+          commonConfusions: [
+            "Use your actual last working day, not your official end date",
+            "If on leave, use the last day you worked"
+          ]
+        },
+        {
+          type: "question",
+          id: "q-seeking-work",
+          fieldId: "seeking_work",
+          originalText: "Are you currently looking for work?",
+          fieldType: "select",
+          options: [
+            "Yes, actively looking",
+            "Yes, but facing barriers",
+            "No, unable to work (health reasons)",
+            "No, caring for family member",
+            "No, in school or training",
+            "No, other reason"
+          ],
+          required: true,
+          context: "Ontario Works generally requires you to look for work, but there are valid exemptions (health, caregiving, education).",
+          commonConfusions: [
+            "Barriers include: no transportation, childcare issues, health limitations",
+            "You may be exempt from job search if caring for young children",
+            "Being in school can exempt you from job search"
+          ]
+        },
+        {
+          type: "question",
+          id: "q-employment-barriers",
+          fieldId: "employment_barriers",
+          originalText: "What barriers, if any, are preventing you from finding work? (Select all that apply)",
+          fieldType: "textarea",
+          required: false,
+          placeholder: "e.g., No transportation, childcare needs, health issues, language barriers, lack of experience",
+          context: "List anything that makes it hard for you to find or keep a job. This helps us connect you with support services.",
+          commonConfusions: [
+            "Being honest helps - there are programs to address most barriers",
+            "Common barriers: transportation, childcare, health, language, criminal record",
+            "Mental health challenges are valid barriers"
+          ]
+        },
+        {
+          type: "warning",
+          id: "warn-job-search",
+          originalText: "Ontario Works recipients are generally required to participate in employment assistance activities and actively seek employment.",
+          context: "This is an important requirement. You'll work with a caseworker to create an employment plan. There are exemptions for people who can't work due to health, caregiving, or education.",
+          severity: "info"
+        }
+      ]
+    },
+
+    // SECTION 7: Declaration
     {
       id: "section-declaration",
       title: "Declaration and Consent",
