@@ -29,8 +29,8 @@ export default function LandingPage() {
           {/* Desktop Nav */}
           <div className="hidden md:flex md:col-span-8 justify-end items-center space-x-8 text-sm font-medium">
             <span className="text-gray-500">Hackville 2026</span>
-            <Link 
-              href="/form" 
+            <Link
+              href="/select"
               className="text-gray-900 border-b border-transparent hover:border-gray-900 transition-colors "
             >
               <b><big>Start Application</big></b> &rarr;
@@ -58,7 +58,7 @@ export default function LandingPage() {
             <div className="col-span-2 md:hidden pt-4 pb-2 border-t border-dashed border-gray-200 animate-in slide-in-from-top-1 fade-in duration-200">
               <div className="flex flex-col space-y-4">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Navigation</span>
-                <Link href="/form" className="text-lg font-medium hover:text-gray-600">
+                <Link href="/select" className="text-lg font-medium hover:text-gray-600">
                   Start Application
                 </Link>
               </div>
@@ -125,8 +125,8 @@ export default function LandingPage() {
                </p>
              </div>
              <div className="md:col-span-4 flex justify-start md:justify-end">
-               <Link 
-                 href="/form"
+               <Link
+                 href="/select"
                  className="group relative inline-flex items-center justify-center px-8 py-5 text-lg font-bold text-white transition-all duration-200 bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                >
                  <span className="mr-3">Start Application</span>
