@@ -3,56 +3,146 @@ import { ExplainRequest, ChatRequest, ChatMessage } from '../types';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-const EXPLAIN_SYSTEM_PROMPT = `You are a helpful assistant that explains Ontario government form questions in simple, clear language.
+// Ontario Works key facts for context injection
+const OW_CONTEXT = {
+  assetLimits: 'Single: $10,000 | Couple/Family: $15,000',
+  exemptAssets: 'Primary home, one vehicle, RDSP, prepaid funerals',
+  commonLaw: '3 months cohabitation (not 1 year like federal)',
+  income: 'First $200 + 50% of remainder is exempt from earnings',
+  basicNeeds: 'Single: ~$733/month | Couple: ~$1,136/month (2024 rates)',
+};
 
-Your job is to:
-1. Explain what the question is really asking in plain English (6th grade reading level)
-2. Give concrete examples relevant to Ontario residents
-3. Clarify any confusing terms
-4. Help them figure out what to enter
+function buildExplainPrompt(request: ExplainRequest): string {
+  const parts: string[] = [];
 
-RULES:
-- Use short sentences (under 15 words when possible)
-- Avoid jargon and legal terms
-- Give specific examples, not abstract explanations
-- If unsure about Ontario Works rules, say "I'm not certain about this specific rule"
-- Be warm and encouraging`;
+  // Concise system instruction
+  parts.push(`Role: Ontario Works form assistant. Explain in plain English (grade 6 level).
+Format: 1) What it means 2) Example 3) What to enter
+Style: Short sentences, no jargon, warm tone.`);
 
-const CHAT_SYSTEM_PROMPT = `You are helping someone fill out an Ontario Works (social assistance) application.
+  // Question details
+  parts.push(`\nQ: "${request.originalText}"
+Type: ${request.fieldType} | Required: ${request.required}`);
 
-YOUR ROLE:
-1. Answer follow-up questions about this specific field
-2. Help them figure out what applies to their situation
-3. When confident, suggest what to enter: "Based on what you told me, you should enter: [ANSWER]"
-4. If unsure, ask ONE clarifying question
+  // Add context only if provided
+  if (request.context) {
+    parts.push(`\nContext: ${request.context}`);
+  }
 
-RULES:
-- Keep responses SHORT (2-3 sentences max)
-- You're not a lawyer - don't guarantee outcomes
-- If unsure about Ontario Works rules, say so
-- Be warm and encouraging`;
+  // Add common confusions as bullet points
+  if (request.commonConfusions) {
+    parts.push(`\n⚠️ Common mistakes:\n${request.commonConfusions}`);
+  }
+
+  // Add user-specific context for personalized response
+  if (request.userContext) {
+    parts.push(`\n👤 User's situation: ${request.userContext}`);
+  }
+
+  // Inject relevant Ontario Works facts based on question content
+  const questionLower = request.originalText.toLowerCase();
+  const relevantFacts: string[] = [];
+
+  if (questionLower.includes('asset') || questionLower.includes('savings') || questionLower.includes('money')) {
+    relevantFacts.push(`Asset limits: ${OW_CONTEXT.assetLimits}`);
+    relevantFacts.push(`Exempt: ${OW_CONTEXT.exemptAssets}`);
+  }
+  if (questionLower.includes('common-law') || questionLower.includes('partner') || questionLower.includes('marital')) {
+    relevantFacts.push(`Common-law in Ontario: ${OW_CONTEXT.commonLaw}`);
+  }
+  if (questionLower.includes('income') || questionLower.includes('earn') || questionLower.includes('work')) {
+    relevantFacts.push(`Earnings exemption: ${OW_CONTEXT.income}`);
+  }
+  if (questionLower.includes('amount') || questionLower.includes('benefit') || questionLower.includes('receive')) {
+    relevantFacts.push(`Basic amounts: ${OW_CONTEXT.basicNeeds}`);
+  }
+
+  if (relevantFacts.length > 0) {
+    parts.push(`\n📋 Ontario Works facts:\n- ${relevantFacts.join('\n- ')}`);
+  }
+
+  parts.push(`\nExplain concisely:`);
+
+  return parts.join('');
+}
 
 export async function explainQuestion(request: ExplainRequest): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ 
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      maxOutputTokens: 300,
+      temperature: 0.3, // Lower temperature for consistent, factual responses
+    }
+  });
 
-  const prompt = `${EXPLAIN_SYSTEM_PROMPT}
-
-QUESTION CONTEXT:
-Original question: "${request.originalText}"
-Field type: ${request.fieldType}
-Required: ${request.required}
-
-${request.context ? `Background information:\n${request.context}` : ''}
-
-${request.commonConfusions ? `Common confusions:\n${request.commonConfusions}` : ''}
-
-${request.userContext ? `User's situation:\n${request.userContext}` : ''}
-
-Please explain this question in simple terms:`;
-
+  const prompt = buildExplainPrompt(request);
   const result = await model.generateContent(prompt);
   const response = await result.response;
   return response.text();
+}
+
+function buildChatPrompt(request: ChatRequest): string {
+  const parts: string[] = [];
+
+  // Concise system instruction
+  parts.push(`Role: Ontario Works form assistant helping with a specific question.
+Task: Answer follow-ups, suggest answers when confident.
+Format: 2-3 sentences. If suggesting answer, end with:
+SUGGESTED_ANSWER: [value]
+CONFIDENCE: [low|medium|high]`);
+
+  // Current question
+  parts.push(`\n📝 Field: "${request.originalText}" (${request.fieldType})`);
+
+  // Add context if provided
+  if (request.context) {
+    parts.push(`Context: ${request.context}`);
+  }
+
+  // Inject relevant Ontario Works facts based on question
+  const questionLower = request.originalText.toLowerCase();
+  const relevantFacts: string[] = [];
+
+  if (questionLower.includes('asset') || questionLower.includes('savings')) {
+    relevantFacts.push(`Assets: ${OW_CONTEXT.assetLimits} (exempt: ${OW_CONTEXT.exemptAssets})`);
+  }
+  if (questionLower.includes('common-law') || questionLower.includes('partner') || questionLower.includes('marital')) {
+    relevantFacts.push(`Common-law: ${OW_CONTEXT.commonLaw}`);
+  }
+  if (questionLower.includes('income') || questionLower.includes('earn')) {
+    relevantFacts.push(`Earnings: ${OW_CONTEXT.income}`);
+  }
+
+  if (relevantFacts.length > 0) {
+    parts.push(`\n📋 Key facts: ${relevantFacts.join(' | ')}`);
+  }
+
+  // Add user's other answers for cross-reference context (only relevant ones)
+  if (request.currentAnswers && Object.keys(request.currentAnswers).length > 0) {
+    const relevantAnswers = Object.entries(request.currentAnswers)
+      .filter(([key, value]) => value !== '' && value !== undefined)
+      .slice(0, 5) // Limit to 5 most recent/relevant
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(' | ');
+    
+    if (relevantAnswers) {
+      parts.push(`\n👤 User info: ${relevantAnswers}`);
+    }
+  }
+
+  // Conversation history (compact format)
+  if (request.conversationHistory.length > 0) {
+    const recentHistory = request.conversationHistory
+      .slice(-4) // Keep last 4 messages for context
+      .map((msg: ChatMessage) => `${msg.role === 'user' ? 'U' : 'A'}: ${msg.content}`)
+      .join('\n');
+    parts.push(`\n💬 Recent:\n${recentHistory}`);
+  }
+
+  // Current message
+  parts.push(`\nU: ${request.userMessage}\n\nRespond:`);
+
+  return parts.join('');
 }
 
 export async function chatAboutQuestion(request: ChatRequest): Promise<{
@@ -60,41 +150,15 @@ export async function chatAboutQuestion(request: ChatRequest): Promise<{
   suggestedAnswer?: string;
   confidence?: 'low' | 'medium' | 'high';
 }> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ 
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      maxOutputTokens: 200,
+      temperature: 0.4, // Slightly higher for conversational responses
+    }
+  });
 
-  // Build conversation history string
-  const historyText = request.conversationHistory
-    .map((msg: ChatMessage) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
-    .join('\n');
-
-  const currentAnswersText = request.currentAnswers
-    ? Object.entries(request.currentAnswers)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join('\n')
-    : 'None provided';
-
-  const prompt = `${CHAT_SYSTEM_PROMPT}
-
-CURRENT QUESTION:
-"${request.originalText}"
-Field type: ${request.fieldType}
-
-${request.context ? `CONTEXT:\n${request.context}` : ''}
-
-USER'S OTHER ANSWERS:
-${currentAnswersText}
-
-CONVERSATION SO FAR:
-${historyText}
-
-User: ${request.userMessage}
-
-Respond helpfully. If you can suggest an answer, format it as:
-SUGGESTED_ANSWER: [your suggestion]
-CONFIDENCE: [low/medium/high]
-
-Otherwise just respond conversationally.`;
-
+  const prompt = buildChatPrompt(request);
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const text = response.text();
