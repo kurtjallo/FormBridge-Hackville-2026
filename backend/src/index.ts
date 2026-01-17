@@ -6,6 +6,8 @@ import { explainRouter } from './routes/explain';
 import { chatRouter } from './routes/chat';
 import { sessionRouter } from './routes/session';
 import { validateRouter } from './routes/validate';
+import formsRouter from './routes/forms';
+import eligibilityRouter from './routes/eligibility';
 
 // Load environment variables
 dotenv.config();
@@ -27,6 +29,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // API routes
+app.use('/forms', formsRouter);
+app.use('/eligibility', eligibilityRouter);
 app.use('/explain', explainRouter);
 app.use('/chat', chatRouter);
 app.use('/session', sessionRouter);
@@ -60,12 +64,15 @@ mongoose.connect(MONGODB_URI)
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log('Available endpoints:');
-  console.log('  GET  /         - Health check');
-  console.log('  POST /explain  - Get explanation for a form question');
-  console.log('  POST /chat     - Chat about a form question');
-  console.log('  GET  /session/:id - Load session');
-  console.log('  POST /session     - Save session');
-  console.log('  POST /validate    - Validate form answers');
+  console.log('  GET  /              - Health check');
+  console.log('  GET  /forms         - List available forms');
+  console.log('  GET  /forms/:id     - Get full form template');
+  console.log('  POST /eligibility   - Check eligibility');
+  console.log('  POST /explain       - Get explanation for a form question');
+  console.log('  POST /chat          - Chat about a form question');
+  console.log('  GET  /session/:id   - Load session');
+  console.log('  POST /session       - Save session');
+  console.log('  POST /validate      - Validate form answers');
 });
 
 export { app };
