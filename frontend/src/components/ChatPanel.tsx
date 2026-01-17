@@ -8,7 +8,7 @@ import { QuickActions } from './QuickActions';
 import { SuggestionButton } from './SuggestionButton';
 import { chatWithAI } from '@/lib/api';
 import { ChatMessage as ChatMessageType, FormQuestion } from '@/types';
-import { X, Send, MessageCircle } from 'lucide-react';
+import { X, Send, MessageCircle, ChevronLeft } from 'lucide-react';
 
 export function ChatPanel() {
   const activeQuestionId = useFormStore((state) => state.activeQuestionId);
@@ -128,17 +128,24 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="fixed bottom-0 right-0 w-full md:w-[420px] h-[600px] bg-white border-l border-t border-gray-200 shadow-xl flex flex-col z-50">
+    <div className="fixed inset-0 md:inset-auto md:bottom-0 md:right-0 w-full md:w-[420px] h-full md:h-[600px] bg-white border-l border-t border-gray-200 shadow-xl flex flex-col z-50">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 pt-safe">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveQuestion(null)}
+              className="md:hidden p-1 hover:bg-gray-200 rounded-full transition-colors mr-2"
+              aria-label="Back to form"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-500" />
+            </button>
             <MessageCircle className="w-5 h-5 text-blue-600" />
             <span className="font-medium text-gray-900">Help Assistant</span>
           </div>
           <button
             onClick={() => setActiveQuestion(null)}
-            className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+            className="hidden md:block p-1 hover:bg-gray-200 rounded-full transition-colors"
             aria-label="Close chat"
           >
             <X className="w-5 h-5 text-gray-500" />
@@ -202,7 +209,7 @@ export function ChatPanel() {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="px-4 pb-4">
+      <form onSubmit={handleSubmit} className="px-4 pb-4 pb-safe">
         <div className="flex gap-2">
           <input
             ref={inputRef}
@@ -211,12 +218,12 @@ export function ChatPanel() {
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Type your question..."
             disabled={isLoading}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-base"
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Send message"
           >
             <Send className="w-5 h-5" />
