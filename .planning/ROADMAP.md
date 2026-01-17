@@ -24,7 +24,7 @@ Build an AI-powered Ontario Works form assistant in three phases: backend API wi
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Express server setup with TypeScript, CORS, environment config
+- [x] 01-01: Express server setup with TypeScript, CORS, environment config
 - [ ] 01-02: Gemini integration with /explain and /chat endpoints
 
 ### Phase 2: Frontend Core
@@ -62,6 +62,6 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend API | 0/2 | Not started | - |
+| 1. Backend API | 1/2 | In progress | - |
 | 2. Frontend Core | 0/3 | Not started | - |
 | 3. Polish & Persistence | 0/2 | Not started | - |
