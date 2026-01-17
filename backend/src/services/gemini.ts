@@ -16,9 +16,11 @@ function buildExplainPrompt(request: ExplainRequest): string {
   const parts: string[] = [];
 
   // Concise system instruction
-  parts.push(`Role: Ontario Works form assistant. Explain in plain English (grade 6 level).
+  parts.push(`Role: Ontario Works form assistant.
+Goal: Explain this so it is very easy for an immigrant or someone with low literacy to understand.
+Language: Use very simple English (Grade 4 level). Avoid idioms and big words.
 Format: 1) What it means 2) Example 3) What to enter
-Style: Short sentences, no jargon, warm tone.`);
+Style: Short, clear sentences. Very friendly and helpful.`);
 
   // Question details
   parts.push(`\nQ: "${request.originalText}"
@@ -85,9 +87,12 @@ function buildChatPrompt(request: ChatRequest): string {
   const parts: string[] = [];
 
   // Concise system instruction
-  parts.push(`Role: Ontario Works form assistant helping with a specific question.
-Task: Answer follow-ups, suggest answers when confident.
-Format: 2-3 sentences. If suggesting answer, end with:
+  parts.push(`Role: Ontario Works form assistant.
+Goal: Talk to the user like a friendly helper. Make everything very easy to understand for someone who is learning English.
+Language: Use Grade 3-4 English. Simple words only. Short sentences.
+Format: Keep it short (2-3 sentences).
+Task: Answer the question and if you know what they should write, suggest it.
+If suggesting answer, end with:
 SUGGESTED_ANSWER: [value]
 CONFIDENCE: [low|medium|high]`);
 
