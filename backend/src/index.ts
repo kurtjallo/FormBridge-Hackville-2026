@@ -1,8 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { corsMiddleware } from './middleware/cors';
 import { explainRouter } from './routes/explain';
 import { chatRouter } from './routes/chat';
+import { sessionRouter } from './routes/session';
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +28,7 @@ app.get('/', (req: Request, res: Response) => {
 // API routes
 app.use('/explain', explainRouter);
 app.use('/chat', chatRouter);
+app.use('/session', sessionRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -44,6 +47,13 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
+// Connect to MongoDB
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/formbridge';
+
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
@@ -51,6 +61,8 @@ app.listen(PORT, () => {
   console.log('  GET  /         - Health check');
   console.log('  POST /explain  - Get explanation for a form question');
   console.log('  POST /chat     - Chat about a form question');
+  console.log('  GET  /session/:id - Load session');
+  console.log('  POST /session     - Save session');
 });
 
 export { app };
