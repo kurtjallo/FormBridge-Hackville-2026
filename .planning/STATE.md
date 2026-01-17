@@ -5,16 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Make government assistance forms understandable to people who struggle with bureaucratic language
-**Current focus:** All phases complete - ready for demo
+**Current focus:** Phase 4 - Backend Data & Forms API
 
 ## Current Position
 
-Phase: 3 of 3 (Polish & Persistence)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-01-17 - Completed 03-02-PLAN.md
+Phase: 4 of 4 (Backend Data & Forms API)
+Plan: 0 of ? in current phase
+Status: Not planned yet
+Last activity: 2026-01-17 - Added Phase 4
 
-Progress: ██████████ 100% (7/7 plans)
+Progress: ███████░░░ 70% (7/? plans)
+Next Phase: Phase 4 - Backend Data & Forms API
 
 ## Performance Metrics
 
@@ -67,6 +68,10 @@ None.
 
 - User needs GEMINI_API_KEY in backend/.env for AI endpoints to work
 - User needs MONGODB_URI in backend/.env for session persistence to work
+
+### Roadmap Evolution
+
+- Phase 4 added: Backend Data & Forms API (TypeScript types, form data, forms/eligibility routes)
 
 ## Session Continuity
 

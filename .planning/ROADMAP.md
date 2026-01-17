@@ -9,6 +9,7 @@ Build an AI-powered Ontario Works form assistant in three phases: backend API wi
 - [x] **Phase 1: Backend API** - Express server with Gemini-powered /explain and /chat endpoints
 - [x] **Phase 2: Frontend Core** - Next.js form display with interactive chat panel and auto-fill
 - [x] **Phase 3: Polish & Persistence** - Validation, progress bar, session persistence, mobile responsive
+- [ ] **Phase 4: Backend Data & Forms API** - TypeScript types, form data, and forms/eligibility routes
 
 ## Phase Details
 
@@ -58,6 +59,21 @@ Plans:
 - [x] 03-01: MongoDB session persistence and /validate endpoint
 - [x] 03-02: Progress bar, Canadian validation, mobile responsive
 
+### Phase 4: Backend Data & Forms API
+**Goal**: Complete backend with TypeScript types, expanded form data, and forms/eligibility endpoints
+**Depends on**: Phase 1
+**Requirements**: FORMS-01, FORMS-02, FORMS-03, DATA-05
+**Success Criteria** (what must be TRUE):
+  1. TypeScript interfaces defined for all form types (FormTemplate, FormItem, etc.)
+  2. Ontario Works form data file with eligibility questions, documents, and expanded sections
+  3. GET /forms returns list of available forms
+  4. GET /forms/:formId returns full form template
+  5. POST /eligibility checks user qualification
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 4 to break down)
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -65,3 +81,4 @@ Plans:
 | 1. Backend API | 2/2 | Complete | 2026-01-17 |
 | 2. Frontend Core | 3/3 | Complete | 2026-01-17 |
 | 3. Polish & Persistence | 2/2 | Complete | 2026-01-17 |
+| 4. Backend Data & Forms API | 0/? | Not Started | - |
