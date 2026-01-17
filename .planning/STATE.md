@@ -5,24 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Make government forms accessible by explaining bureaucratic language in plain terms
-**Current focus:** v2.0 — PDF Form System
+**Current focus:** Phase 5 — PDF Foundation
 
 ## Current Position
 
-Phase: Not started (run /gsd:create-roadmap)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-01-17 — Milestone v2.0 started
+Phase: 5 of 8 (PDF Foundation)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-17 — v2.0 roadmap created
 
-Progress: ░░░░░░░░░░ 0% (new milestone)
+Progress: ████████░░ 80% (7/15 plans) [v1.0 complete, v2.0 starting]
 
-## v1.0 Completion Summary
+## Performance Metrics
 
-**Phases completed:** 4/4
-**Plans executed:** 7
-**Total execution time:** 17 min
+**Velocity:**
+- Total plans completed: 7 (v1.0)
+- Average duration: 2.4 min
+- Total execution time: 17 min
 
-See: .planning/MILESTONES.md for full v1.0 details
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 01-backend-api | 2/2 | 4 min | 2 min |
+| 02-frontend-core | 3/3 | 7 min | 2.3 min |
+| 03-polish-persistence | 2/2 | 6 min | 3 min |
+
+**Recent Trend:**
+- Last 5 plans: 02-01, 02-02, 02-03, 03-01, 03-02
+- Trend: Stable
 
 ## Accumulated Context
 
@@ -31,23 +42,19 @@ See: .planning/MILESTONES.md for full v1.0 details
 | Phase | Decision | Rationale |
 |-------|----------|-----------|
 | 01-01 | PORT 5001 default | macOS ControlCenter uses 5000 |
-| 01-02 | gemini-1.5-flash model | Fast response times for interactive use |
-| 01-02 | 6th grade reading level | Accessibility for target users |
-| 02-01 | Next.js 16 with App Router | Modern React patterns, built-in TypeScript |
-| 02-01 | Zustand for state | Simple, performant, no boilerplate |
-| 02-02 | Per-question conversation history | Maintains context when switching questions |
-| 03-01 | String _id for sessions (UUID) | Easier frontend integration than ObjectId |
+| 01-02 | gemini-1.5-flash model | Fast response times |
+| 02-01 | Zustand for state | Simple, performant |
 | 03-02 | 2-second debounce autosave | Balance responsiveness vs API load |
 
 ### v2.0 Key Decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| PDF-based forms | User wants real PDF interaction, not structured data |
-| Proactive AI | Auto-explain on field focus — seamless UX |
-| AI-assisted uploads | Full AI support for user-uploaded PDFs |
-| pdf-lib for filling | Industry standard, well-maintained |
-| Category navigation | Organize forms by type for discoverability |
+| react-pdf v10.3.0 | Most mature React PDF viewer, Dec 2024 release |
+| pdf-lib v1.17.1 | Pure TypeScript, works in browser and Node |
+| unpdf for extraction | Modern, serverless-optimized |
+| Click-based AI (not hover) | Works on mobile, less noisy UX |
+| Separate pdfStore | PDF state is conceptually different from form state |
 
 ### Pending Todos
 
@@ -55,12 +62,11 @@ None.
 
 ### Blockers/Concerns
 
-- Need to source actual government PDF forms for pre-loading
-- PDF form field detection varies by PDF quality
-- Large PDFs may need lazy loading for performance
+- Need actual Ontario Works PDF to test AcroForm vs XFA detection
+- Gemini Vision accuracy for field detection unknown
 
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: v2.0 milestone initialization
+Stopped at: v2.0 roadmap created (4 phases, 24 requirements)
 Resume file: None

@@ -1,84 +1,121 @@
 # Roadmap: FormBridge
 
-## Overview
+## Milestones
 
-Build an AI-powered Ontario Works form assistant in three phases: backend API with Gemini integration, frontend form with chat panel, then polish with validation and persistence. Demo-critical features first.
+- ✅ **v1.0 MVP** - Phases 1-4 (shipped 2026-01-17)
+- 🚧 **v2.0 PDF Form System** - Phases 5-8 (in progress)
 
 ## Phases
 
-- [x] **Phase 1: Backend API** - Express server with Gemini-powered /explain and /chat endpoints
-- [x] **Phase 2: Frontend Core** - Next.js form display with interactive chat panel and auto-fill
-- [x] **Phase 3: Polish & Persistence** - Validation, progress bar, session persistence, mobile responsive
-- [ ] **Phase 4: Backend Data & Forms API** - TypeScript types, form data, and forms/eligibility routes
-
-## Phase Details
+<details>
+<summary>✅ v1.0 MVP (Phases 1-4) — SHIPPED 2026-01-17</summary>
 
 ### Phase 1: Backend API
 **Goal**: Working API that explains form questions and handles conversations
-**Depends on**: Nothing (first phase)
-**Requirements**: API-01, API-02, API-03, AI-01, AI-02
-**Success Criteria** (what must be TRUE):
-  1. GET request to server returns response (server running)
-  2. POST /explain with questionId returns plain-language explanation
-  3. POST /chat with conversation history returns contextual response
-  4. Gemini API successfully generates responses
-**Plans**: 2 plans
-
-Plans:
-- [x] 01-01: Express server setup with TypeScript, CORS, environment config
-- [x] 01-02: Gemini integration with /explain and /chat endpoints
+**Plans**: 2/2 complete
 
 ### Phase 2: Frontend Core
 **Goal**: Interactive form with AI-powered help and auto-fill suggestions
-**Depends on**: Phase 1
-**Requirements**: FORM-01, FORM-02, FORM-03, CHAT-01, CHAT-02, CHAT-03, CHAT-04, CHAT-05, CHAT-06, AI-03, DATA-01, DATA-02, STATE-01, STATE-02, STATE-03
-**Success Criteria** (what must be TRUE):
-  1. Form displays all 5 Ontario Works sections with appropriate inputs
-  2. Clicking help button opens chat panel with question context
-  3. User can ask follow-up questions and receive AI responses
-  4. AI suggestion button auto-fills the corresponding form field
-**Plans**: 3 plans
-
-Plans:
-- [x] 02-01: Next.js setup with Tailwind, Zustand store, form data
-- [x] 02-02: Form components (FormSection, FormQuestion, ProgressBar)
-- [x] 02-03: Chat panel with API integration and auto-fill
+**Plans**: 3/3 complete
 
 ### Phase 3: Polish & Persistence
 **Goal**: Production-ready polish with validation, persistence, and responsiveness
-**Depends on**: Phase 2
-**Requirements**: API-04, API-05, API-06, FORM-04, FORM-05, AI-04, DATA-03, DATA-04, STATE-04
-**Success Criteria** (what must be TRUE):
-  1. Progress bar updates as sections are completed
-  2. Canadian postal codes and SINs are validated
-  3. Session persists across browser refresh (MongoDB)
-  4. Layout works on mobile devices
-**Plans**: 2 plans
-
-Plans:
-- [x] 03-01: MongoDB session persistence and /validate endpoint
-- [x] 03-02: Progress bar, Canadian validation, mobile responsive
+**Plans**: 2/2 complete
 
 ### Phase 4: Backend Data & Forms API
-**Goal**: Complete backend with TypeScript types, expanded form data, and forms/eligibility endpoints
-**Depends on**: Phase 1
-**Requirements**: FORMS-01, FORMS-02, FORMS-03, DATA-05
+**Goal**: TypeScript types, form data, and forms/eligibility routes
+**Plans**: Complete
+
+</details>
+
+---
+
+## 🚧 v2.0 PDF Form System (In Progress)
+
+**Milestone Goal:** Transform FormBridge from structured TypeScript forms to a PDF-based system where users interact with actual government PDFs, with proactive AI assistance on field click.
+
+- [ ] **Phase 5: PDF Foundation** - PDF viewer, categories, form navigation
+- [ ] **Phase 6: Field Detection & AI** - Extract fields, proactive AI on click
+- [ ] **Phase 7: Form Filling & Export** - Fill fields, export PDF
+- [ ] **Phase 8: Signatures & Uploads** - Signature pad, user uploads
+
+## Phase Details
+
+### Phase 5: PDF Foundation
+**Goal**: Display PDFs with category-based navigation
+**Depends on**: Phase 4 (v1.0 complete)
+**Requirements**: PDF-01, PDF-02, PDF-03, PDF-04, PDF-05
 **Success Criteria** (what must be TRUE):
-  1. TypeScript interfaces defined for all form types (FormTemplate, FormItem, etc.)
-  2. Ontario Works form data file with eligibility questions, documents, and expanded sections
-  3. GET /forms returns list of available forms
-  4. GET /forms/:formId returns full form template
-  5. POST /eligibility checks user qualification
-**Plans**: 0 plans
+  1. User can select a category and see available forms
+  2. PDF displays in browser with zoom and page navigation
+  3. XFA forms are detected and show clear error message
+  4. PDF types and pdfStore established
+**Research flag**: Unlikely (standard patterns)
+**Plans**: TBD
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 4 to break down)
+- [ ] 05-01: PDF types, pdfStore, react-pdf viewer setup
+- [ ] 05-02: Category pages, form metadata, navigation
+
+### Phase 6: Field Detection & AI
+**Goal**: Detect form fields and trigger AI explanations on click
+**Depends on**: Phase 5
+**Requirements**: FIELD-01, FIELD-02, FIELD-03, FIELD-04, FIELD-05
+**Success Criteria** (what must be TRUE):
+  1. Fillable PDF fields are detected and highlighted
+  2. PDF text is extracted for AI context
+  3. Clicking a field triggers AI explanation in chat panel
+  4. AI explains field in plain language (6th grade level)
+**Research flag**: Likely (Gemini Vision prompt engineering)
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: PDF text extraction, AcroForm field detection
+- [ ] 06-02: ChatPanel extension, proactive AI on field click
+
+### Phase 7: Form Filling & Export
+**Goal**: Users can fill PDF fields and download completed form
+**Depends on**: Phase 6
+**Requirements**: FILL-01, FILL-02, FILL-03, FILL-04, FILL-05, EXPORT-01, EXPORT-02, EXPORT-03
+**Success Criteria** (what must be TRUE):
+  1. HTML inputs overlay PDF form fields accurately
+  2. User can type in text fields, check boxes, select options
+  3. Values save to pdfStore with autosave
+  4. User can download filled PDF
+**Research flag**: Unlikely (standard React form patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: PDFFieldOverlay, coordinate conversion, form inputs
+- [ ] 07-02: pdf-lib export, download flow, form flattening
+
+### Phase 8: Signatures & Uploads
+**Goal**: Signature support and user PDF uploads
+**Depends on**: Phase 7
+**Requirements**: SIG-01, SIG-02, SIG-03, UPL-01, UPL-02, UPL-03
+**Success Criteria** (what must be TRUE):
+  1. User can draw signature on signature pad
+  2. Signature embeds in exported PDF
+  3. User can upload their own PDF
+  4. AI can analyze uploaded PDFs
+**Research flag**: Unlikely (react-signature-canvas well-documented)
+**Plans**: TBD
+
+Plans:
+- [ ] 08-01: Signature pad component, signature embedding
+- [ ] 08-02: User upload flow, AI PDF analysis
 
 ## Progress
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Backend API | 2/2 | Complete | 2026-01-17 |
-| 2. Frontend Core | 3/3 | Complete | 2026-01-17 |
-| 3. Polish & Persistence | 2/2 | Complete | 2026-01-17 |
-| 4. Backend Data & Forms API | 0/? | Not Started | - |
+**Execution Order:** 5 → 6 → 7 → 8
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Backend API | v1.0 | 2/2 | Complete | 2026-01-17 |
+| 2. Frontend Core | v1.0 | 3/3 | Complete | 2026-01-17 |
+| 3. Polish & Persistence | v1.0 | 2/2 | Complete | 2026-01-17 |
+| 4. Backend Data | v1.0 | 1/1 | Complete | 2026-01-17 |
+| 5. PDF Foundation | v2.0 | 0/2 | Not started | - |
+| 6. Field Detection & AI | v2.0 | 0/2 | Not started | - |
+| 7. Form Filling & Export | v2.0 | 0/2 | Not started | - |
+| 8. Signatures & Uploads | v2.0 | 0/2 | Not started | - |
