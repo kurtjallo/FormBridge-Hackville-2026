@@ -9,6 +9,7 @@ import { validateRouter } from './routes/validate';
 import { supportChatRouter } from './routes/supportChat';
 import formsRouter from './routes/forms';
 import eligibilityRouter from './routes/eligibility';
+import demoRouter from './routes/demo';
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,7 @@ app.use('/api/chat', chatRouter);
 app.use('/api/session', sessionRouter);
 app.use('/api/validate', validateRouter);
 app.use('/api/support-chat', supportChatRouter);
+app.use('/api/demo', demoRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -75,6 +77,9 @@ app.listen(PORT, () => {
   console.log('  GET  /session/:id   - Load session');
   console.log('  POST /session       - Save session');
   console.log('  POST /validate      - Validate form answers');
+  console.log('  GET  /demo/session  - Load demo session');
+  console.log('  POST /demo/reset    - Reset demo session');
+  console.log('  GET  /demo/personas - List demo personas');
 });
 
 export { app };
