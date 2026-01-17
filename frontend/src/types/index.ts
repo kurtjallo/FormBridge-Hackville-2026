@@ -56,6 +56,11 @@ export interface FormState {
   completedSections: string[];
   markSectionComplete: (sectionId: string) => void;
 
+  // Validation state
+  validationErrors: Record<string, string>;
+  setValidationError: (fieldId: string, error: string | null) => void;
+  clearValidationErrors: () => void;
+
   // Reset
   reset: () => void;
 }
