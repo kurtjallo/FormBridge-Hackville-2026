@@ -18,15 +18,15 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
 
     // Finance
     {
-        id: 'cra-5006',
-        name: 'CRA Form 5006 - Statement of Employment Expenses',
-        description: 'Canada Revenue Agency form for claiming employment-related expenses. Used by employees to calculate deductible expenses for tax purposes.',
+        id: 'cra-td1',
+        name: 'TD1 - Personal Tax Credits Return',
+        description: 'Canada Revenue Agency form for claiming personal tax credits. Used by employees to determine their tax deductions at source.',
         category: 'finance',
-        pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf',
-        estimatedTime: '15-20 minutes',
-        difficulty: 'medium',
-        tags: ['tax', 'cra', 'employment-expenses', 'canada'],
-        pageCount: 4,
+        pdfUrl: 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf',
+        estimatedTime: '10-15 minutes',
+        difficulty: 'easy',
+        tags: ['tax', 'cra', 'tax-credits', 'canada'],
+        pageCount: 2,
     },
 
     // Government

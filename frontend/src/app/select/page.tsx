@@ -100,9 +100,9 @@ const formsDatabase: FormOption[] = [
   { id: 'power-attorney', code: 'POA-03', name: 'Power of Attorney', ministry: 'Ministry of the Attorney General', category: 'legal', pdfUrl: 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf' },
 
   // Finance Forms
-  { id: 'cra-5006', code: 'T1-TAX', name: 'Income Tax and Benefit Return', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
-  { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
-  { id: 'gst-hst', code: 'GST34', name: 'GST/HST Return for Registrants', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
+  { id: 'cra-td1', code: 'TD1', name: 'Personal Tax Credits Return', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf' },
+  { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf' },
+  { id: 'gst-hst', code: 'GST34', name: 'GST/HST Return for Registrants', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf' },
 
   // Immigration Forms
   { id: 'oinp-application', code: 'OINP-01', name: 'Ontario Immigration Nominee Program', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', pdfUrl: 'http://localhost:5001/forms/Immigration/on00596e-immigration-nominee-program.pdf' },

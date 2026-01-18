@@ -31,6 +31,17 @@ interface PDFStore {
     selectedCategory: FormCategory | null;
     setSelectedCategory: (category: FormCategory | null) => void;
 
+    // PDF bytes for export
+    pdfBytes: Uint8Array | null;
+    setPdfBytes: (bytes: Uint8Array | null) => void;
+
+    // Page dimensions (for coordinate mapping)
+    pageDimensions: { width: number; height: number };
+    setPageDimensions: (dimensions: { width: number; height: number }) => void;
+
+    // Clear field values
+    clearFieldValues: () => void;
+
     // Reset
     reset: () => void;
 }
@@ -102,6 +113,17 @@ export const usePDFStore = create<PDFStore>()(
             selectedCategory: null,
             setSelectedCategory: (category) => set({ selectedCategory: category }),
 
+            // PDF bytes for export
+            pdfBytes: null,
+            setPdfBytes: (bytes) => set({ pdfBytes: bytes }),
+
+            // Page dimensions
+            pageDimensions: { width: 612, height: 792 }, // Default letter size
+            setPageDimensions: (dimensions) => set({ pageDimensions: dimensions }),
+
+            // Clear field values
+            clearFieldValues: () => set({ fieldValues: {} }),
+
             // Reset
             reset: () =>
                 set({
@@ -111,6 +133,8 @@ export const usePDFStore = create<PDFStore>()(
                     activeFieldId: null,
                     fieldValues: {},
                     selectedCategory: null,
+                    pdfBytes: null,
+                    pageDimensions: { width: 612, height: 792 },
                 }),
         }),
         {
