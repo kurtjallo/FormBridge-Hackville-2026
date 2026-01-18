@@ -9,8 +9,11 @@ import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
 import { useTranslation } from '@/i18n';
+import { SidebarTabs } from '@/components/SidebarTabs';
+import { FormFieldsPanel } from '@/components/FormFieldsPanel';
+import { PDFFormEditor, FormField } from '@/services/pdfFormEditor';
 
-// Helper to resolve PDF URLs - handles both absolute and relative API paths
+// Helper to resolve PDF URLs
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 function resolvePdfUrl(url: string): string {
   if (url.startsWith('/api/')) {
@@ -19,7 +22,7 @@ function resolvePdfUrl(url: string): string {
   return url;
 }
 
-// Dynamic import to avoid SSR issues with react-pdf
+// Dynamic import for PDF Viewer
 const PDFFormViewer = dynamic(() => import('@/components/PDFFormViewer').then(mod => mod.PDFFormViewer), {
   ssr: false,
   loading: () => (
@@ -70,13 +73,11 @@ function AIAssistantPanel({
   messages,
   onSendMessage,
   isLoading,
-  onClose,
   activeContext,
 }: {
   messages: ChatMessage[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
-  onClose: () => void;
   activeContext: string | null;
 }) {
   const { t } = useTranslation();
@@ -84,7 +85,6 @@ function AIAssistantPanel({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -98,8 +98,8 @@ function AIAssistantPanel({
   };
 
   return (
-    <div className="h-full flex flex-col bg-white border-l border-gray-200 overflow-hidden">
-      {/* Header */}
+    <div className="h-full flex flex-col bg-white overflow-hidden">
+      {/* Header Info */}
       <div className="px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -160,7 +160,6 @@ function AIAssistantPanel({
           ))
         )}
 
-        {/* Loading indicator */}
         {isLoading && (
           <div className="flex gap-3">
             <MapleMoose className="w-8 h-8" />
@@ -209,88 +208,102 @@ export default function FormViewPage() {
   const [showContent, setShowContent] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showMobileChat, setShowMobileChat] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [activeContext, setActiveContext] = useState<string | null>(null);
 
-  // PDF store
-  const { selectedForm, setSelectedForm, setCurrentPage } = usePDFStore();
+  // Layout State
+  const [activeTab, setActiveTab] = useState<'chat' | 'fields'>('chat');
+  const [formFields, setFormFields] = useState<FormField[]>([]);
 
-  // Get form info from session storage or use default
+  // PDF Store
+  const { selectedForm, setSelectedForm, setCurrentPage } = usePDFStore();
   const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf');
 
+  // PDF Editor Ref
+  const pdfEditorRef = useRef<PDFFormEditor | null>(null);
+  if (!pdfEditorRef.current) {
+    pdfEditorRef.current = new PDFFormEditor();
+  }
+
+  // Load PDF logic
   useEffect(() => {
     setShowContent(true);
-    // Always start on page 1 when loading a new PDF
     setCurrentPage(1);
 
-    // Try to get form info from session storage
     const formName = sessionStorage.getItem('selectedFormName');
     const formCode = sessionStorage.getItem('selectedFormCode');
     const formId = sessionStorage.getItem('selectedFormId');
     const storedPdfUrl = sessionStorage.getItem('selectedFormPdfUrl');
 
-    // If we have a PDF URL stored directly, use it (most reliable)
     if (storedPdfUrl) {
       setPdfUrl(resolvePdfUrl(storedPdfUrl));
-      if (formName && formCode) {
-        setFormInfo({ name: formName, code: formCode });
-      }
-      return; // Exit early - we have what we need
-    }
-
-    // If we have a form ID, try to load it from sampleForms
-    if (formId) {
+      if (formName && formCode) setFormInfo({ name: formName, code: formCode });
+    } else if (formId) {
       const form = getFormById(formId);
       if (form) {
         setSelectedForm(form);
         setPdfUrl(resolvePdfUrl(form.pdfUrl));
-        setFormInfo({
-          name: form.name,
-          code: form.id.toUpperCase(),
-        });
-        return; // Exit early to use the selected form
+        setFormInfo({ name: form.name, code: form.id.toUpperCase() });
       }
-    }
-
-    // Fallback to session storage values for display info only
-    if (formName && formCode) {
+    } else if (formName && formCode) {
       setFormInfo({ name: formName, code: formCode });
-    }
-
-    // If we already have a selected form in the store, use it
-    if (selectedForm) {
+    } else if (selectedForm) {
       setPdfUrl(resolvePdfUrl(selectedForm.pdfUrl));
-      setFormInfo({
-        name: selectedForm.name,
-        code: selectedForm.id.toUpperCase(),
-      });
+      setFormInfo({ name: selectedForm.name, code: selectedForm.id.toUpperCase() });
     }
   }, [selectedForm, setSelectedForm, setCurrentPage]);
 
-  const handleSendMessage = async (messageText: string) => {
-    // Add user message
-    const userMessage: ChatMessage = {
-      role: 'user',
-      content: messageText,
-      timestamp: Date.now(),
+  // Load fields when PDF URL changes
+  useEffect(() => {
+    const loadPDFForm = async () => {
+      try {
+        await pdfEditorRef.current!.loadPDF(pdfUrl);
+        const fields = pdfEditorRef.current!.getFields();
+        setFormFields(fields);
+        // Clean fields if none
+        if (fields.length === 0) {
+          if (activeTab === 'fields') setActiveTab('chat');
+        }
+      } catch (error) {
+        console.error('Failed to load PDF form:', error);
+        setFormFields([]);
+      }
     };
+    loadPDFForm();
+  }, [pdfUrl]);
+
+  const handleFieldChange = async (fieldName: string, value: string | boolean) => {
+    await pdfEditorRef.current!.setFieldValue(fieldName, value);
+    setFormFields([...pdfEditorRef.current!.getFields()]);
+  };
+
+  const handleSavePDF = async () => {
+    try {
+      const blob = await pdfEditorRef.current!.save();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${formInfo?.name || 'form'}_filled.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Error saving PDF:", e);
+      alert("Could not save the PDF. Please try again.");
+    }
+  };
+
+  const handleSendMessage = async (messageText: string) => {
+    const userMessage: ChatMessage = { role: 'user', content: messageText, timestamp: Date.now() };
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
-      // Build conversation history for context
-      const conversationHistory = messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
-
-      // Build additional context from active field/form
+      const conversationHistory = messages.map((msg) => ({ role: msg.role, content: msg.content }));
       const additionalContext = activeContext
         ? `User is currently looking at: ${activeContext}. Form: ${formInfo?.name || 'PDF Form'}`
         : `User is viewing: ${formInfo?.name || 'PDF Form'}`;
 
-      // Call the real Gemini-powered API
       const response = await sendSupportMessage({
         message: messageText,
         conversationHistory,
@@ -298,50 +311,29 @@ export default function FormViewPage() {
         additionalContext,
       });
 
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: response.message,
-        timestamp: Date.now(),
-      };
+      const assistantMessage: ChatMessage = { role: 'assistant', content: response.message, timestamp: Date.now() };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Chat API error:', error);
-      // Fallback response on error
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: t('formview.assistant.connectionError'),
-        timestamp: Date.now(),
-      };
+      const errorMessage: ChatMessage = { role: 'assistant', content: t('formview.assistant.connectionError'), timestamp: Date.now() };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCloseChat = () => {
-    setShowMobileChat(false);
-  };
-
-  // Handle text selection from PDF for auto-help
   const handleTextSelectionHelp = useCallback(
     (selectedText: string) => {
-      // Truncate very long selections for display
       const displayText = selectedText.length > 200 ? selectedText.substring(0, 200) + '...' : selectedText;
       setActiveContext(displayText);
+      setActiveTab('chat'); // Switch to chat tab
+      setShowMobileSidebar(true);
 
-      // Open mobile chat if on small screen
-      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-        setShowMobileChat(true);
-      }
-
-      // Clear the selection
       window.getSelection()?.removeAllRanges();
-
-      // Send the help request
       const helpMessage = t('formview.assistant.helpRequest', { text: selectedText });
       handleSendMessage(helpMessage);
     },
-    [t, handleSendMessage]
+    [t]
   );
 
   return (
@@ -401,7 +393,7 @@ export default function FormViewPage() {
               </Link>
             </div>
 
-            <div className="text-sm text-gray-500 hidden sm:block">
+            <div className="text-sm text-gray-500 hidden sm:block font-medium">
               {formInfo ? `${formInfo.code} - ${formInfo.name}` : t('formview.header.viewerTitle')}
             </div>
 
@@ -411,32 +403,38 @@ export default function FormViewPage() {
                   {t('pdf.xfa.badge')}
                 </span>
               )}
+
+              {/* Mobile Sidebar Toggle */}
               <button
                 onClick={() => setShowMobileChat(true)}
                 className="lg:hidden p-2 bg-purple-900 hover:bg-black text-white rounded-lg transition-colors"
                 aria-label={t('formview.assistant.openAssistant')}
               >
-                <MessageCircle className="w-5 h-5" />
+                {activeTab === 'chat' ? <MessageCircle className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main content - Dual Panel */}
-      <main
-        className={`flex-1 min-h-0 flex flex-col lg:flex-row transition-all duration-300 ease-out ${showContent ? 'opacity-100' : 'opacity-0'
-          }`}
-      >
-        {/* Left Panel - PDF Form Viewer */}
-        <div className="flex-1 min-h-0 flex flex-col">
+      {/* Main Content */}
+      <main className={`flex-1 min-h-0 flex flex-col lg:flex-row transition-opacity duration-300 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+
+        {/* Left Panel: PDF Viewer */}
+        <div className="flex-1 min-h-0 flex flex-col relative">
           <PDFFormViewer
             pdfUrl={pdfUrl}
             onFieldClick={(fieldId) => {
-              setActiveContext(t('formview.assistant.contextPrefix', { fieldId }));
-              if (window.innerWidth < 1024) {
-                setShowMobileChat(true);
+              // Switch to fill tab if it exists
+              if (formFields.length > 0) {
+                setActiveTab('fields');
+                // Optionally scroll to field in panel if possible (future enhancement)
+              } else {
+                // Or ask for help about this field
+                setActiveContext(t('formview.assistant.contextPrefix', { fieldId }));
+                setActiveTab('chat');
               }
+              setShowMobileSidebar(true);
             }}
             onHelpRequest={({ selectedText }) => {
               handleTextSelectionHelp(selectedText);
@@ -444,28 +442,77 @@ export default function FormViewPage() {
           />
         </div>
 
-        {/* Right Panel - AI Assistant (Desktop) */}
-        <div className="hidden lg:flex w-96 min-h-0 border-l border-gray-200 flex-col bg-white">
-          <AIAssistantPanel
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            onClose={handleCloseChat}
-            activeContext={activeContext}
+        {/* Right Panel: Unified Sidebar (Desktop) */}
+        <div className="hidden lg:flex w-[400px] border-l border-gray-200 flex-col bg-white shadow-xl z-10">
+          <SidebarTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            hasFields={formFields.length > 0}
           />
+
+          <div className="flex-1 overflow-hidden relative">
+            {/* We use absolute positioning to keep state alive or just conditional rendering */}
+            {activeTab === 'chat' ? (
+              <AIAssistantPanel
+                messages={messages}
+                onSendMessage={handleSendMessage}
+                isLoading={isLoading}
+                activeContext={activeContext}
+              />
+            ) : (
+              <FormFieldsPanel
+                fields={formFields}
+                onFieldChange={handleFieldChange}
+                onSave={handleSavePDF}
+              />
+            )}
+          </div>
         </div>
       </main>
 
-      {/* Mobile Chat Panel */}
-      {showMobileChat && (
-        <div className="fixed inset-0 z-50 lg:hidden bg-white">
-          <AIAssistantPanel
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            onClose={handleCloseChat}
-            activeContext={activeContext}
+      {/* Mobile Drawer (Unified) */}
+      {showMobileSidebar && (
+        <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowMobileSidebar(false)}
           />
+
+          {/* Drawer Content */}
+          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <span className="font-semibold text-gray-900">
+                {activeTab === 'chat' ? t('common.tabs.chat') : t('common.tabs.fields')}
+              </span>
+              <button onClick={() => setShowMobileSidebar(false)} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <SidebarTabs
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              hasFields={formFields.length > 0}
+            />
+
+            <div className="flex-1 overflow-hidden">
+              {activeTab === 'chat' ? (
+                <AIAssistantPanel
+                  messages={messages}
+                  onSendMessage={handleSendMessage}
+                  isLoading={isLoading}
+                  activeContext={activeContext}
+                />
+              ) : (
+                <FormFieldsPanel
+                  fields={formFields}
+                  onFieldChange={handleFieldChange}
+                  onSave={handleSavePDF}
+                />
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -8,6 +8,13 @@
     "selectLanguage": "Select language",
     "languageOptions": "Language options"
   },
+  "tabs": {
+    "chat": "Assistant",
+    "fields": "Fields"
+  },
+  "actions": {
+    "download": "Download"
+  },
   "buttons": {
     "getStarted": "Get Started",
     "learnMore": "Learn More",
