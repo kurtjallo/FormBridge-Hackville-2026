@@ -2,17 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Send, MessageCircle, ChevronLeft, X, FileText } from 'lucide-react';
+import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
 import { useTranslation } from '@/i18n';
 import { Logo } from '@/components/Logo';
-import { SidebarTabs } from '@/components/SidebarTabs';
-import { FormFieldsPanel } from '@/components/FormFieldsPanel';
-import { PDFFormEditor, FormField } from '@/services/pdfFormEditor';
 
 // Helper to resolve PDF URLs
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -216,20 +212,11 @@ export default function FormViewPage() {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [activeContext, setActiveContext] = useState<string | null>(null);
 
-  // Layout State
-  const [activeTab, setActiveTab] = useState<'chat' | 'fields'>('chat');
-  const [formFields, setFormFields] = useState<FormField[]>([]);
 
   // PDF Store
   const { selectedForm, setSelectedForm, setCurrentPage } = usePDFStore();
   const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf');
-
-  // PDF Editor Ref
-  const pdfEditorRef = useRef<PDFFormEditor | null>(null);
-  if (!pdfEditorRef.current) {
-    pdfEditorRef.current = new PDFFormEditor();
-  }
 
   // Load PDF logic
   useEffect(() => {
@@ -259,44 +246,6 @@ export default function FormViewPage() {
     }
   }, [selectedForm, setSelectedForm, setCurrentPage]);
 
-  // Load fields when PDF URL changes
-  useEffect(() => {
-    const loadPDFForm = async () => {
-      try {
-        await pdfEditorRef.current!.loadPDF(pdfUrl);
-        const fields = pdfEditorRef.current!.getFields();
-        setFormFields(fields);
-        // Clean fields if none
-        if (fields.length === 0) {
-          if (activeTab === 'fields') setActiveTab('chat');
-        }
-      } catch (error) {
-        console.error('Failed to load PDF form:', error);
-        setFormFields([]);
-      }
-    };
-    loadPDFForm();
-  }, [pdfUrl]);
-
-  const handleFieldChange = async (fieldName: string, value: string | boolean) => {
-    await pdfEditorRef.current!.setFieldValue(fieldName, value);
-    setFormFields([...pdfEditorRef.current!.getFields()]);
-  };
-
-  const handleSavePDF = async () => {
-    try {
-      const blob = await pdfEditorRef.current!.save();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${formInfo?.name || 'form'}_filled.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error("Error saving PDF:", e);
-      alert("Could not save the PDF. Please try again.");
-    }
-  };
 
   const handleSendMessage = async (messageText: string) => {
     const userMessage: ChatMessage = { role: 'user', content: messageText, timestamp: Date.now() };
@@ -331,7 +280,6 @@ export default function FormViewPage() {
     (selectedText: string) => {
       const displayText = selectedText.length > 200 ? selectedText.substring(0, 200) + '...' : selectedText;
       setActiveContext(displayText);
-      setActiveTab('chat'); // Switch to chat tab
       setShowMobileSidebar(true);
 
       window.getSelection()?.removeAllRanges();
@@ -412,7 +360,7 @@ export default function FormViewPage() {
                 className="lg:hidden p-2 bg-purple-900 hover:bg-black text-white rounded-lg transition-colors"
                 aria-label={t('formview.assistant.openAssistant')}
               >
-                {activeTab === 'chat' ? <MessageCircle className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
+                <MessageCircle className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -427,15 +375,8 @@ export default function FormViewPage() {
           <PDFFormViewer
             pdfUrl={pdfUrl}
             onFieldClick={(fieldId) => {
-              // Switch to fill tab if it exists
-              if (formFields.length > 0) {
-                setActiveTab('fields');
-                // Optionally scroll to field in panel if possible (future enhancement)
-              } else {
-                // Or ask for help about this field
-                setActiveContext(t('formview.assistant.contextPrefix', { fieldId }));
-                setActiveTab('chat');
-              }
+              // Ask for help about this field
+              setActiveContext(t('formview.assistant.contextPrefix', { fieldId }));
               setShowMobileSidebar(true);
             }}
             onHelpRequest={({ selectedText }) => {
@@ -444,35 +385,18 @@ export default function FormViewPage() {
           />
         </div>
 
-        {/* Right Panel: Unified Sidebar (Desktop) */}
+        {/* Right Panel: AI Assistant (Desktop) */}
         <div className="hidden lg:flex w-[400px] border-l border-gray-200 flex-col bg-white shadow-xl z-10">
-          <SidebarTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            hasFields={formFields.length > 0}
+          <AIAssistantPanel
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
+            activeContext={activeContext}
           />
-
-          <div className="flex-1 overflow-hidden relative">
-            {/* We use absolute positioning to keep state alive or just conditional rendering */}
-            {activeTab === 'chat' ? (
-              <AIAssistantPanel
-                messages={messages}
-                onSendMessage={handleSendMessage}
-                isLoading={isLoading}
-                activeContext={activeContext}
-              />
-            ) : (
-              <FormFieldsPanel
-                fields={formFields}
-                onFieldChange={handleFieldChange}
-                onSave={handleSavePDF}
-              />
-            )}
-          </div>
         </div>
       </main>
 
-      {/* Mobile Drawer (Unified) */}
+      {/* Mobile Drawer - AI Assistant */}
       {showMobileSidebar && (
         <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
           {/* Backdrop */}
@@ -483,37 +407,13 @@ export default function FormViewPage() {
 
           {/* Drawer Content */}
           <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-              <span className="font-semibold text-gray-900">
-                {activeTab === 'chat' ? t('common.tabs.chat') : t('common.tabs.fields')}
-              </span>
-              <button onClick={() => setShowMobileSidebar(false)} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <SidebarTabs
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              hasFields={formFields.length > 0}
+            <AIAssistantPanel
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              isLoading={isLoading}
+              activeContext={activeContext}
+              onClose={() => setShowMobileSidebar(false)}
             />
-
-            <div className="flex-1 overflow-hidden">
-              {activeTab === 'chat' ? (
-                <AIAssistantPanel
-                  messages={messages}
-                  onSendMessage={handleSendMessage}
-                  isLoading={isLoading}
-                  activeContext={activeContext}
-                />
-              ) : (
-                <FormFieldsPanel
-                  fields={formFields}
-                  onFieldChange={handleFieldChange}
-                  onSave={handleSavePDF}
-                />
-              )}
-            </div>
           </div>
         </div>
       )}
