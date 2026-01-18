@@ -5,9 +5,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();
 
-// Initialize GCS
-const storage = new Storage();
-const bucketName = process.env.GCS_BUCKET_NAME || 'formbridge-pdfs';
+// Lazy initialization for GCS
+let storage: Storage | null = null;
+let bucketName: string | null = null;
+
+function getGCS() {
+    if (!storage) {
+        storage = new Storage({
+            keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+        });
+        bucketName = process.env.GCS_BUCKET_NAME || 'formbridge-pdfs';
+    }
+    return { storage, bucketName: bucketName! };
+}
 
 // Types
 interface UploadFormRequest {
@@ -115,6 +125,48 @@ router.get('/categories', async (_req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/pdf-forms/proxy/*
+ * Proxy PDF files from GCS to avoid CORS issues
+ * Example: /api/pdf-forms/proxy/forms/legal/abc123.pdf
+ */
+router.get('/proxy/*', async (req: Request, res: Response) => {
+    try {
+        const gcsPath = req.params[0]; // Everything after /proxy/
+
+        if (!gcsPath) {
+            return res.status(400).json({ error: 'File path is required' });
+        }
+
+        const gcs = getGCS();
+        const bucket = gcs.storage.bucket(gcs.bucketName);
+        const file = bucket.file(gcsPath);
+
+        // Check if file exists
+        const [exists] = await file.exists();
+        if (!exists) {
+            return res.status(404).json({ error: 'PDF file not found' });
+        }
+
+        // Set headers for PDF
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+
+        // Stream the file
+        file.createReadStream()
+            .on('error', (err) => {
+                console.error('Error streaming PDF:', err);
+                if (!res.headersSent) {
+                    res.status(500).json({ error: 'Failed to stream PDF' });
+                }
+            })
+            .pipe(res);
+    } catch (error) {
+        console.error('Error proxying PDF:', error);
+        res.status(500).json({ error: 'Failed to proxy PDF' });
+    }
+});
+
+/**
  * GET /api/pdf-forms/:id
  * Get a specific form by ID
  */
@@ -167,7 +219,8 @@ router.post('/upload', async (req: Request, res: Response) => {
         const filename = `forms/${metadata.category}/${formId}.pdf`;
 
         // Upload to GCS
-        const bucket = storage.bucket(bucketName);
+        const gcs = getGCS();
+        const bucket = gcs.storage.bucket(gcs.bucketName);
         const file = bucket.file(filename);
 
         const pdfBuffer = Buffer.from(pdfBase64, 'base64');
@@ -180,29 +233,15 @@ router.post('/upload', async (req: Request, res: Response) => {
             },
         });
 
-        // Make file publicly readable
-        await file.makePublic();
-        const pdfUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
+        // Bucket has uniform bucket-level access enabled, so no per-object ACL needed
+        // Use proxy URL to avoid CORS issues when loading in browser
+        const pdfUrl = `/api/pdf-forms/proxy/${filename}`;
 
-        // Create database entry
-        const form = await PDFForm.create({
-            _id: formId,
-            name: metadata.name,
-            description: metadata.description || '',
-            category: metadata.category,
-            pdfUrl,
-            gcsPath: filename,
-            estimatedTime: metadata.estimatedTime || '10-15 minutes',
-            difficulty: metadata.difficulty || 'medium',
-            tags: metadata.tags || [],
-            pageCount: metadata.pageCount,
-            isXFA: metadata.isXFA || false,
-        });
-
+        // Return the URL directly (no database storage)
         res.status(201).json({
-            id: form._id,
-            name: form.name,
-            pdfUrl: form.pdfUrl,
+            id: formId,
+            name: metadata.name,
+            pdfUrl,
             message: 'Form uploaded successfully',
         });
     } catch (error) {
@@ -227,7 +266,8 @@ router.post('/upload-url', async (req: Request, res: Response) => {
         const formId = uuidv4();
         const filename = `forms/${category}/${formId}.pdf`;
 
-        const bucket = storage.bucket(bucketName);
+        const gcs = getGCS();
+        const bucket = gcs.storage.bucket(gcs.bucketName);
         const file = bucket.file(filename);
 
         // Generate signed URL valid for 15 minutes
@@ -267,10 +307,11 @@ router.post('/confirm-upload', async (req: Request, res: Response) => {
             });
         }
 
-        const pdfUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
+        const gcs = getGCS();
+        const pdfUrl = `https://storage.googleapis.com/${gcs.bucketName}/${filename}`;
 
         // Verify file exists in GCS
-        const bucket = storage.bucket(bucketName);
+        const bucket = gcs.storage.bucket(gcs.bucketName);
         const file = bucket.file(filename);
         const [exists] = await file.exists();
 
@@ -278,8 +319,7 @@ router.post('/confirm-upload', async (req: Request, res: Response) => {
             return res.status(404).json({ error: 'Uploaded file not found in storage' });
         }
 
-        // Make file publicly readable
-        await file.makePublic();
+        // Bucket has uniform bucket-level access enabled, so no per-object ACL needed
 
         // Create database entry
         const form = await PDFForm.create({
@@ -322,7 +362,8 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
         // Delete from GCS
         try {
-            const bucket = storage.bucket(bucketName);
+            const gcs = getGCS();
+            const bucket = gcs.storage.bucket(gcs.bucketName);
             await bucket.file(form.gcsPath).delete();
         } catch (gcsError) {
             console.warn('GCS deletion failed (file may not exist):', gcsError);

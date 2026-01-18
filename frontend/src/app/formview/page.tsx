@@ -8,6 +8,15 @@ import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
 
+// Helper to resolve PDF URLs - handles both absolute and relative API paths
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+function resolvePdfUrl(url: string): string {
+  if (url.startsWith('/api/')) {
+    return `${API_URL}${url}`;
+  }
+  return url;
+}
+
 // Dynamic import to avoid SSR issues with react-pdf
 const PDFViewer = dynamic(() => import('@/components/PDFViewer').then(mod => mod.PDFViewer), {
   ssr: false,
@@ -169,7 +178,7 @@ export default function FormViewPage() {
   const [activeContext, setActiveContext] = useState<string | null>(null);
 
   // PDF store
-  const { selectedForm, setSelectedForm } = usePDFStore();
+  const { selectedForm, setSelectedForm, setCurrentPage } = usePDFStore();
 
   // Get form info from session storage or use default
   const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
@@ -177,6 +186,8 @@ export default function FormViewPage() {
 
   useEffect(() => {
     setShowContent(true);
+    // Always start on page 1 when loading a new PDF
+    setCurrentPage(1);
 
     // Try to get form info from session storage
     const formName = sessionStorage.getItem('selectedFormName');
@@ -186,7 +197,7 @@ export default function FormViewPage() {
 
     // If we have a PDF URL stored directly, use it (most reliable)
     if (storedPdfUrl) {
-      setPdfUrl(storedPdfUrl);
+      setPdfUrl(resolvePdfUrl(storedPdfUrl));
       if (formName && formCode) {
         setFormInfo({ name: formName, code: formCode });
       }
@@ -198,7 +209,7 @@ export default function FormViewPage() {
       const form = getFormById(formId);
       if (form) {
         setSelectedForm(form);
-        setPdfUrl(form.pdfUrl);
+        setPdfUrl(resolvePdfUrl(form.pdfUrl));
         setFormInfo({
           name: form.name,
           code: form.id.toUpperCase(),
@@ -214,13 +225,13 @@ export default function FormViewPage() {
 
     // If we already have a selected form in the store, use it
     if (selectedForm) {
-      setPdfUrl(selectedForm.pdfUrl);
+      setPdfUrl(resolvePdfUrl(selectedForm.pdfUrl));
       setFormInfo({
         name: selectedForm.name,
         code: selectedForm.id.toUpperCase(),
       });
     }
-  }, [selectedForm, setSelectedForm]);
+  }, [selectedForm, setSelectedForm, setCurrentPage]);
 
   const handleSendMessage = async (messageText: string) => {
     // Add user message

@@ -248,16 +248,17 @@ export async function getFormCategoryCounts(): Promise<CategoryCounts> {
   return data.categories;
 }
 
-export async function uploadPDFForm(data: {
-  pdfBase64: string;
-  name: string;
-  description: string;
-  category: string;
-  estimatedTime?: string;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  tags?: string[];
-  pageCount?: number;
-}): Promise<{ id: string; name: string; pdfUrl: string }> {
+export async function uploadPDFForm(
+  data: {
+    pdfBase64: string;
+    name: string;
+    description: string;
+    category: string;
+    estimatedTime?: string;
+    difficulty?: 'easy' | 'medium' | 'hard';
+    tags?: string[];
+  }
+): Promise<{ id: string; name: string; pdfUrl: string }> {
   const response = await fetch(`${API_BASE}/pdf-forms/upload`, {
     method: 'POST',
     headers: {
