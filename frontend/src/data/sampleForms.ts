@@ -33,8 +33,12 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
 // Helper to get form counts by category
 export function getFormCountByCategory(): Record<FormCategory, number> {
     const counts: Record<FormCategory, number> = {
+        employment: 0,
         legal: 0,
         finance: 0,
+        government: 0,
+        healthcare: 0,
+        immigration: 0,
     };
 
     SAMPLE_PDF_FORMS.forEach((form) => {
