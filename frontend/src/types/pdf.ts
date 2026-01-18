@@ -1,9 +1,13 @@
 // PDF Form Types for Phase 5: PDF Foundation
 
-// Form categories for navigation (only categories with actual PDFs)
+// Form categories for navigation
 export type FormCategory =
+    | 'employment'
     | 'legal'
-    | 'finance';
+    | 'finance'
+    | 'government'
+    | 'healthcare'
+    | 'immigration';
 
 export interface FormCategoryInfo {
     id: FormCategory;
@@ -51,8 +55,14 @@ export interface PDFField {
     required?: boolean;
 }
 
-// Form categories data (only categories with actual PDFs)
+// Form categories data
 export const FORM_CATEGORIES: FormCategoryInfo[] = [
+    {
+        id: 'employment',
+        name: 'Employment',
+        description: 'Job applications, work permits',
+        icon: '💼',
+    },
     {
         id: 'legal',
         name: 'Legal',
@@ -64,5 +74,23 @@ export const FORM_CATEGORIES: FormCategoryInfo[] = [
         name: 'Finance & Tax',
         description: 'CRA tax forms, T1 returns',
         icon: '💰',
+    },
+    {
+        id: 'government',
+        name: 'Government',
+        description: 'Ontario Works, social assistance',
+        icon: '🏛️',
+    },
+    {
+        id: 'healthcare',
+        name: 'Healthcare',
+        description: 'OHIP, medical forms',
+        icon: '🏥',
+    },
+    {
+        id: 'immigration',
+        name: 'Immigration',
+        description: 'Visa applications, citizenship',
+        icon: '🌍',
     },
 ];

@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
+import { getPDFForm } from '@/lib/api';
+import { PDFFormMeta, FormCategory } from '@/types/pdf';
 
 // Dynamic import to avoid SSR issues with react-pdf
 const PDFViewer = dynamic(() => import('@/components/PDFViewer').then(mod => mod.PDFViewer), {
@@ -20,24 +22,58 @@ export default function FormViewPage() {
     const params = useParams();
     const router = useRouter();
     const formId = params.id as string;
+    const [isLoadingForm, setIsLoadingForm] = useState(false);
 
-    const { selectedForm, setSelectedForm, setLoading, viewer } = usePDFStore();
+    const { selectedForm, setSelectedForm, setLoading } = usePDFStore();
 
     useEffect(() => {
-        // If no form selected, try to load from ID
-        if (!selectedForm && formId) {
-            const form = getFormById(formId);
-            if (form) {
+        async function loadForm() {
+            // If form already selected in store, use it
+            if (selectedForm?.id === formId) {
+                setLoading(true);
+                return;
+            }
+
+            // Try to load from sample forms first
+            const sampleForm = getFormById(formId);
+            if (sampleForm) {
+                setSelectedForm(sampleForm);
+                setLoading(true);
+                return;
+            }
+
+            // Try to fetch from API (for uploaded forms)
+            setIsLoadingForm(true);
+            try {
+                const apiForm = await getPDFForm(formId);
+                const form: PDFFormMeta = {
+                    id: apiForm.id,
+                    name: apiForm.name,
+                    description: apiForm.description,
+                    category: apiForm.category as FormCategory,
+                    pdfUrl: apiForm.pdfUrl,
+                    estimatedTime: apiForm.estimatedTime,
+                    difficulty: apiForm.difficulty,
+                    tags: apiForm.tags,
+                    pageCount: apiForm.pageCount,
+                    isXFA: apiForm.isXFA,
+                };
                 setSelectedForm(form);
-            } else {
-                // Form not found, redirect to forms page
+                setLoading(true);
+            } catch (error) {
+                console.error('Failed to load form:', error);
                 router.push('/forms');
+            } finally {
+                setIsLoadingForm(false);
             }
         }
-        setLoading(true);
+
+        if (formId) {
+            loadForm();
+        }
     }, [formId, selectedForm, setSelectedForm, setLoading, router]);
 
-    if (!selectedForm) {
+    if (!selectedForm || isLoadingForm) {
         return (
             <div className="min-h-screen bg-gray-900 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
