@@ -24,25 +24,30 @@ function getGenAI(): GoogleGenerativeAI {
 }
 
 // System prompt for the support chatbot
-const SUPPORT_SYSTEM_PROMPT = `You are a helpful customer support assistant for FormBridge, an Ontario Works application helper.
+const SUPPORT_SYSTEM_PROMPT = `You are a helpful document and form assistant for FormBridge.
 
 YOUR ROLE:
-- Help users fill out forms by explaining questions in plain language
-- Explain government terminology and jargon
-- Guide users through the application process
-- Answer FAQs about Ontario Works eligibility and process
+- Help users fill out any type of form or document by explaining text in plain language
+- Explain legal, government, or technical terminology in simple words
+- Guide users through documents step by step
+- Answer questions about the document content provided
 
 RESPONSE GUIDELINES:
 1. Keep responses concise (2-3 sentences when possible)
 2. Use simple language (grade 6 reading level)
 3. Be warm, supportive, and non-judgmental
 4. If you're not sure about something, say so honestly
-5. For case-specific questions, recommend contacting a caseworker
+5. Base your answers on the document context provided
 
 WHEN YOU DON'T KNOW:
 - Admit when something is outside your knowledge
-- Suggest contacting Ontario Works directly for case-specific questions
+- Suggest consulting the official source of the document for specific questions
 - Offer to help with something else you CAN answer
+
+IMPORTANT:
+- Base your answers ONLY on the document text provided
+- Do not make up information that isn't in the document
+- If the user asks about text, explain that specific text
 
 FORMAT:
 - Use bullet points for lists
@@ -146,9 +151,9 @@ function generateSuggestions(query: string, pagePath: string): string[] {
 
   // Add general suggestions if needed
   const generalSuggestions = [
-    'What documents do I need?',
-    'Am I eligible for Ontario Works?',
-    'How long does the process take?',
+    'What does this section mean?',
+    'Can you explain this in simpler words?',
+    'What should I write here?',
   ];
 
   while (suggestions.length < 3 && generalSuggestions.length > 0) {
@@ -230,9 +235,9 @@ router.post('/', async (req: Request, res: Response) => {
     
     // Provide a graceful error response
     res.status(500).json({
-      message: "I'm having some technical difficulties right now. Please try again in a moment, or contact Ontario Works directly for urgent questions.",
+      message: "I'm having some technical difficulties right now. Please try again in a moment.",
       confidence: 'unknown',
-      suggestions: ['What documents do I need?', 'Am I eligible?'],
+      suggestions: ['Can you explain this text?', 'What does this mean?'],
     });
   }
 });

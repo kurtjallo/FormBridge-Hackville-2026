@@ -36,74 +36,50 @@ export function cosineSimilarity(a: number[], b: number[]): number {
   return dotProduct / (magnitudeA * magnitudeB);
 }
 
-// Ontario Works key facts for context injection
-const OW_CONTEXT = {
-  assetLimits: 'Single: $10,000 | Couple/Family: $15,000',
-  exemptAssets: 'Primary home, one vehicle, RDSP, prepaid funerals',
-  commonLaw: '3 months cohabitation (not 1 year like federal)',
-  income: 'First $200 + 50% of remainder is exempt from earnings',
-  basicNeeds: 'Single: ~$733/month | Couple: ~$1,136/month (2024 rates)',
-};
+// RAG-based context - AI uses document context from the request instead of hardcoded facts
 
 function buildExplainPrompt(request: ExplainRequest): string {
   const parts: string[] = [];
   const isFrench = request.language === 'fr';
 
-  // Concise system instruction with bilingual support
+  // Generic document/form assistant - works with ANY document type
   if (isFrench) {
-    parts.push(`Role: Assistant pour le formulaire Ontario au travail.
-Goal: Expliquez ceci pour qu'une personne immigrante ou ayant peu de littératie puisse comprendre facilement.
+    parts.push(`Role: Assistant pour documents et formulaires.
+Goal: Expliquez ce texte pour qu'une personne immigrante ou ayant peu de littératie puisse comprendre facilement.
 Language: Utilisez un français canadien très simple (niveau 4e année). Évitez les expressions compliquées et les mots difficiles. Utilisez le tutoiement.
-Format: 1) Ce que ça veut dire 2) Exemple 3) Quoi écrire
-Style: Phrases courtes et claires. Très amical et serviable.`);
+Format: 1) Ce que ça veut dire en mots simples 2) Un exemple concret 3) Ce que tu dois faire ou écrire
+Style: Phrases courtes et claires. Très amical et serviable.
+Important: Basez votre réponse UNIQUEMENT sur le texte fourni. N'inventez pas d'informations.`);
   } else {
-    parts.push(`Role: Ontario Works form assistant.
-Goal: Explain this so it is very easy for an immigrant or someone with low literacy to understand.
+    parts.push(`Role: Document and form assistant.
+Goal: Explain this text so it is very easy for an immigrant or someone with low literacy to understand.
 Language: Use very simple English (Grade 4 level). Avoid idioms and big words.
-Format: 1) What it means 2) Example 3) What to enter
-Style: Short, clear sentences. Very friendly and helpful.`);
+Format: 1) What it means in simple words 2) A real example 3) What you need to do or write
+Style: Short, clear sentences. Very friendly and helpful.
+Important: Base your answer ONLY on the text provided. Do not make up information.`);
   }
 
-  // Question details
-  parts.push(`\nQ: "${request.originalText}"
-Type: ${request.fieldType} | Required: ${request.required}`);
+  // The actual text to explain (this is the RAG context - the document content)
+  parts.push(`\n📄 Text to explain: "${request.originalText}"`);
 
-  // Add context only if provided
+  // Field type info if it's a form field
+  if (request.fieldType && request.fieldType !== 'text') {
+    parts.push(`Type: ${request.fieldType}${request.required ? ' (Required)' : ''}`);
+  }
+
+  // Additional document context if provided (e.g., surrounding text, section info)
   if (request.context) {
-    parts.push(`\nContext: ${request.context}`);
+    parts.push(`\n📋 Document context: ${request.context}`);
   }
 
   // Add common confusions as bullet points
   if (request.commonConfusions) {
-    parts.push(`\n⚠️ Common mistakes:\n${request.commonConfusions}`);
+    parts.push(`\n⚠️ Common mistakes to avoid:\n${request.commonConfusions}`);
   }
 
   // Add user-specific context for personalized response
   if (request.userContext) {
     parts.push(`\n👤 User's situation: ${request.userContext}`);
-  }
-
-  // Inject relevant Ontario Works facts based on question content
-  const questionLower = request.originalText.toLowerCase();
-  const relevantFacts: string[] = [];
-
-  if (questionLower.includes('asset') || questionLower.includes('savings') || questionLower.includes('money')) {
-    relevantFacts.push(`Asset limits: ${OW_CONTEXT.assetLimits}`);
-    relevantFacts.push(`Exempt: ${OW_CONTEXT.exemptAssets}`);
-  }
-  if (questionLower.includes('common-law') || questionLower.includes('partner') || questionLower.includes('marital')) {
-    relevantFacts.push(`Common-law in Ontario: ${OW_CONTEXT.commonLaw}`);
-  }
-  if (questionLower.includes('income') || questionLower.includes('earn') || questionLower.includes('work')) {
-    relevantFacts.push(`Earnings exemption: ${OW_CONTEXT.income}`);
-  }
-  if (questionLower.includes('amount') || questionLower.includes('benefit') || questionLower.includes('receive')) {
-    relevantFacts.push(`Basic amounts: ${OW_CONTEXT.basicNeeds}`);
-  }
-
-  if (relevantFacts.length > 0) {
-    const factsLabel = isFrench ? 'Faits Ontario au travail' : 'Ontario Works facts';
-    parts.push(`\n📋 ${factsLabel}:\n- ${relevantFacts.join('\n- ')}`);
   }
 
   const explainLabel = isFrench ? 'Expliquez brièvement:' : 'Explain concisely:';
@@ -131,52 +107,40 @@ function buildChatPrompt(request: ChatRequest): string {
   const parts: string[] = [];
   const isFrench = request.language === 'fr';
 
-  // Concise system instruction with bilingual support
+  // Generic document/form assistant - works with ANY document type
   if (isFrench) {
-    parts.push(`Role: Assistant pour le formulaire Ontario au travail.
+    parts.push(`Role: Assistant pour documents et formulaires.
 Goal: Parlez à l'utilisateur comme un ami qui aide. Rendez tout facile à comprendre pour quelqu'un qui apprend le français.
 Language: Utilisez un français canadien simple (niveau 3-4e année). Mots simples seulement. Phrases courtes. Utilisez le tutoiement.
 Format: Gardez ça court (2-3 phrases).
-Task: Répondez à la question et si vous savez quoi écrire, suggérez-le.
+Task: Répondez à la question en vous basant sur le texte du document fourni. Si vous savez quoi écrire, suggérez-le.
+Important: Basez votre réponse UNIQUEMENT sur le texte fourni. N'inventez pas d'informations.
 Si vous suggérez une réponse, terminez avec:
 SUGGESTED_ANSWER: [valeur]
 CONFIDENCE: [low|medium|high]`);
   } else {
-    parts.push(`Role: Ontario Works form assistant.
+    parts.push(`Role: Document and form assistant.
 Goal: Talk to the user like a friendly helper. Make everything very easy to understand for someone who is learning English.
 Language: Use Grade 3-4 English. Simple words only. Short sentences.
 Format: Keep it short (2-3 sentences).
-Task: Answer the question and if you know what they should write, suggest it.
+Task: Answer the question based on the document text provided. If you know what they should write, suggest it.
+Important: Base your answer ONLY on the text provided. Do not make up information.
 If suggesting answer, end with:
 SUGGESTED_ANSWER: [value]
 CONFIDENCE: [low|medium|high]`);
   }
 
-  // Current question
-  parts.push(`\n📝 Field: "${request.originalText}" (${request.fieldType})`);
+  // The document text being discussed (RAG context)
+  parts.push(`\n📄 Document text: "${request.originalText}"`);
 
-  // Add context if provided
+  // Field type if it's a form field
+  if (request.fieldType && request.fieldType !== 'text') {
+    parts.push(`(Field type: ${request.fieldType})`);
+  }
+
+  // Additional document context if provided
   if (request.context) {
-    parts.push(`Context: ${request.context}`);
-  }
-
-  // Inject relevant Ontario Works facts based on question
-  const questionLower = request.originalText.toLowerCase();
-  const relevantFacts: string[] = [];
-
-  if (questionLower.includes('asset') || questionLower.includes('savings')) {
-    relevantFacts.push(`Assets: ${OW_CONTEXT.assetLimits} (exempt: ${OW_CONTEXT.exemptAssets})`);
-  }
-  if (questionLower.includes('common-law') || questionLower.includes('partner') || questionLower.includes('marital')) {
-    relevantFacts.push(`Common-law: ${OW_CONTEXT.commonLaw}`);
-  }
-  if (questionLower.includes('income') || questionLower.includes('earn')) {
-    relevantFacts.push(`Earnings: ${OW_CONTEXT.income}`);
-  }
-
-  if (relevantFacts.length > 0) {
-    const factsLabel = isFrench ? 'Faits clés' : 'Key facts';
-    parts.push(`\n📋 ${factsLabel}: ${relevantFacts.join(' | ')}`);
+    parts.push(`\n📋 Document context: ${request.context}`);
   }
 
   // Add user's other answers for cross-reference context (only relevant ones)
