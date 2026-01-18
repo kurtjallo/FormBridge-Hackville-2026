@@ -3,8 +3,8 @@
 import { useState, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { usePDFStore } from '@/store/pdfStore';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -36,7 +36,6 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
 
             // Check for XFA form (not supported for editing)
             try {
-                // @ts-expect-error - accessing internal property
                 const isXFAForm = pdf._pdfInfo?.isXFA || false;
                 setIsXFA(isXFAForm);
                 if (isXFAForm) {
