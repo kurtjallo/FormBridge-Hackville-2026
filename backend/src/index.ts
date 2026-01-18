@@ -28,8 +28,9 @@ app.use(corsMiddleware);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Serve PDF forms - try local first, then GCS
-app.use('/forms', express.static(path.join(__dirname, 'assets/forms')));
+// Serve PDF forms - use src/assets path since __dirname is dist/ at runtime
+// path.join(__dirname, '..') goes from dist/ to backend/, then into src/assets/forms
+app.use('/forms', express.static(path.join(__dirname, '..', 'src', 'assets', 'forms')));
 
 // Fallback to GCS for PDFs not found locally (production)
 app.get('/forms/*', async (req: Request, res: Response, next) => {
