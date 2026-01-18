@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { usePDFStore } from '@/store/pdfStore';
+import { SelectionHelpButton } from './SelectionHelpButton';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { useTranslation } from '@/i18n';
@@ -30,28 +31,47 @@ export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProp
     } = usePDFStore();
 
     const [isXFA, setIsXFA] = useState(false);
-    const [selectionTimeout, setSelectionTimeout] = useState<NodeJS.Timeout | null>(null);
+    const [showHelpButton, setShowHelpButton] = useState(false);
+    const [selectionRect, setSelectionRect] = useState<DOMRect | null>(null);
+    const [selectedText, setSelectedText] = useState('');
 
-    // Handle text selection for help requests
+    // Handle text selection - show help button instead of auto-sending
     const handleMouseUp = useCallback(() => {
-        if (selectionTimeout) {
-            clearTimeout(selectionTimeout);
-        }
+        const selection = window.getSelection();
+        const text = selection?.toString().trim() || '';
 
-        const timeout = setTimeout(() => {
-            const selection = window.getSelection();
-            const selectedText = selection?.toString().trim() || '';
-
-            if (selectedText.length >= 10 && onHelpRequest) {
-                onHelpRequest({
-                    selectedText,
-                    page: viewer.currentPage,
-                });
+        if (text.length >= 10) {
+            const range = selection?.getRangeAt(0);
+            const rect = range?.getBoundingClientRect();
+            if (rect) {
+                setSelectionRect(rect);
+                setSelectedText(text);
+                setShowHelpButton(true);
             }
-        }, 600);
+        } else {
+            setShowHelpButton(false);
+        }
+    }, []);
 
-        setSelectionTimeout(timeout);
-    }, [selectionTimeout, viewer.currentPage, onHelpRequest]);
+    // Handle help button click
+    const handleHelpClick = useCallback((text: string) => {
+        if (onHelpRequest) {
+            onHelpRequest({ selectedText: text, page: viewer.currentPage });
+        }
+        setShowHelpButton(false);
+    }, [viewer.currentPage, onHelpRequest]);
+
+    // Click-away to dismiss help button
+    useEffect(() => {
+        const handleClickAway = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('[aria-label="Get help with selected text"]')) {
+                setShowHelpButton(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickAway);
+        return () => document.removeEventListener('mousedown', handleClickAway);
+    }, []);
 
     const onDocumentLoadSuccess = useCallback(
         async (pdf: { numPages: number; _pdfInfo?: { isXFA?: boolean } }) => {
@@ -195,6 +215,14 @@ export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProp
                     />
                 </Document>
             </div>
+
+            {/* Floating Help Button for text selection */}
+            <SelectionHelpButton
+                selectedText={selectedText}
+                selectionRect={selectionRect}
+                isVisible={showHelpButton}
+                onHelpClick={handleHelpClick}
+            />
         </div>
     );
 }
