@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
@@ -294,8 +294,30 @@ export default function FormViewPage() {
     setShowMobileChat(false);
   };
 
+  // Handle text selection from PDF for auto-help
+  const handleTextSelectionHelp = useCallback(
+    (selectedText: string) => {
+      // Truncate very long selections for display
+      const displayText = selectedText.length > 200 ? selectedText.substring(0, 200) + '...' : selectedText;
+      setActiveContext(displayText);
+
+      // Open mobile chat if on small screen
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setShowMobileChat(true);
+      }
+
+      // Clear the selection
+      window.getSelection()?.removeAllRanges();
+
+      // Send the help request
+      const helpMessage = t('formview.assistant.helpRequest', { text: selectedText });
+      handleSendMessage(helpMessage);
+    },
+    [t, handleSendMessage]
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-20">
         <div className="px-4 sm:px-6 py-3">
@@ -339,7 +361,7 @@ export default function FormViewPage() {
 
       {/* Main content - Dual Panel */}
       <main
-        className={`flex-1 flex flex-col lg:flex-row transition-all duration-300 ease-out ${showContent ? 'opacity-100' : 'opacity-0'
+        className={`flex-1 min-h-0 flex flex-col lg:flex-row transition-all duration-300 ease-out ${showContent ? 'opacity-100' : 'opacity-0'
           }`}
       >
         {/* Left Panel - PDF Viewer */}
@@ -352,11 +374,14 @@ export default function FormViewPage() {
                 setShowMobileChat(true);
               }
             }}
+            onHelpRequest={({ selectedText }) => {
+              handleTextSelectionHelp(selectedText);
+            }}
           />
         </div>
 
         {/* Right Panel - AI Assistant (Desktop) */}
-        <div className="hidden lg:flex w-96 border-l border-gray-200 flex-col bg-white">
+        <div className="hidden lg:flex w-96 min-h-0 border-l border-gray-200 flex-col bg-white">
           <AIAssistantPanel
             messages={messages}
             onSendMessage={handleSendMessage}
