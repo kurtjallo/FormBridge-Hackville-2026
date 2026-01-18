@@ -108,7 +108,7 @@ export async function fillAndExportPDF(
     originalBytes: Uint8Array,
     fieldValues: Record<string, string>
 ): Promise<Uint8Array> {
-    const doc = await PDFDocument.load(originalBytes);
+    const doc = await PDFDocument.load(originalBytes, { ignoreEncryption: true });
     const form = doc.getForm();
 
     Object.entries(fieldValues).forEach(([fieldId, value]) => {
