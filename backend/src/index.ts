@@ -11,6 +11,8 @@ import formsRouter from './routes/forms';
 import eligibilityRouter from './routes/eligibility';
 import demoRouter from './routes/demo';
 import pdfSessionRouter from './routes/pdfSession';
+import ragRouter from './routes/rag';
+import { seedKnowledgeBase } from './services/ragService';
 
 // Load environment variables
 dotenv.config();
@@ -41,6 +43,7 @@ app.use('/api/validate', validateRouter);
 app.use('/api/support-chat', supportChatRouter);
 app.use('/api/demo', demoRouter);
 app.use('/api/pdf-session', pdfSessionRouter);
+app.use('/api/rag', ragRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -63,7 +66,11 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/formbridge';
 
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(async () => {
+    console.log('Connected to MongoDB');
+    // Auto-seed RAG knowledge base
+    await seedKnowledgeBase();
+  })
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Start server
@@ -87,6 +94,8 @@ app.listen(PORT, () => {
   console.log('  POST /pdf-session          - Create new session');
   console.log('  PATCH /pdf-session/:id     - Update session (autosave)');
   console.log('  POST /pdf-session/:id/chat - Add chat message');
+  console.log('  --- RAG ---');
+  console.log('  GET  /rag/search           - Search knowledge base');
 });
 
 export { app };

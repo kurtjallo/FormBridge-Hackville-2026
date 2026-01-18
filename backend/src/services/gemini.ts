@@ -1,7 +1,40 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ExplainRequest, ChatRequest, ChatMessage } from '../types';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Lazy initialization to ensure env vars are loaded
+let genAI: GoogleGenerativeAI | null = null;
+
+function getGenAI(): GoogleGenerativeAI {
+  if (!genAI) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY environment variable is not set');
+    }
+    genAI = new GoogleGenerativeAI(apiKey);
+  }
+  return genAI;
+}
+
+/**
+ * Generate embedding vector for text using Gemini text-embedding-004
+ * Returns a 768-dimension vector for semantic similarity search
+ */
+export async function generateEmbedding(text: string): Promise<number[]> {
+  const model = getGenAI().getGenerativeModel({ model: 'text-embedding-004' });
+  const result = await model.embedContent(text);
+  return result.embedding.values;
+}
+
+/**
+ * Calculate cosine similarity between two embedding vectors
+ * Returns a value between -1 and 1, where 1 means identical
+ */
+export function cosineSimilarity(a: number[], b: number[]): number {
+  const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
+  const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+  const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+  return dotProduct / (magnitudeA * magnitudeB);
+}
 
 // Ontario Works key facts for context injection
 const OW_CONTEXT = {
@@ -69,7 +102,7 @@ Type: ${request.fieldType} | Required: ${request.required}`);
 }
 
 export async function explainQuestion(request: ExplainRequest): Promise<string> {
-  const model = genAI.getGenerativeModel({ 
+  const model = getGenAI().getGenerativeModel({
     model: 'gemini-1.5-flash',
     generationConfig: {
       maxOutputTokens: 300,
@@ -155,7 +188,7 @@ export async function chatAboutQuestion(request: ChatRequest): Promise<{
   suggestedAnswer?: string;
   confidence?: 'low' | 'medium' | 'high';
 }> {
-  const model = genAI.getGenerativeModel({ 
+  const model = getGenAI().getGenerativeModel({
     model: 'gemini-1.5-flash',
     generationConfig: {
       maxOutputTokens: 200,
