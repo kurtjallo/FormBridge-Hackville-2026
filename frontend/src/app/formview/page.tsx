@@ -182,8 +182,18 @@ export default function FormViewPage() {
     const formName = sessionStorage.getItem('selectedFormName');
     const formCode = sessionStorage.getItem('selectedFormCode');
     const formId = sessionStorage.getItem('selectedFormId');
+    const storedPdfUrl = sessionStorage.getItem('selectedFormPdfUrl');
 
-    // If we have a form ID, try to load it
+    // If we have a PDF URL stored directly, use it (most reliable)
+    if (storedPdfUrl) {
+      setPdfUrl(storedPdfUrl);
+      if (formName && formCode) {
+        setFormInfo({ name: formName, code: formCode });
+      }
+      return; // Exit early - we have what we need
+    }
+
+    // If we have a form ID, try to load it from sampleForms
     if (formId) {
       const form = getFormById(formId);
       if (form) {
@@ -197,7 +207,7 @@ export default function FormViewPage() {
       }
     }
 
-    // Fallback to session storage values
+    // Fallback to session storage values for display info only
     if (formName && formCode) {
       setFormInfo({ name: formName, code: formCode });
     }
