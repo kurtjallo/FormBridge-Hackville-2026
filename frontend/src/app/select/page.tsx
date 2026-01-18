@@ -7,6 +7,7 @@ import { useTranslation } from '@/i18n';
 import { Language } from '@/types';
 import { ChevronRight, ArrowLeft, Upload, Search, FileText, CheckCircle } from 'lucide-react';
 import { FileUpload } from '@/components/FileUpload';
+import { Logo } from '@/components/Logo';
 
 type Step = 'language' | 'name' | 'intro' | 'review' | 'category-select' | 'form-select';
 
@@ -628,14 +629,7 @@ export default function OnboardingPage() {
       <div className="relative z-10 min-h-screen flex flex-col pt-8 pb-12 px-6">
          {/* Top Navigation / Progress */}
          <div className="w-full max-w-4xl mx-auto flex items-center justify-between mb-12">
-            <button
-                onClick={() => router.push('/')}
-                className="text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
-                title="Back to Home"
-            >
-                <img src="/logo.svg" alt="Clarify" className="h-8 w-auto hidden" /> 
-                <span className="font-bold text-xl tracking-tight text-gray-900">Clarify</span>
-            </button>
+            <Logo size="xl" textClassName="font-bold text-2xl tracking-tighter text-gray-900" />
             
             {/* Progress Dots */}
             <div className="flex items-center gap-3 bg-gray-50/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100/50">

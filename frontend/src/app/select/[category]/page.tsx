@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { listPDFForms } from '@/lib/api';
 import { SAMPLE_PDF_FORMS } from '@/data/sampleForms';
 import { PDFFormMeta, FormCategory } from '@/types/pdf';
+import { Logo } from '@/components/Logo';
 
 // Category titles
 const categoryTitles: Record<string, string> = {
@@ -116,6 +117,10 @@ export default function CategoryFormsPage() {
           backgroundSize: '24px 24px'
         }}
       />
+
+      <div className="absolute top-6 left-6 z-20">
+        <Logo />
+      </div>
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-8">
         <div className="w-full max-w-xl mx-auto">
