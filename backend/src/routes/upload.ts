@@ -1,28 +1,10 @@
 import express from 'express';
 import multer from 'multer';
-import { Storage } from '@google-cloud/storage';
 import path from 'path';
 import crypto from 'crypto';
+import { getGCSBucket } from '../services/gcsClient';
 
 const router = express.Router();
-
-// Lazy initialization for GCS (env vars loaded at runtime)
-let storage: Storage | null = null;
-let bucket: ReturnType<Storage['bucket']> | null = null;
-
-function getGCSBucket() {
-    if (!bucket) {
-        storage = new Storage({
-            keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-        });
-        const bucketName = process.env.GCS_BUCKET_NAME;
-        if (!bucketName) {
-            throw new Error('GCS_BUCKET_NAME environment variable is required');
-        }
-        bucket = storage.bucket(bucketName);
-    }
-    return bucket;
-}
 
 // Configure multer for memory storage
 const upload = multer({
