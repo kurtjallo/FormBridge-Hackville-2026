@@ -2,6 +2,7 @@
 
 import { PDFFormMeta, FormCategory } from '@/types/pdf';
 import { usePDFStore } from '@/store/pdfStore';
+import { useTranslation } from '@/i18n';
 
 interface FormCardProps {
     form: PDFFormMeta;
@@ -9,11 +10,14 @@ interface FormCardProps {
 }
 
 function FormCard({ form, onClick }: FormCardProps) {
+    const { t } = useTranslation();
     const difficultyColors = {
         easy: 'bg-green-500/20 text-green-400 border-green-500/30',
         medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
         hard: 'bg-red-500/20 text-red-400 border-red-500/30',
     };
+
+    const difficultyLabel = t(`forms.formCard.difficulty.${form.difficulty}`);
 
     return (
         <button
@@ -39,14 +43,14 @@ function FormCard({ form, onClick }: FormCardProps) {
 
             <div className="flex items-center gap-3 mt-4">
                 <span className={`px-2 py-1 text-xs rounded-full border ${difficultyColors[form.difficulty]}`}>
-                    {form.difficulty}
+                    {difficultyLabel}
                 </span>
                 <span className="text-gray-500 text-xs">
-                    ⏱️ {form.estimatedTime}
+                    {t('forms.formCard.estimatedTime', { time: form.estimatedTime })}
                 </span>
                 {form.pageCount && (
                     <span className="text-gray-500 text-xs">
-                        📄 {form.pageCount} pages
+                        {t('forms.formCard.pages', { count: form.pageCount })}
                     </span>
                 )}
             </div>
@@ -71,6 +75,7 @@ interface FormListProps {
 }
 
 export function FormList({ forms, category, onFormSelect }: FormListProps) {
+    const { t } = useTranslation();
     const filteredForms = category
         ? forms.filter((f) => f.category === category)
         : forms;
@@ -79,11 +84,11 @@ export function FormList({ forms, category, onFormSelect }: FormListProps) {
         return (
             <div className="text-center py-12">
                 <div className="text-6xl mb-4">📋</div>
-                <h3 className="text-xl font-semibold text-white mb-2">No forms available</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">{t('forms.formList.emptyTitle')}</h3>
                 <p className="text-gray-400">
                     {category
-                        ? 'No forms in this category yet. Check back soon!'
-                        : 'Select a category to see available forms.'}
+                        ? t('forms.formList.emptySubtitleCategory')
+                        : t('forms.formList.emptySubtitleDefault')}
                 </p>
             </div>
         );
@@ -93,7 +98,7 @@ export function FormList({ forms, category, onFormSelect }: FormListProps) {
         <div className="form-list">
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-white">
-                    Available Forms
+                    {t('forms.formList.title')}
                     <span className="text-gray-500 font-normal ml-2">
                         ({filteredForms.length})
                     </span>

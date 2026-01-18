@@ -5,6 +5,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { usePDFStore } from '@/store/pdfStore';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { useTranslation } from '@/i18n';
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -15,6 +16,7 @@ interface PDFViewerProps {
 }
 
 export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
+    const { t } = useTranslation();
     const {
         viewer,
         setCurrentPage,
@@ -39,21 +41,21 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
                 const isXFAForm = pdf._pdfInfo?.isXFA || false;
                 setIsXFA(isXFAForm);
                 if (isXFAForm) {
-                    setError('This is an XFA form which has limited editing support. Some features may not work correctly.');
+                    setError(t('pdf.xfa.limitedSupport'));
                 }
             } catch {
                 // Ignore XFA detection errors
             }
         },
-        [setTotalPages, setLoading, setError]
+        [setTotalPages, setLoading, setError, t]
     );
 
     const onDocumentLoadError = useCallback(
         (error: Error) => {
             setLoading(false);
-            setError(`Failed to load PDF: ${error.message}`);
+            setError(t('pdf.error.failedToLoad', { message: error.message }));
         },
-        [setLoading, setError]
+        [setLoading, setError, t]
     );
 
     const goToPrevPage = () => {
@@ -79,17 +81,20 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
                         disabled={viewer.currentPage <= 1}
                         className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
-                        ← Prev
+                        {t('pdf.toolbar.prev')}
                     </button>
                     <span className="text-gray-600 text-sm min-w-[100px] text-center">
-                        Page {viewer.currentPage} of {viewer.totalPages || '...'}
+                        {t('pdf.toolbar.page', {
+                            current: viewer.currentPage,
+                            total: viewer.totalPages || '...'
+                        })}
                     </span>
                     <button
                         onClick={goToNextPage}
                         disabled={viewer.currentPage >= viewer.totalPages}
                         className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
-                        Next →
+                        {t('pdf.toolbar.next')}
                     </button>
                 </div>
 
@@ -116,7 +121,7 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
                         onClick={() => setScale(1)}
                         className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-md text-sm font-medium text-gray-700 transition-colors ml-2"
                     >
-                        Reset
+                        {t('pdf.toolbar.reset')}
                     </button>
                 </div>
             </div>
@@ -124,14 +129,14 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
             {/* XFA Warning */}
             {isXFA && (
                 <div className="bg-yellow-900/50 border-b border-yellow-700 px-4 py-2 text-yellow-200 text-sm">
-                    ⚠️ This is an XFA form. Some interactive features may be limited.
+                    {t('pdf.xfa.limitedNotice')}
                 </div>
             )}
 
             {/* Error Display */}
             {viewer.error && !isXFA && (
                 <div className="bg-red-900/50 border-b border-red-700 px-4 py-3 text-red-200">
-                    <p className="font-medium">Error loading PDF</p>
+                    <p className="font-medium">{t('pdf.error.title')}</p>
                     <p className="text-sm opacity-80">{viewer.error}</p>
                 </div>
             )}

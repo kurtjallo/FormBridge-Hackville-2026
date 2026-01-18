@@ -2,6 +2,7 @@
 
 import { FORM_CATEGORIES, FormCategory, FormCategoryInfo } from '@/types/pdf';
 import { usePDFStore } from '@/store/pdfStore';
+import { useTranslation } from '@/i18n';
 
 interface CategoryCardProps {
     category: FormCategoryInfo;
@@ -11,6 +12,12 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category, isSelected, onClick, formCount }: CategoryCardProps) {
+    const { t } = useTranslation();
+
+    const formCountLabel = formCount === 1
+        ? t('forms.categorySelector.formCountSingle', { count: formCount })
+        : t('forms.categorySelector.formCountPlural', { count: formCount });
+
     return (
         <button
             onClick={onClick}
@@ -28,7 +35,7 @@ function CategoryCard({ category, isSelected, onClick, formCount }: CategoryCard
                     <h3 className="font-semibold text-white text-lg">{category.name}</h3>
                     <p className="text-gray-400 text-sm mt-1">{category.description}</p>
                     <p className="text-gray-500 text-xs mt-2">
-                        {formCount} {formCount === 1 ? 'form' : 'forms'} available
+                        {formCountLabel}
                     </p>
                 </div>
             </div>
@@ -52,6 +59,7 @@ interface CategorySelectorProps {
 }
 
 export function CategorySelector({ formCountByCategory, onCategorySelect }: CategorySelectorProps) {
+    const { t } = useTranslation();
     const { selectedCategory, setSelectedCategory } = usePDFStore();
 
     const handleCategoryClick = (categoryId: FormCategory) => {
@@ -63,8 +71,8 @@ export function CategorySelector({ formCountByCategory, onCategorySelect }: Cate
     return (
         <div className="category-selector">
             <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">Choose a Category</h2>
-                <p className="text-gray-400 mt-1">Select a form category to get started</p>
+                <h2 className="text-2xl font-bold text-white">{t('forms.categorySelector.title')}</h2>
+                <p className="text-gray-400 mt-1">{t('forms.categorySelector.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -88,7 +96,7 @@ export function CategorySelector({ formCountByCategory, onCategorySelect }: Cate
                         }}
                         className="text-gray-400 hover:text-white text-sm underline"
                     >
-                        Clear selection
+                        {t('forms.categorySelector.clearSelection')}
                     </button>
                 </div>
             )}

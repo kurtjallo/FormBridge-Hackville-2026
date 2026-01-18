@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
+import { useTranslation } from '@/i18n';
 
 // Dynamic import to avoid SSR issues with react-pdf
 const PDFViewer = dynamic(() => import('@/components/PDFViewer').then(mod => mod.PDFViewer), {
@@ -17,6 +18,7 @@ const PDFViewer = dynamic(() => import('@/components/PDFViewer').then(mod => mod
 });
 
 export default function FormViewPage() {
+    const { t } = useTranslation();
     const params = useParams();
     const router = useRouter();
     const formId = params.id as string;
@@ -56,7 +58,7 @@ export default function FormViewPage() {
                                 onClick={() => router.push('/forms')}
                                 className="text-gray-400 hover:text-white text-sm flex items-center gap-2"
                             >
-                                ← Back
+                                {t('formview.formsDetail.back')}
                             </button>
                             <div className="h-6 w-px bg-gray-700" />
                             <div>
@@ -72,11 +74,11 @@ export default function FormViewPage() {
                         <div className="flex items-center gap-3">
                             {selectedForm.isXFA && (
                                 <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full border border-yellow-500/30">
-                                    ⚠️ XFA Form
+                                    {t('formview.formsDetail.xfaBadge')}
                                 </span>
                             )}
                             <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
-                                Get AI Help
+                                {t('formview.formsDetail.getAiHelp')}
                             </button>
                         </div>
                     </div>
@@ -95,19 +97,19 @@ export default function FormViewPage() {
                 {/* Chat Panel Placeholder (for Phase 6) */}
                 <div className="w-96 border-l border-gray-800 bg-gray-900 hidden lg:block">
                     <div className="p-6 border-b border-gray-800">
-                        <h2 className="font-semibold text-white">AI Assistant</h2>
+                        <h2 className="font-semibold text-white">{t('formview.formsDetail.assistantTitle')}</h2>
                         <p className="text-gray-400 text-sm mt-1">
-                            Click on any form field to get help
+                            {t('formview.formsDetail.assistantSubtitle')}
                         </p>
                     </div>
 
                     <div className="flex flex-col items-center justify-center h-64 text-center p-6">
                         <span className="text-4xl mb-4">🤖</span>
                         <p className="text-gray-400 text-sm">
-                            Select a field in the PDF to get a plain-language explanation
+                            {t('formview.formsDetail.emptyTitle')}
                         </p>
                         <p className="text-gray-500 text-xs mt-2">
-                            Coming in Phase 6
+                            {t('formview.formsDetail.emptyBadge')}
                         </p>
                     </div>
                 </div>

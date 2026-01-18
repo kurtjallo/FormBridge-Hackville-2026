@@ -1,0 +1,59 @@
+{
+  "panel": {
+    "title": "Assistant d’aide",
+    "backToForm": "Retour au formulaire",
+    "closeChat": "Fermer le chat",
+    "currentQuestion": "Question actuelle",
+    "emptyTitle": "Posez-moi vos questions sur cet item !",
+    "emptySubtitle": "Je peux l’expliquer simplement, donner des exemples ou vous aider à formuler votre réponse.",
+    "inputPlaceholder": "Saisissez votre question...",
+    "sendMessage": "Envoyer le message",
+    "connectionError": "Désolé, je n’ai pas pu me connecter. Veuillez vérifier que le serveur backend est en cours d’exécution et réessayer.",
+    "aiLabel": "IA"
+  },
+  "widget": {
+    "openAssistant": "Ouvrir l’assistant de chat",
+    "needHelp": "Besoin d’aide ?",
+    "chatLabel": "Chat",
+    "assistantTitle": "Assistant Clarify",
+    "assistantSubtitle": "Ici pour vous aider avec votre demande",
+    "minimizeChat": "Réduire le chat",
+    "closeChat": "Fermer le chat",
+    "quickQuestions": "Questions rapides :",
+    "inputPlaceholder": "Saisissez votre question...",
+    "sendMessage": "Envoyer le message",
+    "welcomeMessage": "Bonjour ! Je suis votre assistant Ontario Works. Je peux vous aider à remplir les formulaires, expliquer la terminologie et vous guider dans la demande. Que puis-je faire pour vous ?",
+    "contextualWelcome": "Bonjour ! Je vois que vous êtes dans la section {{title}}. {{description}}. Je peux expliquer toute question ou tout terme ici. Que souhaitez-vous savoir ?",
+    "fallbackResponses": {
+      "one": "Je ne suis pas sûr de cette question précise, mais je peux vous aider à naviguer dans le formulaire ou à expliquer la terminologie. Souhaitez-vous que j’explique un terme en particulier ?",
+      "two": "Je n’ai pas cette information dans ma base de connaissances. Cependant, je peux aider avec l’admissibilité à Ontario Works, le processus de demande ou expliquer des termes complexes.",
+      "three": "C’est en dehors de mon domaine d’expertise. Pour des questions spécifiques à votre situation, je vous recommande de contacter votre bureau Ontario Works. Y a-t-il quelque chose concernant le formulaire avec lequel je peux vous aider ?"
+    },
+    "quickSuggestions": {
+      "documents": "Quels documents dois-je fournir ?",
+      "eligibility": "Suis-je admissible ?",
+      "timeline": "Combien de temps cela prend-il ?",
+      "commonLaw": "Expliquer l’union de fait"
+    },
+    "unknownSuggestions": {
+      "eligibility": "Expliquez l’admissibilité",
+      "assetLimits": "Expliquez les limites d’actifs",
+      "benefitUnit": "Qu’est-ce qu’une unité de prestations ?"
+    },
+    "basedOn": "Basé sur :",
+    "relatedLabel": "Lié :",
+    "tellMeAbout": "Parlez-moi de {{topic}}"
+  },
+  "quickActions": {
+    "meaningLabel": "Que signifie cette question ?",
+    "meaningMessage": "Pouvez-vous expliquer ce que cette question demande en termes simples ?",
+    "exampleLabel": "Donnez-moi un exemple",
+    "exampleMessage": "Pouvez-vous donner un exemple de réponse à cette question ?",
+    "applyLabel": "Est-ce que cela s’applique à ma situation ?",
+    "applyMessage": "Comment savoir si cette question s’applique à ma situation ?"
+  },
+  "suggestion": {
+    "applied": "Appliqué !",
+    "label": "Suggestion IA (cliquer pour remplir automatiquement)"
+  }
+}

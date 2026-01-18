@@ -1,13 +1,13 @@
 import { PDFFormMeta, FormCategory } from '@/types/pdf';
 
-// Sample PDF forms for demo - only includes actual PDFs in backend
+// Sample PDF forms for demo
 // In production, these would come from the backend API
 export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
-    // Legal - Actual PDF: Basic-Non-Disclosure-Agreement.pdf
+    // Legal (Priority for demo)
     {
         id: 'basic-nda',
         name: 'Basic Non-Disclosure Agreement',
-        description: 'Standard NDA for protecting confidential information between parties. Includes confidentiality obligations, exclusions, and Ontario governing law.',
+        description: 'Standard NDA for sharing confidential information between two parties. Includes confidentiality obligations, exclusions, and Ontario governing law.',
         category: 'legal',
         pdfUrl: 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf',
         estimatedTime: '10-15 minutes',
@@ -16,31 +16,105 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         pageCount: 3,
     },
 
-    // Finance - Actual PDF: 5006-r-24e.pdf (CRA T1 Tax Form)
+    // Finance
     {
-        id: 'cra-t1-tax',
-        name: 'CRA T1 General Income Tax Form',
-        description: 'Canada Revenue Agency T1 General form for Ontario tax returns. File your personal income tax return with this official CRA form.',
+        id: 'cra-5006',
+        name: 'CRA Form 5006 - Statement of Employment Expenses',
+        description: 'Canada Revenue Agency form for claiming employment-related expenses. Used by employees to calculate deductible expenses for tax purposes.',
         category: 'finance',
         pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf',
-        estimatedTime: '20-30 minutes',
-        difficulty: 'hard',
-        tags: ['tax', 'cra', 't1', 'ontario', 'income-tax'],
+        estimatedTime: '15-20 minutes',
+        difficulty: 'medium',
+        tags: ['tax', 'cra', 'employment-expenses', 'canada'],
         pageCount: 4,
+    },
+
+    // Government
+    {
+        id: 'business-license',
+        name: 'Business License Application',
+        description: 'Application to obtain or renew a business license. Includes business information, owner details, and required declarations.',
+        category: 'government',
+        pdfUrl: 'http://localhost:5001/forms/Government/Business-License-Application.pdf',
+        estimatedTime: '15-20 minutes',
+        difficulty: 'medium',
+        tags: ['business', 'license', 'government', 'application'],
+        pageCount: 3,
+    },
+    {
+        id: 'vendor-registration',
+        name: 'Vendor Registration Form',
+        description: 'Register as an approved vendor for government or corporate procurement. Includes banking information and business certifications.',
+        category: 'government',
+        pdfUrl: 'http://localhost:5001/forms/Government/Vendor-Registration-Form.pdf',
+        estimatedTime: '10-15 minutes',
+        difficulty: 'easy',
+        tags: ['vendor', 'procurement', 'government', 'registration'],
+        pageCount: 2,
+    },
+
+    // Healthcare
+    {
+        id: 'medical-consent',
+        name: 'Medical Consent Form',
+        description: 'Informed consent for medical procedures and treatment. Includes patient acknowledgments, allergies, and PHIPA compliance.',
+        category: 'healthcare',
+        pdfUrl: 'http://localhost:5001/forms/Healthcare/Medical-Consent-Form.pdf',
+        estimatedTime: '5-10 minutes',
+        difficulty: 'easy',
+        tags: ['medical', 'consent', 'healthcare', 'phipa'],
+        pageCount: 2,
+    },
+    {
+        id: 'patient-release',
+        name: 'Patient Information Release',
+        description: 'Authorization for release of personal health information under PHIPA. Specify records to release and recipient details.',
+        category: 'healthcare',
+        pdfUrl: 'http://localhost:5001/forms/Healthcare/Patient-Information-Release.pdf',
+        estimatedTime: '5-10 minutes',
+        difficulty: 'easy',
+        tags: ['health-records', 'privacy', 'phipa', 'authorization'],
+        pageCount: 2,
+    },
+
+    // Immigration
+    {
+        id: 'sponsorship-undertaking',
+        name: 'Sponsorship Undertaking',
+        description: 'Commitment to provide for sponsored family members as required by IRCC. Includes financial obligations and undertaking period.',
+        category: 'immigration',
+        pdfUrl: 'http://localhost:5001/forms/Immigration/Sponsorship-Undertaking.pdf',
+        estimatedTime: '15-20 minutes',
+        difficulty: 'hard',
+        tags: ['sponsorship', 'immigration', 'family', 'ircc'],
+        pageCount: 3,
+    },
+    {
+        id: 'document-checklist',
+        name: 'Supporting Document Checklist',
+        description: 'Comprehensive checklist for immigration applications. Track identity, financial, relationship, and background documents.',
+        category: 'immigration',
+        pdfUrl: 'http://localhost:5001/forms/Immigration/Supporting-Document-Checklist.pdf',
+        estimatedTime: '10-15 minutes',
+        difficulty: 'easy',
+        tags: ['checklist', 'documents', 'immigration', 'application'],
+        pageCount: 2,
     },
 ];
 
 // Helper to get form counts by category
 export function getFormCountByCategory(): Record<FormCategory, number> {
     const counts: Record<FormCategory, number> = {
+        employment: 0,
         legal: 0,
         finance: 0,
+        government: 0,
+        healthcare: 0,
+        immigration: 0,
     };
 
     SAMPLE_PDF_FORMS.forEach((form) => {
-        if (form.category in counts) {
-            counts[form.category as keyof typeof counts]++;
-        }
+        counts[form.category]++;
     });
 
     return counts;

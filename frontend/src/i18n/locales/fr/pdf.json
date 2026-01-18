@@ -1,0 +1,17 @@
+{
+  "toolbar": {
+    "prev": "← Précédent",
+    "next": "Suivant →",
+    "page": "Page {{current}} sur {{total}}",
+    "reset": "Réinitialiser"
+  },
+  "xfa": {
+    "limitedSupport": "Ce formulaire XFA offre une prise en charge limitée de l’édition. Certaines fonctionnalités peuvent ne pas fonctionner correctement.",
+    "limitedNotice": "⚠️ Il s’agit d’un formulaire XFA. Certaines fonctionnalités interactives peuvent être limitées.",
+    "badge": "Formulaire XFA"
+  },
+  "error": {
+    "title": "Erreur de chargement du PDF",
+    "failedToLoad": "Échec du chargement du PDF : {{message}}"
+  }
+}

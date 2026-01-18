@@ -237,7 +237,7 @@ export const pageContexts: PageContext[] = [
   {
     path: '/',
     title: 'Home',
-    description: 'Welcome page for FormBridge - Ontario Works application assistant',
+    description: 'Welcome page for Clarify - Ontario Works application assistant',
     relevantKnowledge: ['faq-eligibility', 'faq-how-long', 'faq-documents'],
   },
   {

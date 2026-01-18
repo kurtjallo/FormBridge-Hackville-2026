@@ -3,6 +3,7 @@
 import { useFormStore } from '@/store/formStore';
 import { Sparkles, Check } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from '@/i18n';
 
 interface SuggestionButtonProps {
   fieldId: string;
@@ -11,6 +12,7 @@ interface SuggestionButtonProps {
 }
 
 export function SuggestionButton({ fieldId, suggestion, confidence }: SuggestionButtonProps) {
+  const { t } = useTranslation();
   const setAnswer = useFormStore((state) => state.setAnswer);
   const [applied, setApplied] = useState(false);
 
@@ -41,7 +43,7 @@ export function SuggestionButton({ fieldId, suggestion, confidence }: Suggestion
       )}
       <div className="flex-1">
         <p className="text-xs text-gray-500 mb-0.5">
-          {applied ? 'Applied!' : 'AI Suggestion (click to auto-fill)'}
+          {applied ? t('chat.suggestion.applied') : t('chat.suggestion.label')}
         </p>
         <p className="text-sm text-gray-800 font-medium">{suggestion}</p>
       </div>

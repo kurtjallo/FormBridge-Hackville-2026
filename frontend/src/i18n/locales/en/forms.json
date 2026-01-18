@@ -1,0 +1,49 @@
+{
+  "categorySelector": {
+    "title": "Choose a Category",
+    "subtitle": "Select a form category to get started",
+    "clearSelection": "Clear selection",
+    "formCountSingle": "{{count}} form available",
+    "formCountPlural": "{{count}} forms available"
+  },
+  "formList": {
+    "title": "Available Forms",
+    "emptyTitle": "No forms available",
+    "emptySubtitleCategory": "No forms in this category yet. Check back soon!",
+    "emptySubtitleDefault": "Select a category to see available forms."
+  },
+  "formCard": {
+    "difficulty": {
+      "easy": "easy",
+      "medium": "medium",
+      "hard": "hard"
+    },
+    "estimatedTime": "⏱️ {{time}}",
+    "pages": "📄 {{count}} pages"
+  },
+  "formsPage": {
+    "brandSubtitle": "AI-powered form assistance",
+    "backToHome": "← Back to Home",
+    "browseAllTitle": "Or browse all forms",
+    "browseAllSubtitle": "Select a category above or browse our complete form library",
+    "footerTagline": "Clarify — Making forms accessible with AI"
+  },
+  "header": {
+    "subtitle": "Ontario Works Application Assistant"
+  },
+  "formPage": {
+    "sessionAutoSaved": "Session: {{id}}... (auto-saved)"
+  },
+  "progress": {
+    "label": "Progress: {{completed}} of {{total}} sections complete"
+  },
+  "section": {
+    "label": "Section {{number}}"
+  },
+  "fields": {
+    "selectPlaceholder": "Select an option...",
+    "textPlaceholder": "Enter your response...",
+    "numberPlaceholder": "Enter a number...",
+    "helpTitle": "Get help with this question"
+  }
+}

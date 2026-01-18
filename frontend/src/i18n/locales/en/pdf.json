@@ -1,0 +1,17 @@
+{
+  "toolbar": {
+    "prev": "← Prev",
+    "next": "Next →",
+    "page": "Page {{current}} of {{total}}",
+    "reset": "Reset"
+  },
+  "xfa": {
+    "limitedSupport": "This is an XFA form which has limited editing support. Some features may not work correctly.",
+    "limitedNotice": "⚠️ This is an XFA form. Some interactive features may be limited.",
+    "badge": "XFA Form"
+  },
+  "error": {
+    "title": "Error loading PDF",
+    "failedToLoad": "Failed to load PDF: {{message}}"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "brand": "Clarify",
+    "hackville": "Hackville 2026",
+    "startApplication": "Démarrer la demande",
+    "navigation": "Navigation",
+    "language": "Langue",
+    "selectLanguage": "Sélectionner la langue",
+    "languageOptions": "Options de langue"
+  },
+  "buttons": {
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "continue": "Continuer",
+    "back": "Retour",
+    "letsDoIt": "Allons-y!",
+    "looksGood": "C'est parfait!"
+  },
+  "footer": {
+    "copyright": "© 2026 Clarify",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "credits": "Créé par : Uzeyr A, Kurt J, Bianca J, Jason T @ Hackville 2026",
+    "hackville": "© 2026 Hackville Clarify"
+  },
+  "languages": {
+    "english": "Anglais",
+    "french": "Français"
+  }
+}
