@@ -11,8 +11,9 @@ import {
     fillAndExportPDF,
     downloadPDF,
 } from '@/lib/pdfService';
-import { Download, Loader2 } from 'lucide-react';
+import { Download, Loader2, Check, X } from 'lucide-react';
 import { useTranslation } from '@/i18n';
+import { SignatureModal } from './SignatureModal';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
@@ -35,6 +36,11 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
     const [showHelpButton, setShowHelpButton] = useState(false);
     const [selectionRect, setSelectionRect] = useState<DOMRect | null>(null);
     const [selectedText, setSelectedText] = useState('');
+
+    // Signature modal state (for intercepted annotation clicks)
+    const [signatureModalOpen, setSignatureModalOpen] = useState(false);
+    const [signatureFieldId, setSignatureFieldId] = useState<string | null>(null);
+    const [capturedSignature, setCapturedSignature] = useState<string | null>(null); // For visual preview
 
     const {
         viewer,
@@ -157,6 +163,70 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
         document.addEventListener('mousedown', handleClickAway);
         return () => document.removeEventListener('mousedown', handleClickAway);
     }, []);
+
+    // Intercept clicks on PDF annotation links (e.g., esign URLs)
+    useEffect(() => {
+        const container = pageContainerRef.current;
+        if (!container) return;
+
+        const handleAnnotationClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const link = target.closest('a');
+
+            if (link) {
+                const href = link.getAttribute('href') || '';
+
+                // Check if this is an external esign/signature URL
+                const isEsignUrl = /esign|docusign|hellosign|adobesign|sign.*pdf|pdf.*sign/i.test(href);
+                const isExternalUrl = href.startsWith('http') || href.startsWith('//');
+
+                if (isEsignUrl || (isExternalUrl && href.includes('sign'))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    console.log('Intercepted esign URL:', href);
+
+                    // Find a signature field or create a temporary one
+                    const signatureField = fields.find(f => f.type === 'signature');
+                    if (signatureField) {
+                        setSignatureFieldId(signatureField.id);
+                    } else {
+                        // Use a generic field ID for annotation-triggered signatures
+                        setSignatureFieldId('annotation_signature_' + Date.now());
+                    }
+                    setSignatureModalOpen(true);
+                    return;
+                }
+            }
+        };
+
+        // Capture phase to intercept before default handling
+        container.addEventListener('click', handleAnnotationClick, true);
+        return () => container.removeEventListener('click', handleAnnotationClick, true);
+    }, [fields]);
+
+    // Handle signature from modal (for intercepted annotations)
+    const handleSignatureConfirm = useCallback((dataUrl: string) => {
+        console.log('[Signature] handleSignatureConfirm called');
+        console.log('[Signature] signatureFieldId:', signatureFieldId);
+        console.log('[Signature] dataUrl length:', dataUrl?.length);
+        console.log('[Signature] dataUrl starts with data:image:', dataUrl?.startsWith('data:image'));
+
+        if (signatureFieldId) {
+            // Store the signature in field values
+            const { setFieldValue } = usePDFStore.getState();
+            setFieldValue(signatureFieldId, dataUrl);
+            console.log('[Signature] Stored in fieldValues with key:', signatureFieldId);
+
+            // If this is an annotation signature (no real field), show preview
+            if (signatureFieldId.startsWith('annotation_signature_')) {
+                console.log('[Signature] Setting capturedSignature for preview');
+                setCapturedSignature(dataUrl);
+            }
+        }
+        setSignatureModalOpen(false);
+        setSignatureFieldId(null);
+    }, [signatureFieldId]);
 
     // Handle PDF export
     const handleExport = useCallback(async () => {
@@ -290,6 +360,38 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                 </div>
             </div>
 
+            {/* Captured Signature Preview (for annotation-intercepted signatures) */}
+            {capturedSignature && (
+                <div className="bg-green-50 border-b border-green-200 px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                            <Check className="w-5 h-5 text-green-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-green-800">Signature captured!</p>
+                            <p className="text-xs text-green-600">It will be embedded when you download the PDF</p>
+                        </div>
+                        <div className="ml-4 bg-white border border-green-200 rounded-lg p-2 h-12 flex items-center">
+                            <img
+                                src={capturedSignature}
+                                alt="Your signature"
+                                className="h-full w-auto max-w-[200px] object-contain"
+                                style={{ minWidth: '50px' }}
+                                onLoad={() => console.log('[Signature Preview] Image loaded successfully')}
+                                onError={(e) => console.error('[Signature Preview] Image failed to load:', e)}
+                            />
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setCapturedSignature(null)}
+                        className="p-1.5 text-green-600 hover:bg-green-100 rounded-full transition-colors"
+                        title="Dismiss"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
             {/* XFA Warning */}
             {isXFA && (
                 <div className="bg-yellow-900/50 border-b border-yellow-700 px-4 py-2 text-yellow-200 text-sm">
@@ -355,6 +457,17 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                 selectionRect={selectionRect}
                 isVisible={showHelpButton}
                 onHelpClick={handleHelpClick}
+            />
+
+            {/* Signature Modal (for intercepted annotation clicks) */}
+            <SignatureModal
+                isOpen={signatureModalOpen}
+                onClose={() => {
+                    setSignatureModalOpen(false);
+                    setSignatureFieldId(null);
+                }}
+                onConfirm={handleSignatureConfirm}
+                fieldName={signatureFieldId?.replace(/_/g, ' ') || 'Signature'}
             />
         </div>
     );
