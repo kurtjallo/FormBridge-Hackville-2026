@@ -18,6 +18,8 @@ PORT=5001
 GEMINI_API_KEY=<required>
 FRONTEND_URL=http://localhost:3000
 MONGODB_URI=mongodb://localhost:27017/formbridge
+GCS_BUCKET_NAME=<for PDF storage>
+GOOGLE_APPLICATION_CREDENTIALS=./service-account-key.json
 ```
 
 ## Architecture
@@ -38,6 +40,7 @@ All routes are prefixed with `/api/`:
 | `/api/demo` | Demo session with pre-filled personas |
 | `/api/pdf-session` | PDF form sessions with field values and chat history |
 | `/api/rag` | Knowledge base search for RAG context |
+| `/api/pdf-forms` | PDF form upload, listing, and management (GCS storage) |
 
 ### AI Service (Gemini)
 
@@ -61,16 +64,22 @@ The service auto-injects relevant Ontario Works facts (asset limits, common-law 
 - `addKnowledgeDoc()` creates docs with auto-generated embeddings
 - `migrateEmbeddings()` backfills embeddings for docs that don't have them
 
+### PDF Forms Service
+
+`src/routes/pdfForms.ts` handles PDF form management with Google Cloud Storage:
+
+- **Upload flow**: Base64 upload or signed URL for direct GCS upload
+- **Storage**: PDFs stored in GCS under `forms/{category}/{uuid}.pdf`
+- **Metadata**: MongoDB stores form metadata (name, category, tags, difficulty)
+- Categories: `employment`, `legal`, `finance`, `government`, `healthcare`, `immigration`
+
 ### Session Models
 
-Two session types exist:
+Three models for persistence:
 
 1. **Session** (`src/models/Session.ts`) - Legacy form sessions with `answers` map
-2. **PDFSession** (`src/models/PDFSession.ts`) - Newer PDF form sessions with:
-   - `fieldValues` - Form field ID to value mapping
-   - `chatHistory` - Per-session chat with optional `fieldId` association
-   - `progress` - 0-100 completion percentage
-   - `status` - `in_progress`, `completed`, or `abandoned`
+2. **PDFSession** (`src/models/PDFSession.ts`) - PDF form sessions with field values and chat history
+3. **PDFForm** (`src/models/PDFForm.ts`) - PDF form metadata with GCS URL reference
 
 ### Form Data
 
@@ -97,3 +106,5 @@ Two session types exist:
 | String UUIDs for session IDs | Easier frontend integration than MongoDB ObjectId |
 | MongoDB text search for RAG | Simple setup, no vector DB needed |
 | Grade 3-4 prompts | Target audience includes low literacy and ESL users |
+| GCS for PDF storage | Scalable, signed URLs for large files |
+| 50MB body limit | Allows base64 PDF uploads |
