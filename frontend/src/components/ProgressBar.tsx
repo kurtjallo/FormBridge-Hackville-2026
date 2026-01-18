@@ -64,7 +64,7 @@ export function ProgressBar({ sections }: ProgressBarProps) {
           {sections.map((section, index) => {
             const status = sectionStatus[index];
             return (
-              <div key={section.id} className="flex flex-col items-center">
+              <div key={section.id} className="flex flex-col items-center group relative">
                 {status.complete ? (
                   <CheckCircle className="w-5 h-5 text-green-600" />
                 ) : status.progress > 0 ? (
@@ -94,6 +94,13 @@ export function ProgressBar({ sections }: ProgressBarProps) {
                 >
                   {index + 1}
                 </span>
+                {/* Tooltip */}
+                <div className="absolute bottom-full mb-2 hidden group-hover:block z-10 pointer-events-none">
+                  <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                    {section.title}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </div>
               </div>
             );
           })}
