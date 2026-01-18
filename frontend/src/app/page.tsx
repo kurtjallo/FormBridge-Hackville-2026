@@ -2,16 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useFormStore } from '@/store/formStore';
 import { useTranslation } from '@/i18n';
+import { useFormStore } from '@/store/formStore';
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
-
-  const { t } = useTranslation();
-  const language = useFormStore((state) => state.language);
+  const { t, language } = useTranslation();
   const setLanguage = useFormStore((state) => state.setLanguage);
 
   // Close dropdown when clicking outside
@@ -233,6 +231,7 @@ export default function LandingPage() {
                   aria-label={t('landing.aria.startApplication')}
                 >
                   <span className="mr-3">{t('common.buttons.getStarted')}</span>
+                
                   <svg
                     className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1"
                     fill="none"
@@ -242,7 +241,7 @@ export default function LandingPage() {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
-                </Link>
+                  </Link>
 
                 <button
                   className="inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-purple-900 border border-purple-500 rounded-lg hover:border-purple-800 hover:text-black hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200 w-full sm:w-auto"
@@ -250,6 +249,7 @@ export default function LandingPage() {
                   onClick={() => document.getElementById('process-section-heading')?.scrollIntoView({ behavior: 'smooth' })}
                 >
                   <span>{t('common.buttons.learnMore')}</span>
+                  
                   <svg
                     className="w-4 h-4 ml-2"
                     fill="none"

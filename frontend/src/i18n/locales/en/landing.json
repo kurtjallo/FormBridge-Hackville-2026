@@ -28,10 +28,9 @@
     }
   },
   "aria": {
-    "mainNavigation": "Main Navigation",
-    "mainHeading": "main-heading",
-    "startApplication": "Start your application process",
-    "learnMore": "Learn more about our services",
+    "mainNavigation": "Main navigation",
+    "startApplication": "Start filling out your application",
+    "learnMore": "Learn more about our process",
     "toggleMenu": "Toggle menu",
     "step": "Step"
   }

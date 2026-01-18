@@ -1,32 +1,37 @@
+"use client";
+
 import { HelpCircle, FileQuestion, UserCheck } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 interface QuickActionsProps {
   onAction: (message: string) => void;
   disabled?: boolean;
 }
 
-const QUICK_ACTIONS = [
-  {
-    label: 'What does this mean?',
-    message: 'Can you explain what this question is asking in simple terms?',
-    icon: HelpCircle,
-  },
-  {
-    label: 'Give me an example',
-    message: 'Can you give me an example of how to answer this question?',
-    icon: FileQuestion,
-  },
-  {
-    label: 'Does my situation apply?',
-    message: 'How do I know if this question applies to my situation?',
-    icon: UserCheck,
-  },
-];
-
 export function QuickActions({ onAction, disabled }: QuickActionsProps) {
+  const { t } = useTranslation();
+
+  const quickActions = [
+    {
+      label: t('chat.quickActions.meaningLabel'),
+      message: t('chat.quickActions.meaningMessage'),
+      icon: HelpCircle,
+    },
+    {
+      label: t('chat.quickActions.exampleLabel'),
+      message: t('chat.quickActions.exampleMessage'),
+      icon: FileQuestion,
+    },
+    {
+      label: t('chat.quickActions.applyLabel'),
+      message: t('chat.quickActions.applyMessage'),
+      icon: UserCheck,
+    },
+  ];
+
   return (
     <div className="flex flex-wrap gap-2">
-      {QUICK_ACTIONS.map((action) => (
+      {quickActions.map((action) => (
         <button
           key={action.label}
           onClick={() => onAction(action.message)}

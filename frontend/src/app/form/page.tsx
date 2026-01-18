@@ -8,8 +8,10 @@ import { ChatPanel } from '@/components/ChatPanel';
 import { ontarioWorksForm } from '@/data/ontarioWorksForm';
 import { useFormStore } from '@/store/formStore';
 import { saveSession } from '@/lib/api';
+import { useTranslation } from '@/i18n';
 
 export default function FormPage() {
+  const { t } = useTranslation();
   const setActiveQuestion = useFormStore((state) => state.setActiveQuestion);
   const activeQuestionId = useFormStore((state) => state.activeQuestionId);
   const answers = useFormStore((state) => state.answers);
@@ -77,7 +79,7 @@ export default function FormPage() {
           </p>
           {sessionId && (
             <p className="text-xs text-gray-400 mt-2">
-              Session: {sessionId.slice(0, 8)}... (auto-saved)
+              {t('forms.formPage.sessionAutoSaved', { id: sessionId.slice(0, 8) })}
             </p>
           )}
         </div>

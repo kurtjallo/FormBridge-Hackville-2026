@@ -1,0 +1,52 @@
+{
+  "toolbar": {
+    "prev": "← Prev",
+    "next": "Next →",
+    "page": "Page {{current}} of {{total}}",
+    "reset": "Reset"
+  },
+  "xfa": {
+    "limitedSupport": "This is an XFA form which has limited editing support. Some features may not work correctly.",
+    "limitedNotice": "⚠️ This is an XFA form. Some interactive features may be limited.",
+    "badge": "XFA Form"
+  },
+  "error": {
+    "title": "Error loading PDF",
+    "failedToLoad": "Failed to load PDF: {{message}}"
+  },
+  "categorySelector": {
+    "title": "Choose a category",
+    "subtitle": "Select a form category to get started",
+    "uploadTitle": "Upload your own PDF",
+    "uploadSubtitle": "Or drag & drop a file",
+    "clearSelection": "Clear selection",
+    "formCount": "{{count}} form available",
+    "formCountPlural": "{{count}} forms available"
+  },
+  "categories": {
+    "employment": {
+      "name": "Employment",
+      "description": "Job applications, work permits"
+    },
+    "legal": {
+      "name": "Legal",
+      "description": "Contracts, agreements, waivers"
+    },
+    "finance": {
+      "name": "Finance",
+      "description": "Tax forms, banking documents"
+    },
+    "government": {
+      "name": "Government",
+      "description": "Ontario Works, social assistance"
+    },
+    "healthcare": {
+      "name": "Healthcare",
+      "description": "OHIP, medical forms"
+    },
+    "immigration": {
+      "name": "Immigration",
+      "description": "Visa applications, citizenship"
+    }
+  }
+}

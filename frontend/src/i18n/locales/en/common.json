@@ -1,6 +1,6 @@
 {
   "nav": {
-    "brand": "FormBridge",
+    "brand": "Clarify",
     "hackville": "Hackville 2026",
     "startApplication": "Start Application",
     "navigation": "Navigation",
@@ -10,13 +10,18 @@
   },
   "buttons": {
     "getStarted": "Get Started",
-    "learnMore": "Learn More"
+    "learnMore": "Learn More",
+    "continue": "Continue",
+    "back": "Back",
+    "letsDoIt": "Let's do it!",
+    "looksGood": "Looks good!"
   },
   "footer": {
-    "copyright": "© 2026 FormBridge",
+    "copyright": "© 2026 Clarify",
     "privacy": "Privacy",
     "terms": "Terms",
-    "credits": "Created by: Uzeyr A, Kurt J, Bianca J, Jason T @ Hackville 2026"
+    "credits": "Created by: Uzeyr A, Kurt J, Bianca J, Jason T @ Hackville 2026",
+    "hackville": "© 2026 Hackville Clarify"
   },
   "languages": {
     "english": "English",

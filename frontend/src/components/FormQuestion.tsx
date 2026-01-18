@@ -4,6 +4,7 @@ import { useFormStore } from '@/store/formStore';
 import { FormQuestion as FormQuestionType } from '@/types';
 import { HelpCircle, AlertCircle } from 'lucide-react';
 import { validateField } from '@/lib/validation';
+import { useTranslation } from '@/i18n';
 
 interface FormQuestionProps {
   question: FormQuestionType;
@@ -11,6 +12,7 @@ interface FormQuestionProps {
 }
 
 export function FormQuestion({ question, onHelpClick }: FormQuestionProps) {
+  const { t } = useTranslation();
   const answers = useFormStore((state) => state.answers);
   const setAnswer = useFormStore((state) => state.setAnswer);
   const validationErrors = useFormStore((state) => state.validationErrors);
@@ -50,7 +52,7 @@ export function FormQuestion({ question, onHelpClick }: FormQuestionProps) {
             onBlur={handleBlur}
             className={`${inputClasses} bg-white`}
           >
-            <option value="">Select an option...</option>
+            <option value="">{t('forms.fields.selectPlaceholder')}</option>
             {question.options?.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -67,7 +69,7 @@ export function FormQuestion({ question, onHelpClick }: FormQuestionProps) {
             onBlur={handleBlur}
             rows={3}
             className={`${inputClasses} resize-none`}
-            placeholder="Enter your response..."
+            placeholder={t('forms.fields.textPlaceholder')}
           />
         );
 
@@ -79,7 +81,7 @@ export function FormQuestion({ question, onHelpClick }: FormQuestionProps) {
             onChange={(e) => handleChange(e.target.value ? Number(e.target.value) : '')}
             onBlur={handleBlur}
             className={inputClasses}
-            placeholder="Enter a number..."
+            placeholder={t('forms.fields.numberPlaceholder')}
             min={0}
           />
         );
@@ -106,7 +108,7 @@ export function FormQuestion({ question, onHelpClick }: FormQuestionProps) {
             onChange={(e) => handleChange(e.target.value)}
             onBlur={handleBlur}
             className={inputClasses}
-            placeholder="Enter your response..."
+            placeholder={t('forms.fields.textPlaceholder')}
           />
         );
     }
@@ -124,8 +126,8 @@ export function FormQuestion({ question, onHelpClick }: FormQuestionProps) {
         <button
           onClick={onHelpClick}
           className="flex-shrink-0 p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors"
-          title="Get help with this question"
-          aria-label="Get help with this question"
+          title={t('forms.fields.helpTitle')}
+          aria-label={t('forms.fields.helpTitle')}
         >
           <HelpCircle className="w-5 h-5" />
         </button>

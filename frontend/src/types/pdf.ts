@@ -66,13 +66,13 @@ export const FORM_CATEGORIES: FormCategoryInfo[] = [
     {
         id: 'legal',
         name: 'Legal',
-        description: 'Non-disclosure agreements, contracts',
+        description: 'Contracts, agreements, waivers',
         icon: '⚖️',
     },
     {
         id: 'finance',
-        name: 'Finance & Tax',
-        description: 'CRA tax forms, T1 returns',
+        name: 'Finance',
+        description: 'Tax forms, banking documents',
         icon: '💰',
     },
     {

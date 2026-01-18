@@ -4,12 +4,14 @@ import { useFormStore } from '@/store/formStore';
 import { FormSection } from '@/types';
 import { CheckCircle, Circle, AlertCircle } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from '@/i18n';
 
 interface ProgressBarProps {
   sections: FormSection[];
 }
 
 export function ProgressBar({ sections }: ProgressBarProps) {
+  const { t } = useTranslation();
   const answers = useFormStore((state) => state.answers);
 
   // Calculate section completion based on answered required questions
@@ -48,7 +50,7 @@ export function ProgressBar({ sections }: ProgressBarProps) {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">
-            Progress: {completedCount} of {totalCount} sections complete
+            {t('forms.progress.label', { completed: completedCount, total: totalCount })}
           </span>
           <span className="text-sm text-gray-500">{Math.round(progressPercent)}%</span>
         </div>

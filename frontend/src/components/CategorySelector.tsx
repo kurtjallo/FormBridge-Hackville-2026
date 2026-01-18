@@ -2,6 +2,7 @@
 
 import { FORM_CATEGORIES, FormCategory, FormCategoryInfo } from '@/types/pdf';
 import { usePDFStore } from '@/store/pdfStore';
+import { useTranslation } from '@/i18n';
 
 interface CategoryCardProps {
     category: FormCategoryInfo;
@@ -11,6 +12,12 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category, isSelected, onClick, formCount }: CategoryCardProps) {
+    const { t } = useTranslation();
+    const translatedName = t(`pdf.categories.${category.id}.name`);
+    const translatedDescription = t(`pdf.categories.${category.id}.description`);
+    const name = translatedName === `pdf.categories.${category.id}.name` ? category.name : translatedName;
+    const description = translatedDescription === `pdf.categories.${category.id}.description` ? category.description : translatedDescription;
+
     return (
         <button
             onClick={onClick}
@@ -25,10 +32,12 @@ function CategoryCard({ category, isSelected, onClick, formCount }: CategoryCard
             <div className="flex items-start gap-4">
                 <span className="text-4xl">{category.icon}</span>
                 <div className="text-left">
-                    <h3 className="font-semibold text-white text-lg">{category.name}</h3>
-                    <p className="text-gray-400 text-sm mt-1">{category.description}</p>
+                    <h3 className="font-semibold text-white text-lg">{name}</h3>
+                    <p className="text-gray-400 text-sm mt-1">{description}</p>
                     <p className="text-gray-500 text-xs mt-2">
-                        {formCount} {formCount === 1 ? 'form' : 'forms'} available
+                        {formCount === 1
+                            ? t('pdf.categorySelector.formCount', { count: formCount })
+                            : t('pdf.categorySelector.formCountPlural', { count: formCount })}
                     </p>
                 </div>
             </div>
@@ -57,6 +66,7 @@ interface CategorySelectorProps {
 
 export function CategorySelector({ formCountByCategory, onCategorySelect, onUploadClick }: CategorySelectorProps) {
     const { selectedCategory, setSelectedCategory } = usePDFStore();
+    const { t } = useTranslation();
 
     const handleCategoryClick = (categoryId: FormCategory) => {
         const newSelection = selectedCategory === categoryId ? null : categoryId;
@@ -69,8 +79,8 @@ export function CategorySelector({ formCountByCategory, onCategorySelect, onUplo
     return (
         <div className="category-selector">
             <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">Choose a Category</h2>
-                <p className="text-gray-400 mt-1">Select a form category to get started</p>
+                <h2 className="text-2xl font-bold text-white">{t('pdf.categorySelector.title')}</h2>
+                <p className="text-gray-400 mt-1">{t('pdf.categorySelector.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,8 +110,8 @@ export function CategorySelector({ formCountByCategory, onCategorySelect, onUplo
                     >
                         <span className="text-2xl">📤</span>
                         <div className="text-left">
-                            <span className="font-semibold">Upload Your Own PDF</span>
-                            <p className="text-gray-500 text-sm">Or drag & drop a file</p>
+                            <span className="font-semibold">{t('pdf.categorySelector.uploadTitle')}</span>
+                            <p className="text-gray-500 text-sm">{t('pdf.categorySelector.uploadSubtitle')}</p>
                         </div>
                     </button>
                 </div>
@@ -116,7 +126,7 @@ export function CategorySelector({ formCountByCategory, onCategorySelect, onUplo
                         }}
                         className="text-gray-400 hover:text-white text-sm underline"
                     >
-                        Clear selection
+                        {t('pdf.categorySelector.clearSelection')}
                     </button>
                 </div>
             )}

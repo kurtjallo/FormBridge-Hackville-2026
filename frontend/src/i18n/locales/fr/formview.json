@@ -1,0 +1,30 @@
+{
+  "assistant": {
+    "title": "Assistant IA",
+    "description": "Cliquez sur un texte surligné pour obtenir de l’aide.",
+    "helpWith": "Aide pour :",
+    "contextPrefix": "Champ du formulaire : {{fieldId}}",
+    "emptyTitle": "Cliquez sur un bouton [?] pour obtenir de l’aide",
+    "emptySubtitle": "J’expliquerai tout en termes simples",
+    "userLabel": "Vous",
+    "aiLabel": "IA",
+    "inputPlaceholder": "Saisissez une question...",
+    "closeAssistant": "Fermer l’assistant",
+    "sendMessage": "Envoyer le message",
+    "openAssistant": "Ouvrir l’assistant IA",
+    "connectionError": "J’ai des difficultés à me connecter pour le moment. Veuillez réessayer dans un instant ou vérifier que le serveur backend est en cours d’exécution."
+  },
+  "header": {
+    "back": "Retour",
+    "viewerTitle": "Visionneuse de formulaire PDF"
+  },
+  "formsDetail": {
+    "back": "← Retour",
+    "getAiHelp": "Obtenir l’aide de l’IA",
+    "assistantTitle": "Assistant IA",
+    "assistantSubtitle": "Cliquez sur un champ du formulaire pour obtenir de l’aide",
+    "emptyTitle": "Sélectionnez un champ dans le PDF pour obtenir une explication en langage clair",
+    "emptyBadge": "À venir en phase 6",
+    "xfaBadge": "⚠️ Formulaire XFA"
+  }
+}

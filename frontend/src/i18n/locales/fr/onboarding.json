@@ -1,0 +1,98 @@
+{
+  "steps": {
+    "language": "Langue",
+    "name": "Ton nom",
+    "birthday": "Date de naissance",
+    "intro": "Rencontre Maple",
+    "review": "Révision",
+    "categorySelect": "Catégorie",
+    "formSelect": "Choisir un formulaire"
+  },
+  "stepIndicator": "Étape {{current}} sur {{total}}",
+  "language": {
+    "title": "Choisis ta langue",
+    "subtitle": "Sélectionne ta langue préférée pour continuer.",
+    "chooseLanguage": "Choisis ta langue",
+    "english": "Anglais",
+    "french": "Français",
+    "continueEnglish": "Continuer en anglais",
+    "continueFrench": "Continuer en français"
+  },
+  "name": {
+    "title": "Comment tu t'appelles?",
+    "subtitle": "On va utiliser ton nom pour personnaliser ton expérience.",
+    "placeholder": "Entre ton nom"
+  },
+  "birthday": {
+    "title": "C'est quand ta fête?",
+    "subtitle": "Ça nous aide à vérifier si tu es admissible aux programmes.",
+    "placeholder": "AAAA/MM/JJ",
+    "invalidDate": "Entre une date valide s'il te plaît"
+  },
+  "intro": {
+    "greeting": "Salut {{name}}! Je suis Maple l'orignal! Ton guide amical dans la jungle de la paperasse. Je vais t'aider à chaque étape. On commence?"
+  },
+  "review": {
+    "title": "Vérifie tes infos",
+    "subtitle": "Clique sur un champ pour le modifier directement.",
+    "nameLabel": "Nom",
+    "birthdayLabel": "Date de naissance",
+    "languageLabel": "Langue"
+  },
+  "categorySelect": {
+    "title": "Choisis une catégorie",
+    "subtitle": "Quelle catégorie correspond le mieux à ton formulaire?",
+    "backToReview": "← Retour à la révision",
+    "uploadOwnPdf": "Téléverser un PDF",
+    "backToHome": "← Retour à l'accueil",
+    "soon": "Bientôt"
+  },
+  "formSelect": {
+    "title": "Formulaires {{category}}",
+    "searchTitle": "Résultats de recherche",
+    "subtitle": "Cherche par nom ou code de formulaire",
+    "searchPlaceholder": "Cherche par nom ou code de formulaire...",
+    "resultsFound": "{{count}} résultat trouvé",
+    "resultsFoundPlural": "{{count}} résultats trouvés",
+    "acrossCategories": " dans toutes les catégories",
+    "popularForms": "Formulaires populaires",
+    "popular": "Populaire",
+    "noResults": "Aucun formulaire trouvé pour \"{{query}}\"",
+    "clearSearch": "Effacer la recherche",
+    "backToCategories": "← Retour aux catégories"
+  },
+  "categories": {
+    "legal": {
+      "title": "Juridique",
+      "description": "Accords de confidentialité, contrats"
+    },
+    "finance": {
+      "title": "Finance et impôts",
+      "description": "Formulaires fiscaux de l'ARC, déclarations T1"
+    },
+    "financial": {
+      "title": "Finances",
+      "description": "Impôts, prestations, programmes d'aide"
+    },
+    "health": {
+      "title": "Santé",
+      "description": "Soins de santé, assurance, formulaires médicaux"
+    },
+    "labor": {
+      "title": "Travail",
+      "description": "Emploi, milieu de travail, syndicats"
+    },
+    "immigration": {
+      "title": "Immigration",
+      "description": "Visas, permis, citoyenneté"
+    },
+    "childrenCommunity": {
+      "title": "Enfants, Communauté et Services sociaux",
+      "description": "Services familiaux, garderies, soutien social"
+    },
+    "publicBusiness": {
+      "title": "Services publics et commerciaux",
+      "description": "Licences, permis, inscriptions"
+    }
+  }
+}

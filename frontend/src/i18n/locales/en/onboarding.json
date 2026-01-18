@@ -1,0 +1,98 @@
+{
+  "steps": {
+    "language": "Language",
+    "name": "Your Name",
+    "birthday": "Birthday",
+    "intro": "Meet Maple",
+    "review": "Review",
+    "categorySelect": "Category",
+    "formSelect": "Select Form"
+  },
+  "stepIndicator": "Step {{current}} of {{total}}",
+  "language": {
+    "title": "Choose your language",
+    "subtitle": "Select your preferred language to continue.",
+    "chooseLanguage": "Choose your language",
+    "english": "English",
+    "french": "Français",
+    "continueEnglish": "Continue in English",
+    "continueFrench": "Continue in French"
+  },
+  "name": {
+    "title": "What's your name?",
+    "subtitle": "We'll use this to personalize your experience.",
+    "placeholder": "Enter your name"
+  },
+  "birthday": {
+    "title": "When's your birthday?",
+    "subtitle": "This helps verify eligibility for programs.",
+    "placeholder": "YYYY/MM/DD",
+    "invalidDate": "Please enter a valid date"
+  },
+  "intro": {
+    "greeting": "Hey {{name}}! I'm Maple the Moose! Your friendly guide through the paperwork wilderness. I'll help you every step of the way. Let's get started, eh?"
+  },
+  "review": {
+    "title": "Review your info",
+    "subtitle": "Click any field to edit it directly.",
+    "nameLabel": "Name",
+    "birthdayLabel": "Birthday",
+    "languageLabel": "Language"
+  },
+  "categorySelect": {
+    "title": "Select a category",
+    "subtitle": "Which category best fits your form?",
+    "backToReview": "← Back to review",
+    "uploadOwnPdf": "Upload your own PDF",
+    "backToHome": "← Back to home",
+    "soon": "Soon"
+  },
+  "formSelect": {
+    "title": "{{category}} Forms",
+    "searchTitle": "Search Results",
+    "subtitle": "Search by name or form code",
+    "searchPlaceholder": "Search by form name or code...",
+    "resultsFound": "{{count}} result found",
+    "resultsFoundPlural": "{{count}} results found",
+    "acrossCategories": " across all categories",
+    "popularForms": "Popular Forms",
+    "popular": "Popular",
+    "noResults": "No forms found matching \"{{query}}\"",
+    "clearSearch": "Clear search",
+    "backToCategories": "← Back to categories"
+  },
+  "categories": {
+    "legal": {
+      "title": "Legal",
+      "description": "Non-disclosure agreements, contracts"
+    },
+    "finance": {
+      "title": "Finance & Tax",
+      "description": "CRA tax forms, T1 returns"
+    },
+    "financial": {
+      "title": "Financial",
+      "description": "Taxes, benefits, assistance programs"
+    },
+    "health": {
+      "title": "Health",
+      "description": "Healthcare, insurance, medical forms"
+    },
+    "labor": {
+      "title": "Labor",
+      "description": "Employment, workplace, unions"
+    },
+    "immigration": {
+      "title": "Immigration",
+      "description": "Visas, permits, citizenship"
+    },
+    "childrenCommunity": {
+      "title": "Children, Community & Social Services",
+      "description": "Family services, childcare, social support"
+    },
+    "publicBusiness": {
+      "title": "Public & Business Services",
+      "description": "Licenses, permits, registrations"
+    }
+  }
+}

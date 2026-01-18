@@ -3,19 +3,20 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileUpload } from '@/components/FileUpload';
+import { useTranslation } from '@/i18n';
 
 interface CategoryOption {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: React.ReactNode;
 }
 
 const categoryOptions: CategoryOption[] = [
   {
     id: 'legal',
-    title: 'Legal',
-    description: 'Non-disclosure agreements, contracts',
+    titleKey: 'onboarding.categories.legal.title',
+    descriptionKey: 'onboarding.categories.legal.description',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -27,8 +28,8 @@ const categoryOptions: CategoryOption[] = [
   },
   {
     id: 'finance',
-    title: 'Finance & Tax',
-    description: 'CRA tax forms, T1 returns',
+    titleKey: 'onboarding.categories.finance.title',
+    descriptionKey: 'onboarding.categories.finance.description',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -40,6 +41,7 @@ const categoryOptions: CategoryOption[] = [
 export default function SelectCategoryPage() {
   const router = useRouter();
   const [showUpload, setShowUpload] = useState(false);
+  const { t } = useTranslation();
 
   const handleCategorySelect = (categoryId: string) => {
     router.push(`/select/${categoryId}`);
@@ -78,10 +80,10 @@ export default function SelectCategoryPage() {
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-8">
         <div className="w-full max-w-xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-3">
-            Select a category
+            {t('onboarding.categorySelect.title')}
           </h1>
           <p className="text-gray-500 text-sm sm:text-base mb-8">
-            Which category best fits your form?
+            {t('onboarding.categorySelect.subtitle')}
           </p>
 
           {/* Category Cards */}
@@ -97,10 +99,10 @@ export default function SelectCategoryPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-base text-gray-900">
-                    {category.title}
+                    {t(category.titleKey)}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    {category.description}
+                    {t(category.descriptionKey)}
                   </p>
                 </div>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 flex-shrink-0">
@@ -120,7 +122,7 @@ export default function SelectCategoryPage() {
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <span className="font-medium">Upload Your Own PDF</span>
+            <span className="font-medium">{t('onboarding.categorySelect.uploadOwnPdf')}</span>
           </button>
 
           {/* Back Link */}
@@ -128,13 +130,13 @@ export default function SelectCategoryPage() {
             onClick={() => router.push('/')}
             className="mt-8 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-all duration-200"
           >
-            ← Back to home
+            {t('onboarding.categorySelect.backToHome')}
           </button>
         </div>
 
         {/* Footer */}
         <div className="absolute bottom-4 text-[10px] text-gray-400">
-          © 2026 Hackville FormBridge
+          {t('common.footer.hackville')}
         </div>
       </div>
     </div>

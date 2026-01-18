@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FormBridge - Ontario Works Application Assistant",
+  title: "Clarify - Ontario Works Application Assistant",
   description: "A friendly assistant to help you complete your Ontario Works application",
 };
 

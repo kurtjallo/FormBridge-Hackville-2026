@@ -2,7 +2,7 @@
   "hero": {
     "titleLine1": "Services essentiels.",
     "titleLine2": "Simplifiés.",
-    "subtitle": "Un système numérique conçu pour rendre les formulaires gouvernementaux accessibles et compréhensibles. Nous réduisons la charge cognitive et vous guidons avec précision à chaque étape."
+    "subtitle": "Un système numérique conçu pour rendre les formulaires gouvernementaux accessibles et compréhensibles. Nous réduisons la charge cognitive et te guidons avec précision à chaque étape."
   },
   "process": {
     "heading": "Notre processus en trois étapes"
@@ -11,28 +11,27 @@
     "purpose": {
       "label": "Objectif",
       "title": "Clarté plutôt que complexité",
-      "description": "L'aide gouvernementale ne devrait pas être compliquée. Nous avons simplifié les formulaires complexes avec un langage clair, un design intuitif et une aide immédiate quand vous en avez besoin.",
+      "description": "L'aide gouvernementale ne devrait pas être compliquée. Nous avons simplifié les formulaires complexes avec un langage clair, un design intuitif et une aide immédiate quand tu en as besoin.",
       "feature": "Explications en langage simple"
     },
     "method": {
       "label": "Méthode",
       "title": "Guidé étape par étape",
-      "description": "Chaque question est présentée clairement avec le contexte et l'objectif. Notre assistant IA fournit des explications instantanées pour tout terme ou exigence, vous gardant informé et confiant.",
+      "description": "Chaque question est présentée clairement avec le contexte et l'objectif. Notre assistant IA fournit des explications instantanées pour tout terme ou exigence, te gardant informé et confiant.",
       "feature": "Assistance alimentée par IA"
     },
     "result": {
       "label": "Résultat",
-      "title": "Terminez en confiance",
-      "description": "La validation en temps réel garantit que vos informations sont exactes avant la soumission. Suivez votre progrès et révisez tout attentivement avant votre demande finale.",
+      "title": "Termine en confiance",
+      "description": "La validation en temps réel garantit que tes informations sont exactes avant la soumission. Suis ton progrès et révise tout attentivement avant ta demande finale.",
       "feature": "Validation et révision instantanées"
     }
   },
   "aria": {
     "mainNavigation": "Navigation principale",
-    "mainHeading": "titre-principal",
-    "startApplication": "Démarrer votre processus de demande",
-    "learnMore": "En savoir plus sur nos services",
-    "toggleMenu": "Basculer le menu",
+    "startApplication": "Commencer à remplir ta demande",
+    "learnMore": "En savoir plus sur notre processus",
+    "toggleMenu": "Ouvrir le menu",
     "step": "Étape"
   }
 }

@@ -1,0 +1,52 @@
+{
+  "toolbar": {
+    "prev": "← Précédent",
+    "next": "Suivant →",
+    "page": "Page {{current}} sur {{total}}",
+    "reset": "Réinitialiser"
+  },
+  "xfa": {
+    "limitedSupport": "Ce formulaire XFA offre une prise en charge limitée de l’édition. Certaines fonctionnalités peuvent ne pas fonctionner correctement.",
+    "limitedNotice": "⚠️ Il s’agit d’un formulaire XFA. Certaines fonctionnalités interactives peuvent être limitées.",
+    "badge": "Formulaire XFA"
+  },
+  "error": {
+    "title": "Erreur de chargement du PDF",
+    "failedToLoad": "Échec du chargement du PDF : {{message}}"
+  },
+  "categorySelector": {
+    "title": "Choisir une catégorie",
+    "subtitle": "Sélectionnez une catégorie de formulaires pour commencer",
+    "uploadTitle": "Téléverser un PDF",
+    "uploadSubtitle": "Ou glisser-déposer un fichier",
+    "clearSelection": "Effacer la sélection",
+    "formCount": "{{count}} formulaire disponible",
+    "formCountPlural": "{{count}} formulaires disponibles"
+  },
+  "categories": {
+    "employment": {
+      "name": "Emploi",
+      "description": "Candidatures, permis de travail"
+    },
+    "legal": {
+      "name": "Juridique",
+      "description": "Contrats, ententes, renonciations"
+    },
+    "finance": {
+      "name": "Finances",
+      "description": "Formulaires fiscaux, documents bancaires"
+    },
+    "government": {
+      "name": "Gouvernement",
+      "description": "Ontario Works, aide sociale"
+    },
+    "healthcare": {
+      "name": "Santé",
+      "description": "OHIP, formulaires médicaux"
+    },
+    "immigration": {
+      "name": "Immigration",
+      "description": "Demandes de visa, citoyenneté"
+    }
+  }
+}

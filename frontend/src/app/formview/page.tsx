@@ -7,6 +7,7 @@ import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
+import { useTranslation } from '@/i18n';
 
 // Helper to resolve PDF URLs - handles both absolute and relative API paths
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -48,6 +49,7 @@ function AIAssistantPanel({
   onClose: () => void;
   activeContext: string | null;
 }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -72,22 +74,22 @@ function AIAssistantPanel({
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-gray-900">AI ASSISTANT</span>
+            <span className="font-semibold text-gray-900">{t('formview.assistant.title')}</span>
           </div>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors lg:hidden"
-            aria-label="Close assistant"
+            aria-label={t('formview.assistant.closeAssistant')}
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
         <p className="text-sm text-gray-600">
-          Click any highlighted text to get help understanding it.
+          {t('formview.assistant.description')}
         </p>
         {activeContext && (
           <div className="mt-3 bg-blue-50 border border-blue-100 rounded-lg p-3">
-            <p className="text-xs text-blue-600 font-medium mb-1">Help with:</p>
+            <p className="text-xs text-blue-600 font-medium mb-1">{t('formview.assistant.helpWith')}</p>
             <p className="text-sm text-blue-900 line-clamp-2">{activeContext}</p>
           </div>
         )}
@@ -98,8 +100,10 @@ function AIAssistantPanel({
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
             <MessageCircle className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-            <p className="text-sm text-gray-600">Click any <span className="font-mono text-gray-500 bg-gray-100 px-1 rounded">[?]</span> button to get help</p>
-            <p className="text-xs text-gray-500 mt-1">I&apos;ll explain everything in simple terms</p>
+            <p className="text-sm text-gray-600">
+              {t('formview.assistant.emptyTitle')}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">{t('formview.assistant.emptySubtitle')}</p>
           </div>
         ) : (
           messages.map((message, index) => (
@@ -111,7 +115,9 @@ function AIAssistantPanel({
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
                   }`}
               >
-                <span className="text-xs font-medium">{message.role === 'user' ? 'You' : 'AI'}</span>
+                <span className="text-xs font-medium">
+                  {message.role === 'user' ? t('formview.assistant.userLabel') : t('formview.assistant.aiLabel')}
+                </span>
               </div>
               <div
                 className={`max-w-[80%] px-4 py-2 rounded-2xl ${message.role === 'user'
@@ -152,7 +158,7 @@ function AIAssistantPanel({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Type a question..."
+            placeholder={t('formview.assistant.inputPlaceholder')}
             disabled={isLoading}
             className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed text-sm placeholder:text-gray-400"
           />
@@ -160,7 +166,7 @@ function AIAssistantPanel({
             type="submit"
             disabled={!inputValue.trim() || isLoading}
             className="p-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Send message"
+            aria-label={t('formview.assistant.sendMessage')}
           >
             <Send className="w-4 h-4" />
           </button>
@@ -171,6 +177,7 @@ function AIAssistantPanel({
 }
 
 export default function FormViewPage() {
+  const { t } = useTranslation();
   const [showContent, setShowContent] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -274,7 +281,7 @@ export default function FormViewPage() {
       // Fallback response on error
       const errorMessage: ChatMessage = {
         role: 'assistant',
-        content: "I'm having trouble connecting right now. Please try again in a moment, or check that the backend server is running.",
+        content: t('formview.assistant.connectionError'),
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -297,31 +304,31 @@ export default function FormViewPage() {
               <Link
                 href="/select"
                 className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors"
-                aria-label="Go back"
+                aria-label={t('formview.header.back')}
               >
                 <ChevronLeft className="w-5 h-5 text-gray-500" />
               </Link>
               <div className="h-5 w-px bg-gray-200 hidden sm:block" />
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>
-                <span className="font-bold text-lg text-gray-900 tracking-tight">FormBridge</span>
+                <span className="font-bold text-lg text-gray-900 tracking-tight">{t('common.nav.brand')}</span>
               </div>
             </div>
 
             <div className="text-sm text-gray-500 hidden sm:block">
-              {formInfo ? `${formInfo.code} - ${formInfo.name}` : 'PDF Form Viewer'}
+              {formInfo ? `${formInfo.code} - ${formInfo.name}` : t('formview.header.viewerTitle')}
             </div>
 
             <div className="flex items-center gap-2">
               {selectedForm?.isXFA && (
                 <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full border border-yellow-500/30">
-                  XFA Form
+                  {t('pdf.xfa.badge')}
                 </span>
               )}
               <button
                 onClick={() => setShowMobileChat(true)}
                 className="lg:hidden p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                aria-label="Open AI assistant"
+                aria-label={t('formview.assistant.openAssistant')}
               >
                 <MessageCircle className="w-5 h-5" />
               </button>
@@ -340,7 +347,7 @@ export default function FormViewPage() {
           <PDFViewer
             pdfUrl={pdfUrl}
             onFieldClick={(fieldId) => {
-              setActiveContext(`Form field: ${fieldId}`);
+              setActiveContext(t('formview.assistant.contextPrefix', { fieldId }));
               if (window.innerWidth < 1024) {
                 setShowMobileChat(true);
               }
