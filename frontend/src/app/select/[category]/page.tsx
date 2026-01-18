@@ -15,7 +15,7 @@ const categoryTitles: Record<string, string> = {
 // Map form IDs to their PDF URLs (for sample forms)
 const formPdfUrls: Record<string, string> = {
   'basic-nda': 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf',
-  'cra-t1-tax': 'http://localhost:5001/forms/Finance/5006-r-24e.pdf',
+  'cra-td1': 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf',
 };
 
 export default function CategoryFormsPage() {

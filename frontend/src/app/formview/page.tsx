@@ -20,7 +20,7 @@ function resolvePdfUrl(url: string): string {
 }
 
 // Dynamic import to avoid SSR issues with react-pdf
-const PDFViewer = dynamic(() => import('@/components/PDFViewer').then(mod => mod.PDFViewer), {
+const PDFFormViewer = dynamic(() => import('@/components/PDFFormViewer').then(mod => mod.PDFFormViewer), {
   ssr: false,
   loading: () => (
     <div className="flex-1 flex items-center justify-center bg-gray-50">
@@ -402,9 +402,9 @@ export default function FormViewPage() {
         className={`flex-1 min-h-0 flex flex-col lg:flex-row transition-all duration-300 ease-out ${showContent ? 'opacity-100' : 'opacity-0'
           }`}
       >
-        {/* Left Panel - PDF Viewer */}
+        {/* Left Panel - PDF Form Viewer */}
         <div className="flex-1 min-h-0 flex flex-col">
-          <PDFViewer
+          <PDFFormViewer
             pdfUrl={pdfUrl}
             onFieldClick={(fieldId) => {
               setActiveContext(t('formview.assistant.contextPrefix', { fieldId }));

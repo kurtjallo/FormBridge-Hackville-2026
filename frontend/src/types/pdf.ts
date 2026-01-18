@@ -53,6 +53,8 @@ export interface PDFField {
     };
     value?: string;
     required?: boolean;
+    options?: string[];    // For select/radio fields
+    maxLength?: number;    // For text fields
 }
 
 // Form categories data
