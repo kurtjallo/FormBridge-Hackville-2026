@@ -28,8 +28,35 @@ app.use(corsMiddleware);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Serve PDF forms as static files
+// Serve PDF forms - try local first, then GCS
 app.use('/forms', express.static(path.join(__dirname, 'assets/forms')));
+
+// Fallback to GCS for PDFs not found locally (production)
+app.get('/forms/*', async (req: Request, res: Response, next) => {
+  try {
+    const { getGCSClient } = await import('./services/gcsClient');
+    // GCS path: hackville/forms/Legal/... (folder structure in bucket)
+    const gcsPath = `hackville/forms${req.path}`;
+    console.log(`[GCS] Looking for PDF at: ${gcsPath}`);
+
+    const gcs = getGCSClient();
+    const bucket = gcs.storage.bucket(gcs.bucketName);
+    const file = bucket.file(gcsPath);
+
+    const [exists] = await file.exists();
+    if (!exists) {
+      console.log(`[GCS] PDF not found: ${gcsPath}`);
+      return res.status(404).json({ error: 'PDF not found', path: gcsPath });
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    file.createReadStream().pipe(res);
+  } catch (error) {
+    console.error('Error serving PDF from GCS:', error);
+    res.status(500).json({ error: 'Failed to load PDF' });
+  }
+});
 
 // Health check endpoint
 app.get('/', (req: Request, res: Response) => {
