@@ -426,7 +426,7 @@ export default function OnboardingPage() {
       sessionStorage.setItem('selectedFormCode', form.code);
       // Clear onboarding data after successful completion
       localStorage.removeItem(STORAGE_KEY);
-      router.push('/form');
+      router.push('/formview');
     }
   };
 
