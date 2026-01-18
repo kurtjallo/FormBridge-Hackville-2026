@@ -507,7 +507,7 @@ export default function OnboardingPage() {
 
       <div className="relative z-10 h-screen flex flex-col items-center justify-center px-6 py-8">
         {/* Progress indicator with tooltips */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 items-center">
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 flex gap-2 items-center">
           {steps.map((step) => {
             const isActive = currentStep === step;
             const isCompleted = completedSteps.has(step);
@@ -517,7 +517,7 @@ export default function OnboardingPage() {
             return (
               <div key={step} className="relative">
                 {isHovered && (
-                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md shadow-lg z-50">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md shadow-lg z-50">
                     {stepLabels[step]}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
                   </div>
@@ -542,11 +542,6 @@ export default function OnboardingPage() {
               </div>
             );
           })}
-        </div>
-
-        {/* Step label */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 text-[10px] font-medium text-gray-400 uppercase tracking-widest">
-          Step {steps.indexOf(currentStep) + 1} of {steps.length}
         </div>
 
         {/* Content container */}
@@ -579,7 +574,7 @@ export default function OnboardingPage() {
                 disabled={!name.trim()}
                 className={`mt-8 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
                   name.trim()
-                    ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'
+                    ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
@@ -613,7 +608,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
                 >
                   Back
                 </button>
@@ -622,7 +617,7 @@ export default function OnboardingPage() {
                   disabled={!isValidDate(birthday)}
                   className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
                     isValidDate(birthday)
-                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'
+                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -650,14 +645,18 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleIntroComplete}
                   disabled={!isComplete}
-                  className="px-6 py-3 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-600 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                    isComplete
+                      ? 'bg-gray-900 text-white hover:bg-gray-600 cursor-pointer'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
                   Let's do it!
                 </button>
@@ -810,7 +809,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
                 >
                   Back
                 </button>
@@ -820,7 +819,7 @@ export default function OnboardingPage() {
                   className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                     editingField !== null
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-gray-900 text-white hover:bg-gray-600'
+                      : 'bg-gray-900 text-white hover:bg-gray-600 cursor-pointer'
                   }`}
                 >
                   Looks good!
@@ -832,14 +831,14 @@ export default function OnboardingPage() {
           {/* Step 5: Category Selection */}
           {currentStep === 'category-select' && (
             <div className="text-center w-full max-w-xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
                 Select a category
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">
+              <p className="text-gray-500 text-sm sm:text-base mb-6">
                 Which category best fits your form?
               </p>
 
-              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-[50vh] overflow-y-auto">
+              <div className="space-y-2 sm:space-y-3 mb-6 max-h-[50vh] overflow-y-auto">
                 {categoryOptions.map((category: CategoryOption, index: number) => (
                   <button
                     key={category.id}
@@ -886,7 +885,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200"
+                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 ← Back to review
               </button>
@@ -896,15 +895,15 @@ export default function OnboardingPage() {
           {/* Step 6: Form Selection */}
           {currentStep === 'form-select' && (
             <div className="text-center w-full max-w-xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
                 {searchQuery ? 'Search Results' : `${selectedCategoryTitle} Forms`}
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4">
+              <p className="text-gray-500 text-sm sm:text-base mb-6">
                 Search by name or form code
               </p>
 
               {/* Search Input */}
-              <div className="relative mb-4 sm:mb-5">
+              <div className="relative mb-6">
                 <svg
                   width="18"
                   height="18"
@@ -928,7 +927,7 @@ export default function OnboardingPage() {
 
               {/* Search results info */}
               {searchQuery && (
-                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">
                     {filteredForms.length} {filteredForms.length === 1 ? 'result' : 'results'} found
                     {hasOtherCategoryResults && ' across all categories'}
@@ -939,14 +938,14 @@ export default function OnboardingPage() {
 
               {/* Popular Forms Label */}
               {!searchQuery && popularForms.length > 0 && (
-                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">Popular Forms</span>
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
               )}
 
               {/* Forms List */}
-              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-[40vh] sm:max-h-[45vh] overflow-y-auto">
+              <div className="space-y-2 sm:space-y-3 mb-6 max-h-[40vh] sm:max-h-[45vh] overflow-y-auto">
                 {filteredForms.length > 0 ? (
                   filteredForms.map((form: FormOption, index: number) => (
                     <button
@@ -1005,7 +1004,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200"
+                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 ← Back to categories
               </button>
