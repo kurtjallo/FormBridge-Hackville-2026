@@ -47,8 +47,35 @@ const formsDatabase: FormOption[] = [
   { id: 'on00597', code: 'on00597', name: 'Apprenticeship TDA Approval Process Guidelines', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
   { id: 'on00614', code: 'on00614', name: 'Service Provider EOIS-APPR Registration', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
 
-  // Immigration Forms
-  { id: 'on00917', code: 'on00917', name: 'Commissioner and Notary Public Application', ministry: 'Ministry of the Attorney General', category: 'immigration', popular: true },
+  // Immigration Forms - Work Permits, LMIA, PR, and Provincial Nominee
+  { id: 'lmia-application', code: 'EMP5593', name: 'Labour Market Impact Assessment (LMIA) Application', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'lmia-high-wage', code: 'EMP5626', name: 'LMIA Application - High-Wage Position', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'lmia-low-wage', code: 'EMP5627', name: 'LMIA Application - Low-Wage Position', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'lmia-agricultural', code: 'EMP5389', name: 'LMIA Application - Agricultural Stream', ministry: 'Employment and Social Development Canada', category: 'immigration' },
+  { id: 'lmia-global-talent', code: 'EMP5624', name: 'LMIA Application - Global Talent Stream', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'work-permit', code: 'IMM1295', name: 'Application for Work Permit Made Outside of Canada', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'work-permit-inside', code: 'IMM5710', name: 'Application to Change Conditions or Extend Stay as a Worker', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pgwp', code: 'IMM5710', name: 'Post-Graduation Work Permit (PGWP) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'open-work-permit', code: 'IMM5710', name: 'Open Work Permit Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'pr-express-entry', code: 'IMM0008', name: 'Generic Application Form for Canada - Express Entry', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pr-family-sponsor', code: 'IMM1344', name: 'Application to Sponsor, Sponsorship Agreement and Undertaking', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pr-family-spouse', code: 'IMM5532', name: 'Relationship Information and Sponsorship Evaluation', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'pr-pnp', code: 'IMM0008', name: 'Provincial Nominee Program (PNP) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'oinp-skilled-worker', code: 'OINP-001', name: 'Ontario Immigrant Nominee Program - Skilled Worker Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration', popular: true },
+  { id: 'oinp-masters-grad', code: 'OINP-002', name: 'Ontario Immigrant Nominee Program - Masters Graduate Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration', popular: true },
+  { id: 'oinp-phd-grad', code: 'OINP-003', name: 'Ontario Immigrant Nominee Program - PhD Graduate Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'oinp-employer-job-offer', code: 'OINP-004', name: 'Ontario Immigrant Nominee Program - Employer Job Offer', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'oinp-entrepreneur', code: 'OINP-005', name: 'Ontario Immigrant Nominee Program - Entrepreneur Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'pr-card-renewal', code: 'IMM5444', name: 'Application for a Permanent Resident Card', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pr-travel-doc', code: 'IMM5524', name: 'Application for a Permanent Resident Travel Document', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'citizenship-adult', code: 'CIT0002', name: 'Application for Canadian Citizenship - Adults', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'citizenship-minor', code: 'CIT0003', name: 'Application for Canadian Citizenship - Minors', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'study-permit', code: 'IMM1294', name: 'Application for Study Permit Made Outside of Canada', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'study-permit-extend', code: 'IMM5709', name: 'Application to Change Conditions or Extend Stay as a Student', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'visitor-visa', code: 'IMM5257', name: 'Application for Visitor Visa (Temporary Resident Visa)', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'super-visa', code: 'IMM5257', name: 'Application for Super Visa - Parents and Grandparents', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'eta', code: 'IMM5257', name: 'Electronic Travel Authorization (eTA) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'on00917', code: 'on00917', name: 'Commissioner and Notary Public Application', ministry: 'Ministry of the Attorney General', category: 'immigration' },
   { id: 'on00684', code: 'on00684', name: 'EOIS-APPR Initial Application for Access for an Employer Subscriber', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
   { id: 'on00685', code: 'on00685', name: 'EOIS-APPR Application for Access for a Training Delivery Agent', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
 
@@ -248,15 +275,23 @@ export default function OnboardingPage() {
   // Track which steps have been completed
   const [completedSteps, setCompletedSteps] = useState<Set<Step>>(new Set());
 
-  // Get forms for selected category
+  // Get forms for selected category OR search across all forms
   const categoryForms = formsDatabase.filter(form => form.category === selectedCategory);
+
+  // When searching, search ALL forms by name or code only
   const filteredForms = searchQuery
-    ? categoryForms.filter(form =>
+    ? formsDatabase.filter(form =>
         form.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         form.code.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : categoryForms;
   const popularForms = categoryForms.filter(form => form.popular);
+
+  // Check if search results include forms from other categories
+  const hasOtherCategoryResults = searchQuery && filteredForms.some(form => form.category !== selectedCategory);
+
+  // Helper to get category title by id
+  const getCategoryTitle = (categoryId: string) => categoryOptions.find(c => c.id === categoryId)?.title || categoryId;
 
   // Stagger buttons animation
   useEffect(() => {
@@ -517,7 +552,7 @@ export default function OnboardingPage() {
         {/* Content container */}
         <div
           className={`w-full transition-all duration-300 ease-out ${
-            (currentStep === 'category-select' || currentStep === 'form-select') ? 'max-w-lg' : 'max-w-sm'
+            (currentStep === 'category-select' || currentStep === 'form-select') ? 'max-w-xl' : 'max-w-sm'
           } ${
             showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
@@ -796,7 +831,7 @@ export default function OnboardingPage() {
 
           {/* Step 5: Category Selection */}
           {currentStep === 'category-select' && (
-            <div className="text-center w-full max-w-md mx-auto">
+            <div className="text-center w-full max-w-xl mx-auto">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
                 Select a category
               </h1>
@@ -860,9 +895,9 @@ export default function OnboardingPage() {
 
           {/* Step 6: Form Selection */}
           {currentStep === 'form-select' && (
-            <div className="text-center w-full max-w-md mx-auto">
+            <div className="text-center w-full max-w-xl mx-auto">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
-                {selectedCategoryTitle} Forms
+                {searchQuery ? 'Search Results' : `${selectedCategoryTitle} Forms`}
               </h1>
               <p className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4">
                 Search by name or form code
@@ -886,10 +921,21 @@ export default function OnboardingPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search forms..."
+                  placeholder="Search by form name or code..."
                   className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-sm sm:text-base bg-gray-50 text-gray-900 border-2 border-gray-200 focus:border-gray-400 outline-none rounded-xl transition-all duration-200 placeholder:text-gray-400"
                 />
               </div>
+
+              {/* Search results info */}
+              {searchQuery && (
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    {filteredForms.length} {filteredForms.length === 1 ? 'result' : 'results'} found
+                    {hasOtherCategoryResults && ' across all categories'}
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+              )}
 
               {/* Popular Forms Label */}
               {!searchQuery && popularForms.length > 0 && (
@@ -913,14 +959,12 @@ export default function OnboardingPage() {
                       }}
                       className="w-full text-left p-3 sm:p-4 rounded-xl border border-gray-200 hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all duration-200 flex items-center gap-3 sm:gap-4"
                     >
-                      <div className="p-2 sm:p-2.5 rounded-lg bg-gray-100 text-gray-700">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14 2 14 8 20 8" />
-                        </svg>
+                      {/* Form code as main identifier */}
+                      <div className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-gray-900 text-white font-mono text-xs sm:text-sm font-semibold flex-shrink-0 min-w-[60px] sm:min-w-[70px] text-center">
+                        {form.code}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-medium text-sm sm:text-base text-gray-900 truncate">
                             {form.name}
                           </h3>
@@ -929,9 +973,15 @@ export default function OnboardingPage() {
                               Popular
                             </span>
                           )}
+                          {/* Show category badge when searching across all categories */}
+                          {searchQuery && (
+                            <span className="text-[10px] sm:text-xs font-medium px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded flex-shrink-0">
+                              {getCategoryTitle(form.category)}
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs sm:text-sm text-gray-500 truncate">
-                          {form.code} • {form.ministry}
+                          {form.ministry}
                         </p>
                       </div>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 flex-shrink-0">
