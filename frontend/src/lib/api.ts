@@ -126,6 +126,7 @@ export interface SupportChatRequest {
   pagePath: string;
   knowledgeContext?: string;
   additionalContext?: string;
+  language?: Language;
 }
 
 export interface SupportChatResponse {
@@ -136,12 +137,13 @@ export interface SupportChatResponse {
 }
 
 export async function sendSupportMessage(request: SupportChatRequest): Promise<SupportChatResponse> {
+  const language = useFormStore.getState().language;
   const response = await fetch(`${API_BASE}/support-chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(request),
+    body: JSON.stringify({ ...request, language }),
   });
 
   if (!response.ok) {

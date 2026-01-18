@@ -49,11 +49,23 @@ FORMAT:
 - Bold important terms or numbers
 - Keep paragraphs short`;
 
+// Language display names for the prompt
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English',
+  fr: 'French',
+};
+
 /**
  * Build the chat prompt with knowledge context
  */
-function buildSupportChatPrompt(request: SupportChatRequest): string {
+function buildSupportChatPrompt(request: SupportChatRequest & { language?: string }): string {
   const parts: string[] = [SUPPORT_SYSTEM_PROMPT];
+
+  // Add language instruction
+  if (request.language && request.language !== 'en') {
+    const languageName = LANGUAGE_NAMES[request.language] || request.language;
+    parts.push(`\n🌐 LANGUAGE: Respond in ${languageName}.`);
+  }
 
   // Add page context
   if (request.pagePath) {
@@ -162,7 +174,8 @@ router.post('/', async (req: Request, res: Response) => {
       pagePath = '/',
       knowledgeContext,
       additionalContext,
-    } = req.body as SupportChatRequest;
+      language = 'en',
+    } = req.body as SupportChatRequest & { language?: string };
 
     // Validate required fields
     if (!message || typeof message !== 'string') {
@@ -174,17 +187,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Determine confidence before generating response
     const confidence = determineConfidence(message);
-    
-    // If we have no knowledge, provide a graceful fallback
-    if (confidence === 'unknown') {
-      const fallbackResponse: SupportChatResponse = {
-        message: knowledgeBase.getUnknownResponse(),
-        suggestions: generateSuggestions(message, pagePath),
-        confidence: 'unknown',
-      };
-      res.json(fallbackResponse);
-      return;
-    }
 
     // Build prompt with knowledge context
     const prompt = buildSupportChatPrompt({
@@ -193,6 +195,7 @@ router.post('/', async (req: Request, res: Response) => {
       pagePath,
       knowledgeContext,
       additionalContext,
+      language,
     });
 
     // Generate AI response
