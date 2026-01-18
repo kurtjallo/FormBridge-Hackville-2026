@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
@@ -23,7 +24,7 @@ const PDFViewer = dynamic(() => import('@/components/PDFViewer').then(mod => mod
   ssr: false,
   loading: () => (
     <div className="flex-1 flex items-center justify-center bg-gray-50">
-      <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
     </div>
   ),
 });
@@ -178,6 +179,7 @@ function AIAssistantPanel({
 
 export default function FormViewPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [showContent, setShowContent] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -323,18 +325,54 @@ export default function FormViewPage() {
         <div className="px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 sm:gap-4">
-              <Link
-                href="/select"
-                className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors"
+              <button
+                onClick={() => {
+                  // Update session storage to go back to form-select step, not language
+                  const saved = sessionStorage.getItem('formbridge_onboarding');
+                  let data;
+                  if (saved) {
+                    try {
+                      data = JSON.parse(saved);
+                    } catch (e) {
+                      console.error('Failed to parse session:', e);
+                      data = {};
+                    }
+                  } else {
+                    data = {};
+                  }
+                  // Always set currentStep to form-select and mark previous steps as completed
+                  data.currentStep = 'form-select';
+                  data.completedSteps = ['language', 'name', 'intro', 'review', 'category-select'];
+                  // Preserve selectedCategory if not already set - try to get it from selectedForm
+                  if (!data.selectedCategory && selectedForm) {
+                    // Try to infer category from the form
+                    const formId = sessionStorage.getItem('selectedFormId');
+                    if (formId) {
+                      // Default to legal if we can't determine
+                      if (formId.includes('nda') || formId.includes('contract') || formId.includes('attorney')) {
+                        data.selectedCategory = 'legal';
+                      } else if (formId.includes('cra') || formId.includes('tax') || formId.includes('ontario-works') || formId.includes('gst')) {
+                        data.selectedCategory = 'finance';
+                      } else if (formId.includes('oinp') || formId.includes('immigration')) {
+                        data.selectedCategory = 'immigration';
+                      } else {
+                        data.selectedCategory = 'legal'; // fallback
+                      }
+                    }
+                  }
+                  sessionStorage.setItem('formbridge_onboarding', JSON.stringify(data));
+                  router.push('/select');
+                }}
+                className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                 aria-label={t('formview.header.back')}
               >
                 <ChevronLeft className="w-5 h-5 text-gray-500" />
-              </Link>
+              </button>
               <div className="h-5 w-px bg-gray-200 hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>
+              <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                <div className="w-2.5 h-2.5 bg-purple-900 rounded-full"></div>
                 <span className="font-bold text-lg text-gray-900 tracking-tight">{t('common.nav.brand')}</span>
-              </div>
+              </Link>
             </div>
 
             <div className="text-sm text-gray-500 hidden sm:block">

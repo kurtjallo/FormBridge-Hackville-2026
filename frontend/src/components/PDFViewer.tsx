@@ -122,7 +122,7 @@ export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProp
                     <button
                         onClick={goToPrevPage}
                         disabled={viewer.currentPage <= 1}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         {t('pdf.toolbar.prev')}
                     </button>
@@ -135,7 +135,7 @@ export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProp
                     <button
                         onClick={goToNextPage}
                         disabled={viewer.currentPage >= viewer.totalPages}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         {t('pdf.toolbar.next')}
                     </button>
@@ -146,7 +146,7 @@ export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProp
                     <button
                         onClick={zoomOut}
                         disabled={viewer.scale <= 0.5}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         −
                     </button>
@@ -156,13 +156,13 @@ export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProp
                     <button
                         onClick={zoomIn}
                         disabled={viewer.scale >= 3}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         +
                     </button>
                     <button
                         onClick={() => setScale(1)}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-md text-sm font-medium text-gray-700 transition-colors ml-2"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer ml-2"
                     >
                         {t('pdf.toolbar.reset')}
                     </button>
