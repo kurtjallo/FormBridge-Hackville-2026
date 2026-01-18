@@ -90,10 +90,11 @@ export function SelectionHelpButton({
       className="
         fixed z-[100] flex items-center gap-1.5
         px-3 py-2
-        bg-blue-600 hover:bg-blue-700
+        bg-purple-900 hover:bg-black
         text-white text-sm font-medium
         rounded-lg shadow-lg
         animate-in fade-in zoom-in-95 duration-200
+        cursor-pointer
       "
       style={{
         top: `${position.top}px`,
