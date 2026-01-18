@@ -46,12 +46,16 @@ function CategoryCard({ category, isSelected, onClick, formCount }: CategoryCard
     );
 }
 
+// Only show Legal and Finance categories (the ones with actual PDFs)
+const VISIBLE_CATEGORIES: FormCategory[] = ['legal', 'finance'];
+
 interface CategorySelectorProps {
     formCountByCategory: Record<FormCategory, number>;
     onCategorySelect?: (category: FormCategory | null) => void;
+    onUploadClick?: () => void;
 }
 
-export function CategorySelector({ formCountByCategory, onCategorySelect }: CategorySelectorProps) {
+export function CategorySelector({ formCountByCategory, onCategorySelect, onUploadClick }: CategorySelectorProps) {
     const { selectedCategory, setSelectedCategory } = usePDFStore();
 
     const handleCategoryClick = (categoryId: FormCategory) => {
@@ -60,6 +64,8 @@ export function CategorySelector({ formCountByCategory, onCategorySelect }: Cate
         onCategorySelect?.(newSelection);
     };
 
+    const visibleCategoryData = FORM_CATEGORIES.filter(cat => VISIBLE_CATEGORIES.includes(cat.id));
+
     return (
         <div className="category-selector">
             <div className="mb-6">
@@ -67,8 +73,8 @@ export function CategorySelector({ formCountByCategory, onCategorySelect }: Cate
                 <p className="text-gray-400 mt-1">Select a form category to get started</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {FORM_CATEGORIES.map((category) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {visibleCategoryData.map((category) => (
                     <CategoryCard
                         key={category.id}
                         category={category}
@@ -78,6 +84,28 @@ export function CategorySelector({ formCountByCategory, onCategorySelect }: Cate
                     />
                 ))}
             </div>
+
+            {/* Upload Button - Below the grid */}
+            {onUploadClick && (
+                <div className="mt-8 flex justify-center">
+                    <button
+                        onClick={onUploadClick}
+                        className="
+                            flex items-center gap-3 px-6 py-4
+                            bg-gray-800/50 border-2 border-dashed border-gray-600
+                            hover:border-blue-500 hover:bg-blue-600/10
+                            rounded-xl transition-all duration-200
+                            text-gray-300 hover:text-white
+                        "
+                    >
+                        <span className="text-2xl">📤</span>
+                        <div className="text-left">
+                            <span className="font-semibold">Upload Your Own PDF</span>
+                            <p className="text-gray-500 text-sm">Or drag & drop a file</p>
+                        </div>
+                    </button>
+                </div>
+            )}
 
             {selectedCategory && (
                 <div className="mt-6 flex justify-center">
