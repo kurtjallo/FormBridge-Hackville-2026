@@ -88,20 +88,21 @@ interface FormOption {
   name: string;
   ministry: string;
   category: 'legal' | 'finance';
+  pdfUrl: string;
 }
 
 // Database with ONLY Legal and Finance forms for demo
+// IDs must match SAMPLE_PDF_FORMS in sampleForms.ts for PDF lookup to work
 const formsDatabase: FormOption[] = [
   // Legal Forms
-  { id: 'nda', code: 'NDA-01', name: 'Non-Disclosure Agreement', ministry: 'Ministry of the Attorney General', category: 'legal' },
-  { id: 'contract-review', code: 'CTR-02', name: 'Standard Service Contract', ministry: 'Ministry of the Attorney General', category: 'legal' },
-  { id: 'power-attorney', code: 'POA-03', name: 'Power of Attorney', ministry: 'Ministry of the Attorney General', category: 'legal' },
-  
+  { id: 'basic-nda', code: 'NDA-01', name: 'Non-Disclosure Agreement', ministry: 'Ministry of the Attorney General', category: 'legal', pdfUrl: 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf' },
+  { id: 'contract-review', code: 'CTR-02', name: 'Standard Service Contract', ministry: 'Ministry of the Attorney General', category: 'legal', pdfUrl: 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf' },
+  { id: 'power-attorney', code: 'POA-03', name: 'Power of Attorney', ministry: 'Ministry of the Attorney General', category: 'legal', pdfUrl: 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf' },
+
   // Finance Forms
-  { id: 't4-statement', code: 'T4', name: 'T4 Statement of Remuneration Paid', ministry: 'Canada Revenue Agency', category: 'finance' },
-  { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'finance' },
-  { id: 'tax-return', code: 'T1-GEN', name: 'T1 General Income Tax and Benefit Return', ministry: 'Canada Revenue Agency', category: 'finance' },
-  { id: 'gst-hst', code: 'GST34', name: 'GST/HST Return for Registrants', ministry: 'Canada Revenue Agency', category: 'finance' },
+  { id: 'cra-5006', code: 'T1-TAX', name: 'Income Tax and Benefit Return', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
+  { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
+  { id: 'gst-hst', code: 'GST34', name: 'GST/HST Return for Registrants', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
 ];
 
 export default function OnboardingPage() {
@@ -187,8 +188,8 @@ export default function OnboardingPage() {
   const handleFormSelect = (form: FormOption) => {
     sessionStorage.setItem('selectedFormId', form.id);
     sessionStorage.setItem('selectedFormName', form.name);
-    // For demo, we might want to map to real PDFs if available, or generate them
-    // sessionStorage.setItem('selectedFormPdfUrl', ...);
+    sessionStorage.setItem('selectedFormCode', form.code);
+    sessionStorage.setItem('selectedFormPdfUrl', form.pdfUrl);
     router.push('/formview');
   };
 
