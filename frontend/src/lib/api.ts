@@ -1,4 +1,5 @@
-import { ChatMessage } from '@/types';
+import { ChatMessage, Language } from '@/types';
+import { useFormStore } from '@/store/formStore';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 const API_BASE = `${API_URL}/api`;
@@ -11,6 +12,7 @@ export interface ChatRequest {
   conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }>;
   userMessage: string;
   currentAnswers?: Record<string, string | number | boolean>;
+  language?: Language;
 }
 
 export interface ChatResponse {
@@ -20,12 +22,13 @@ export interface ChatResponse {
 }
 
 export async function chatWithAI(request: ChatRequest): Promise<ChatResponse> {
+  const language = useFormStore.getState().language;
   const response = await fetch(`${API_BASE}/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(request),
+    body: JSON.stringify({ ...request, language }),
   });
 
   if (!response.ok) {
