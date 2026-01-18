@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import path from 'path';
 import { corsMiddleware } from './middleware/cors';
 import { explainRouter } from './routes/explain';
 import { chatRouter } from './routes/chat';
@@ -23,6 +24,9 @@ const PORT = process.env.PORT || 5001;
 // Middleware
 app.use(corsMiddleware);
 app.use(express.json());
+
+// Serve PDF forms as static files
+app.use('/forms', express.static(path.join(__dirname, 'assets/forms')));
 
 // Health check endpoint
 app.get('/', (req: Request, res: Response) => {
