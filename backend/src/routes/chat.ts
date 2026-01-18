@@ -14,6 +14,7 @@ router.post('/', async (req: Request, res: Response) => {
       conversationHistory,
       userMessage,
       currentAnswers,
+      language,
     } = req.body as ChatRequest;
 
     // Validate required fields
@@ -33,6 +34,7 @@ router.post('/', async (req: Request, res: Response) => {
       conversationHistory: conversationHistory || [],
       userMessage,
       currentAnswers,
+      language,
     });
 
     const response: ChatResponse = {

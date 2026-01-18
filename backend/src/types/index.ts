@@ -1,3 +1,5 @@
+export type Language = 'en' | 'fr';
+
 export interface ExplainRequest {
   questionId: string;
   originalText: string;
@@ -6,6 +8,7 @@ export interface ExplainRequest {
   context?: string;
   commonConfusions?: string;
   userContext?: string;
+  language?: Language;
 }
 
 export interface ExplainResponse {
@@ -26,6 +29,7 @@ export interface ChatRequest {
   conversationHistory: ChatMessage[];
   userMessage: string;
   currentAnswers?: Record<string, string>;
+  language?: Language;
 }
 
 export interface ChatResponse {

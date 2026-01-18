@@ -47,13 +47,22 @@ const OW_CONTEXT = {
 
 function buildExplainPrompt(request: ExplainRequest): string {
   const parts: string[] = [];
+  const isFrench = request.language === 'fr';
 
-  // Concise system instruction
-  parts.push(`Role: Ontario Works form assistant.
+  // Concise system instruction with bilingual support
+  if (isFrench) {
+    parts.push(`Role: Assistant pour le formulaire Ontario au travail.
+Goal: Expliquez ceci pour qu'une personne immigrante ou ayant peu de littératie puisse comprendre facilement.
+Language: Utilisez un français canadien très simple (niveau 4e année). Évitez les expressions compliquées et les mots difficiles. Utilisez le tutoiement.
+Format: 1) Ce que ça veut dire 2) Exemple 3) Quoi écrire
+Style: Phrases courtes et claires. Très amical et serviable.`);
+  } else {
+    parts.push(`Role: Ontario Works form assistant.
 Goal: Explain this so it is very easy for an immigrant or someone with low literacy to understand.
 Language: Use very simple English (Grade 4 level). Avoid idioms and big words.
 Format: 1) What it means 2) Example 3) What to enter
 Style: Short, clear sentences. Very friendly and helpful.`);
+  }
 
   // Question details
   parts.push(`\nQ: "${request.originalText}"
@@ -93,10 +102,12 @@ Type: ${request.fieldType} | Required: ${request.required}`);
   }
 
   if (relevantFacts.length > 0) {
-    parts.push(`\n📋 Ontario Works facts:\n- ${relevantFacts.join('\n- ')}`);
+    const factsLabel = isFrench ? 'Faits Ontario au travail' : 'Ontario Works facts';
+    parts.push(`\n📋 ${factsLabel}:\n- ${relevantFacts.join('\n- ')}`);
   }
 
-  parts.push(`\nExplain concisely:`);
+  const explainLabel = isFrench ? 'Expliquez brièvement:' : 'Explain concisely:';
+  parts.push(`\n${explainLabel}`);
 
   return parts.join('');
 }
@@ -118,9 +129,20 @@ export async function explainQuestion(request: ExplainRequest): Promise<string> 
 
 function buildChatPrompt(request: ChatRequest): string {
   const parts: string[] = [];
+  const isFrench = request.language === 'fr';
 
-  // Concise system instruction
-  parts.push(`Role: Ontario Works form assistant.
+  // Concise system instruction with bilingual support
+  if (isFrench) {
+    parts.push(`Role: Assistant pour le formulaire Ontario au travail.
+Goal: Parlez à l'utilisateur comme un ami qui aide. Rendez tout facile à comprendre pour quelqu'un qui apprend le français.
+Language: Utilisez un français canadien simple (niveau 3-4e année). Mots simples seulement. Phrases courtes. Utilisez le tutoiement.
+Format: Gardez ça court (2-3 phrases).
+Task: Répondez à la question et si vous savez quoi écrire, suggérez-le.
+Si vous suggérez une réponse, terminez avec:
+SUGGESTED_ANSWER: [valeur]
+CONFIDENCE: [low|medium|high]`);
+  } else {
+    parts.push(`Role: Ontario Works form assistant.
 Goal: Talk to the user like a friendly helper. Make everything very easy to understand for someone who is learning English.
 Language: Use Grade 3-4 English. Simple words only. Short sentences.
 Format: Keep it short (2-3 sentences).
@@ -128,6 +150,7 @@ Task: Answer the question and if you know what they should write, suggest it.
 If suggesting answer, end with:
 SUGGESTED_ANSWER: [value]
 CONFIDENCE: [low|medium|high]`);
+  }
 
   // Current question
   parts.push(`\n📝 Field: "${request.originalText}" (${request.fieldType})`);
@@ -152,7 +175,8 @@ CONFIDENCE: [low|medium|high]`);
   }
 
   if (relevantFacts.length > 0) {
-    parts.push(`\n📋 Key facts: ${relevantFacts.join(' | ')}`);
+    const factsLabel = isFrench ? 'Faits clés' : 'Key facts';
+    parts.push(`\n📋 ${factsLabel}: ${relevantFacts.join(' | ')}`);
   }
 
   // Add user's other answers for cross-reference context (only relevant ones)
@@ -162,9 +186,10 @@ CONFIDENCE: [low|medium|high]`);
       .slice(0, 5) // Limit to 5 most recent/relevant
       .map(([key, value]) => `${key}: ${value}`)
       .join(' | ');
-    
+
     if (relevantAnswers) {
-      parts.push(`\n👤 User info: ${relevantAnswers}`);
+      const userInfoLabel = isFrench ? 'Info utilisateur' : 'User info';
+      parts.push(`\n👤 ${userInfoLabel}: ${relevantAnswers}`);
     }
   }
 
@@ -174,11 +199,13 @@ CONFIDENCE: [low|medium|high]`);
       .slice(-4) // Keep last 4 messages for context
       .map((msg: ChatMessage) => `${msg.role === 'user' ? 'U' : 'A'}: ${msg.content}`)
       .join('\n');
-    parts.push(`\n💬 Recent:\n${recentHistory}`);
+    const recentLabel = isFrench ? 'Récent' : 'Recent';
+    parts.push(`\n💬 ${recentLabel}:\n${recentHistory}`);
   }
 
   // Current message
-  parts.push(`\nU: ${request.userMessage}\n\nRespond:`);
+  const respondLabel = isFrench ? 'Répondez:' : 'Respond:';
+  parts.push(`\nU: ${request.userMessage}\n\n${respondLabel}`);
 
   return parts.join('');
 }
