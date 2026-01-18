@@ -187,17 +187,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Determine confidence before generating response
     const confidence = determineConfidence(message);
-    
-    // If we have no knowledge, provide a graceful fallback
-    if (confidence === 'unknown') {
-      const fallbackResponse: SupportChatResponse = {
-        message: knowledgeBase.getUnknownResponse(),
-        suggestions: generateSuggestions(message, pagePath),
-        confidence: 'unknown',
-      };
-      res.json(fallbackResponse);
-      return;
-    }
 
     // Build prompt with knowledge context
     const prompt = buildSupportChatPrompt({
