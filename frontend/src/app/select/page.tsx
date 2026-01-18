@@ -51,11 +51,18 @@ function MapleMoose({ className = "w-12 h-12" }: { className?: string }) {
 }
 
 // Typewriter hook
-function useTypewriter(text: string, speed: number = 30, startTyping: boolean = true) {
-  const [displayedText, setDisplayedText] = useState('');
-  const [isComplete, setIsComplete] = useState(false);
+function useTypewriter(text: string, speed: number = 30, startTyping: boolean = true, skipAnimation: boolean = false) {
+  const [displayedText, setDisplayedText] = useState(skipAnimation ? text : '');
+  const [isComplete, setIsComplete] = useState(skipAnimation);
 
   useEffect(() => {
+    // If animation should be skipped, show full text immediately
+    if (skipAnimation) {
+      setDisplayedText(text);
+      setIsComplete(true);
+      return;
+    }
+
     if (!startTyping) {
       setDisplayedText('');
       setIsComplete(false);
@@ -77,7 +84,7 @@ function useTypewriter(text: string, speed: number = 30, startTyping: boolean = 
     }, speed);
 
     return () => clearInterval(timer);
-  }, [text, speed, startTyping]);
+  }, [text, speed, startTyping, skipAnimation]);
 
   return { displayedText, isComplete };
 }
@@ -121,7 +128,8 @@ export default function OnboardingPage() {
   const [showUpload, setShowUpload] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<Step>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [isSessionLoaded, setIsSessionLoaded] = useState(false);
+
   const steps: Step[] = ['language', 'name', 'intro', 'review', 'category-select', 'form-select'];
 
   // Load session
@@ -134,21 +142,25 @@ export default function OnboardingPage() {
         if (data.language) setStoreLanguage(data.language);
         if (data.currentStep) setCurrentStep(data.currentStep);
         if (data.completedSteps) setCompletedSteps(new Set(data.completedSteps));
+        if (data.selectedCategory) setSelectedCategory(data.selectedCategory);
       } catch (e) {
         console.error('Failed to load session:', e);
       }
     }
+    setIsSessionLoaded(true);
   }, [setStoreLanguage]);
 
-  // Save session
+  // Save session - only after initial load to prevent overwriting
   useEffect(() => {
+    if (!isSessionLoaded) return;
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
       name,
       language,
       currentStep,
       completedSteps: Array.from(completedSteps),
+      selectedCategory,
     }));
-  }, [name, language, currentStep, completedSteps]);
+  }, [name, language, currentStep, completedSteps, selectedCategory, isSessionLoaded]);
 
   const handleNext = () => {
     const currentIndex = steps.indexOf(currentStep);
@@ -206,7 +218,7 @@ export default function OnboardingPage() {
             <div className="flex flex-col gap-4 mt-8">
               <button
                 onClick={() => handleLanguageSelect('en')}
-                className={`p-6 rounded-2xl border-2 transition-all duration-200 text-left relative overflow-hidden group ${language === 'en' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-200 shadow-md' : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'}`}
+                className={`p-6 rounded-2xl border-2 transition-all duration-200 text-left relative overflow-hidden group cursor-pointer ${language === 'en' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-200 shadow-md' : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'}`}
               >
                 <div className="flex items-center gap-4">
                     <span className="text-4xl group-hover:scale-110 transition-transform duration-300">🇬🇧</span>
@@ -219,7 +231,7 @@ export default function OnboardingPage() {
               </button>
               <button
                 onClick={() => handleLanguageSelect('fr')}
-                className={`p-6 rounded-2xl border-2 transition-all duration-200 text-left relative overflow-hidden group ${language === 'fr' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-200 shadow-md' : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'}`}
+                className={`p-6 rounded-2xl border-2 transition-all duration-200 text-left relative overflow-hidden group cursor-pointer ${language === 'fr' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-200 shadow-md' : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'}`}
               >
                 <div className="flex items-center gap-4">
                     <span className="text-4xl group-hover:scale-110 transition-transform duration-300">⚜️</span>
@@ -234,7 +246,7 @@ export default function OnboardingPage() {
             
             <button
               onClick={handleNext}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5"
+              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
             >
               {t('common.buttons.continue')}
             </button>
@@ -260,7 +272,7 @@ export default function OnboardingPage() {
             <button
               onClick={handleNext}
               disabled={!name.trim()}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
               {t('common.buttons.continue')}
             </button>
@@ -270,9 +282,13 @@ export default function OnboardingPage() {
 
       case 'intro':
         const IntroContent = () => {
+          // Skip animation if user has already seen the intro (intro is in completedSteps)
+          const hasSeenIntro = completedSteps.has('intro');
           const { displayedText, isComplete } = useTypewriter(
             t('onboarding.intro.greeting', { name: name }),
-            30
+            30,
+            true,
+            hasSeenIntro
           );
           
           return (
@@ -295,7 +311,7 @@ export default function OnboardingPage() {
                 <div className="flex justify-end">
                     <button
                       onClick={handleNext}
-                      className="w-full sm:w-auto px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                      className="w-full sm:w-auto px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 cursor-pointer"
                     >
                       {t('common.buttons.letsDoIt')}
                       <ChevronRight size={20} />
@@ -340,9 +356,9 @@ export default function OnboardingPage() {
                         )}
                     </div>
                     {editingField !== 'name' && (
-                        <button 
+                        <button
                             onClick={() => setEditingField('name')}
-                            className="text-purple-600 opacity-0 group-hover:opacity-100 text-sm font-medium transition-opacity px-2 py-1"
+                            className="text-purple-600 opacity-0 group-hover:opacity-100 text-sm font-medium transition-opacity px-2 py-1 cursor-pointer"
                         >
                             Edit
                         </button>
@@ -357,13 +373,13 @@ export default function OnboardingPage() {
                             <div className="flex gap-2 mt-1">
                                 <button
                                     onClick={() => { setStoreLanguage('en'); setEditingField(null); }}
-                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${language === 'en' ? 'bg-purple-100 border-purple-300 text-purple-800' : 'bg-white border-gray-200 hover:bg-gray-50'}`}
+                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${language === 'en' ? 'bg-purple-100 border-purple-300 text-purple-800' : 'bg-white border-gray-200 hover:bg-gray-50'}`}
                                 >
                                     English
                                 </button>
                                 <button
                                     onClick={() => { setStoreLanguage('fr'); setEditingField(null); }}
-                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${language === 'fr' ? 'bg-purple-100 border-purple-300 text-purple-800' : 'bg-white border-gray-200 hover:bg-gray-50'}`}
+                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors cursor-pointer ${language === 'fr' ? 'bg-purple-100 border-purple-300 text-purple-800' : 'bg-white border-gray-200 hover:bg-gray-50'}`}
                                 >
                                     Français
                                 </button>
@@ -378,9 +394,9 @@ export default function OnboardingPage() {
                         )}
                     </div>
                     {editingField !== 'language' && (
-                        <button 
+                        <button
                             onClick={() => setEditingField('language')}
-                            className="text-purple-600 opacity-0 group-hover:opacity-100 text-sm font-medium transition-opacity px-2 py-1"
+                            className="text-purple-600 opacity-0 group-hover:opacity-100 text-sm font-medium transition-opacity px-2 py-1 cursor-pointer"
                         >
                             Edit
                         </button>
@@ -390,7 +406,7 @@ export default function OnboardingPage() {
 
             <button
               onClick={handleNext}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all mt-4"
+              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all mt-4 cursor-pointer"
             >
               {t('common.buttons.looksGood')}
             </button>
@@ -417,7 +433,7 @@ export default function OnboardingPage() {
                             setSelectedCategory(cat.id as 'legal' | 'finance' | 'immigration');
                             handleNext();
                         }}
-                        className="group relative p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-purple-500 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300 text-left overflow-hidden"
+                        className="group relative p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-purple-500 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300 text-left overflow-hidden cursor-pointer"
                     >
                         <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">{cat.icon}</div>
                         <h3 className="text-xl font-bold text-gray-900 mb-2">{t(`onboarding.categories.${cat.id}.title`)}</h3>
@@ -435,7 +451,7 @@ export default function OnboardingPage() {
              <div className="flex justify-center mt-8">
                  <button
                     onClick={() => setShowUpload(true)}
-                    className="flex items-center gap-2 px-6 py-3 text-gray-500 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all border border-dashed border-transparent hover:border-purple-200"
+                    className="flex items-center gap-2 px-6 py-3 text-gray-500 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all border border-dashed border-transparent hover:border-purple-200 cursor-pointer"
                  >
                     <Upload size={18} />
                     <span>{t('onboarding.categorySelect.uploadOwnPdf')}</span>
@@ -454,7 +470,7 @@ export default function OnboardingPage() {
         return (
            <div className="space-y-6 max-w-2xl mx-auto transition-all duration-500 ease-out">
              <div className="flex items-center gap-4 mb-6">
-                <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
                     <ArrowLeft size={20} className="text-gray-500" />
                 </button>
                 <div>
@@ -485,10 +501,10 @@ export default function OnboardingPage() {
                     </div>
                 ) : (
                     searchFiltered.map((form) => (
-                        <button 
+                        <button
                             key={form.id}
                             onClick={() => handleFormSelect(form)}
-                            className="w-full text-left p-4 rounded-xl border border-gray-200 bg-white hover:border-purple-500 hover:shadow-md transition-all group flex items-start gap-4"
+                            className="w-full text-left p-4 rounded-xl border border-gray-200 bg-white hover:border-purple-500 hover:shadow-md transition-all group flex items-start gap-4 cursor-pointer"
                         >
                             <div className="p-3 bg-gray-50 rounded-lg group-hover:bg-purple-50 transition-colors">
                                 <FileText size={24} className="text-gray-400 group-hover:text-purple-600 transition-colors" />
@@ -539,9 +555,9 @@ export default function OnboardingPage() {
       <div className="relative z-10 min-h-screen flex flex-col pt-8 pb-12 px-6">
          {/* Top Navigation / Progress */}
          <div className="w-full max-w-4xl mx-auto flex items-center justify-between mb-12">
-            <button 
+            <button
                 onClick={() => router.push('/')}
-                className="text-gray-400 hover:text-gray-900 transition-colors"
+                className="text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
                 title="Back to Home"
             >
                 <img src="/logo.svg" alt="Clarify" className="h-8 w-auto hidden" /> 
@@ -562,7 +578,7 @@ export default function OnboardingPage() {
                              disabled={isFuture}
                              className={`
                                 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                                ${isActive ? 'w-8 h-2.5 rounded-full bg-purple-600 shadow-sm' : 'w-2.5 h-2.5 rounded-full hover:scale-125'}
+                                ${isActive ? 'w-8 h-2.5 rounded-full bg-purple-600 shadow-sm cursor-pointer' : 'w-2.5 h-2.5 rounded-full hover:scale-125'}
                                 ${isCompleted ? 'bg-purple-300 hover:bg-purple-400 cursor-pointer' : ''}
                                 ${isFuture ? 'bg-gray-200 cursor-default' : ''}
                              `}

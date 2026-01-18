@@ -38,10 +38,10 @@ export default function LandingPage() {
         
         {/* Navigation */}
         <nav className="py-6 border-b border-purple-900 grid grid-cols-2 md:grid-cols-12 gap-8 items-center" aria-label={t('landing.aria.mainNavigation')}>
-          <div className="md:col-span-4 font-bold text-xl tracking-tighter flex items-center gap-2">
+          <Link href="/" className="md:col-span-4 font-bold text-xl tracking-tighter flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
             <div className="w-3 h-3 bg-purple-900 rounded-full"></div>
             {t('common.nav.brand')}
-          </div>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex md:col-span-8 justify-end items-center space-x-8 text-sm font-medium">
@@ -51,7 +51,7 @@ export default function LandingPage() {
             <div className="relative" ref={langDropdownRef}>
               <button
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:border-purple-900 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200"
+                className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:border-purple-900 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200 cursor-pointer"
                 aria-label={t('common.nav.selectLanguage')}
                 aria-expanded={isLangDropdownOpen}
                 aria-haspopup="listbox"
@@ -79,7 +79,7 @@ export default function LandingPage() {
                       setLanguage('en');
                       setIsLangDropdownOpen(false);
                     }}
-                    className={`w-full px-4 py-2.5 text-left text-sm font-medium flex items-center justify-between hover:bg-purple-50 transition-colors duration-150 ${
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium flex items-center justify-between hover:bg-purple-50 transition-colors duration-150 cursor-pointer ${
                       language === 'en' ? 'text-purple-900 bg-purple-50' : 'text-gray-700'
                     }`}
                     role="option"
@@ -97,7 +97,7 @@ export default function LandingPage() {
                       setLanguage('fr');
                       setIsLangDropdownOpen(false);
                     }}
-                    className={`w-full px-4 py-2.5 text-left text-sm font-medium flex items-center justify-between hover:bg-purple-50 transition-colors duration-150 ${
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium flex items-center justify-between hover:bg-purple-50 transition-colors duration-150 cursor-pointer ${
                       language === 'fr' ? 'text-purple-900 bg-purple-50' : 'text-gray-700'
                     }`}
                     role="option"
@@ -174,7 +174,7 @@ export default function LandingPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => setLanguage('en')}
-                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg border transition-all duration-200 cursor-pointer ${
                         language === 'en'
                           ? 'bg-purple-900 text-white border-purple-900'
                           : 'bg-white text-gray-700 border-gray-200 hover:border-purple-900 hover:bg-purple-50'
@@ -184,7 +184,7 @@ export default function LandingPage() {
                     </button>
                     <button
                       onClick={() => setLanguage('fr')}
-                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg border transition-all duration-200 cursor-pointer ${
                         language === 'fr'
                           ? 'bg-purple-900 text-white border-purple-900'
                           : 'bg-white text-gray-700 border-gray-200 hover:border-purple-900 hover:bg-purple-50'
@@ -244,7 +244,7 @@ export default function LandingPage() {
                   </Link>
 
                 <button
-                  className="inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-purple-900 border border-purple-500 rounded-lg hover:border-purple-800 hover:text-black hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200 w-full sm:w-auto"
+                  className="inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-purple-900 border border-purple-500 rounded-lg hover:border-purple-800 hover:text-black hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200 w-full sm:w-auto cursor-pointer"
                   aria-label={t('landing.aria.learnMore')}
                   onClick={() => document.getElementById('process-section-heading')?.scrollIntoView({ behavior: 'smooth' })}
                 >

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Send, MessageCircle, ChevronLeft, X, FileText } from 'lucide-react';
+import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
@@ -27,12 +27,41 @@ const PDFFormViewer = dynamic(() => import('@/components/PDFFormViewer').then(mo
   ssr: false,
   loading: () => (
     <div className="flex-1 flex items-center justify-center bg-gray-50">
-      <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
     </div>
   ),
 });
 
-// Chat Types
+// Maple the Moose mascot component
+function MapleMoose({ className = "w-8 h-8" }: { className?: string }) {
+  return (
+    <div className={`${className} bg-gradient-to-br from-amber-600 to-amber-800 rounded-full flex items-center justify-center shadow-md flex-shrink-0 border-2 border-white`}>
+      <svg viewBox="0 0 100 100" className="w-3/4 h-3/4">
+        {/* Antlers */}
+        <path d="M25 35 L20 20 L25 25 L22 10 L28 22 L30 15 L32 25 L35 30" fill="#8B4513" stroke="#5D3A1A" strokeWidth="2"/>
+        <path d="M75 35 L80 20 L75 25 L78 10 L72 22 L70 15 L68 25 L65 30" fill="#8B4513" stroke="#5D3A1A" strokeWidth="2"/>
+        {/* Ears */}
+        <ellipse cx="28" cy="42" rx="8" ry="6" fill="#D2691E"/>
+        <ellipse cx="72" cy="42" rx="8" ry="6" fill="#D2691E"/>
+        {/* Face */}
+        <ellipse cx="50" cy="55" rx="25" ry="22" fill="#D2691E"/>
+        {/* Muzzle */}
+        <ellipse cx="50" cy="65" rx="12" ry="10" fill="#DEB887"/>
+        {/* Nose */}
+        <ellipse cx="50" cy="62" rx="6" ry="4" fill="#2C1810"/>
+        {/* Eyes */}
+        <circle cx="40" cy="50" r="4" fill="#2C1810"/>
+        <circle cx="60" cy="50" r="4" fill="#2C1810"/>
+        <circle cx="41" cy="49" r="1.5" fill="white"/>
+        <circle cx="61" cy="49" r="1.5" fill="white"/>
+        {/* Friendly smile */}
+        <path d="M44 70 Q50 75 56 70" fill="none" stroke="#2C1810" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+}
+
+// Chat message type
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -72,17 +101,26 @@ function AIAssistantPanel({
     <div className="h-full flex flex-col bg-white overflow-hidden">
       {/* Header Info */}
       <div className="px-4 py-4 border-b border-gray-200">
-        <div className="flex items-center gap-2 mb-2">
-          <MessageCircle className="w-5 h-5 text-blue-600" />
-          <h3 className="font-semibold text-gray-900">{t('formview.assistant.title')}</h3>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <MapleMoose className="w-8 h-8" />
+            <span className="font-semibold text-gray-900">{t('formview.assistant.title')}</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors lg:hidden"
+            aria-label={t('formview.assistant.closeAssistant')}
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
         </div>
         <p className="text-sm text-gray-600">
           {t('formview.assistant.description')}
         </p>
         {activeContext && (
-          <div className="mt-3 bg-blue-50 border border-blue-100 rounded-lg p-3 animate-in fade-in slide-in-from-top-2 duration-300">
-            <p className="text-xs text-blue-600 font-medium mb-1">{t('formview.assistant.helpWith')}</p>
-            <p className="text-sm text-blue-900 line-clamp-2">{activeContext}</p>
+          <div className="mt-3 bg-purple-50 border border-purple-100 rounded-lg p-3">
+            <p className="text-xs text-purple-900 font-medium mb-1">{t('formview.assistant.helpWith')}</p>
+            <p className="text-sm text-purple-900 line-clamp-2">{activeContext}</p>
           </div>
         )}
       </div>
@@ -91,7 +129,7 @@ function AIAssistantPanel({
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
-            <MessageCircle className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+            <MapleMoose className="w-16 h-16 mx-auto mb-3" />
             <p className="text-sm text-gray-600">
               {t('formview.assistant.emptyTitle')}
             </p>
@@ -103,17 +141,16 @@ function AIAssistantPanel({
               key={index}
               className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
             >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
-                  }`}
-              >
-                <span className="text-xs font-medium">
-                  {message.role === 'user' ? t('formview.assistant.userLabel') : t('formview.assistant.aiLabel')}
-                </span>
-              </div>
+              {message.role === 'user' ? (
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-purple-900 text-white">
+                  <span className="text-xs font-medium">{t('formview.assistant.userLabel')}</span>
+                </div>
+              ) : (
+                <MapleMoose className="w-8 h-8" />
+              )}
               <div
                 className={`max-w-[80%] px-4 py-2 rounded-2xl ${message.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-br-md'
+                  ? 'bg-purple-900 text-white rounded-br-md'
                   : 'bg-gray-100 text-gray-800 rounded-bl-md'
                   }`}
               >
@@ -125,9 +162,7 @@ function AIAssistantPanel({
 
         {isLoading && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-              <span className="text-gray-600 text-xs">AI</span>
-            </div>
+            <MapleMoose className="w-8 h-8" />
             <div className="bg-gray-100 px-4 py-2 rounded-2xl rounded-bl-md">
               <div className="flex gap-1">
                 <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -151,12 +186,12 @@ function AIAssistantPanel({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={t('formview.assistant.inputPlaceholder')}
             disabled={isLoading}
-            className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed text-sm placeholder:text-gray-400"
+            className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-50 disabled:cursor-not-allowed text-sm placeholder:text-gray-400"
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="p-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2.5 bg-purple-900 text-white rounded-full hover:bg-black disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label={t('formview.assistant.sendMessage')}
           >
             <Send className="w-4 h-4" />
@@ -169,6 +204,7 @@ function AIAssistantPanel({
 
 export default function FormViewPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const [showContent, setShowContent] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -307,18 +343,54 @@ export default function FormViewPage() {
         <div className="px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 sm:gap-4">
-              <Link
-                href="/select"
-                className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors"
+              <button
+                onClick={() => {
+                  // Update session storage to go back to form-select step, not language
+                  const saved = sessionStorage.getItem('formbridge_onboarding');
+                  let data;
+                  if (saved) {
+                    try {
+                      data = JSON.parse(saved);
+                    } catch (e) {
+                      console.error('Failed to parse session:', e);
+                      data = {};
+                    }
+                  } else {
+                    data = {};
+                  }
+                  // Always set currentStep to form-select and mark previous steps as completed
+                  data.currentStep = 'form-select';
+                  data.completedSteps = ['language', 'name', 'intro', 'review', 'category-select'];
+                  // Preserve selectedCategory if not already set - try to get it from selectedForm
+                  if (!data.selectedCategory && selectedForm) {
+                    // Try to infer category from the form
+                    const formId = sessionStorage.getItem('selectedFormId');
+                    if (formId) {
+                      // Default to legal if we can't determine
+                      if (formId.includes('nda') || formId.includes('contract') || formId.includes('attorney')) {
+                        data.selectedCategory = 'legal';
+                      } else if (formId.includes('cra') || formId.includes('tax') || formId.includes('ontario-works') || formId.includes('gst')) {
+                        data.selectedCategory = 'finance';
+                      } else if (formId.includes('oinp') || formId.includes('immigration')) {
+                        data.selectedCategory = 'immigration';
+                      } else {
+                        data.selectedCategory = 'legal'; // fallback
+                      }
+                    }
+                  }
+                  sessionStorage.setItem('formbridge_onboarding', JSON.stringify(data));
+                  router.push('/select');
+                }}
+                className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                 aria-label={t('formview.header.back')}
               >
                 <ChevronLeft className="w-5 h-5 text-gray-500" />
-              </Link>
+              </button>
               <div className="h-5 w-px bg-gray-200 hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>
+              <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                <div className="w-2.5 h-2.5 bg-purple-900 rounded-full"></div>
                 <span className="font-bold text-lg text-gray-900 tracking-tight">{t('common.nav.brand')}</span>
-              </div>
+              </Link>
             </div>
 
             <div className="text-sm text-gray-500 hidden sm:block font-medium">
@@ -334,9 +406,9 @@ export default function FormViewPage() {
 
               {/* Mobile Sidebar Toggle */}
               <button
-                onClick={() => setShowMobileSidebar(true)}
-                className="lg:hidden p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors relative"
-                aria-label="Open controls"
+                onClick={() => setShowMobileChat(true)}
+                className="lg:hidden p-2 bg-purple-900 hover:bg-black text-white rounded-lg transition-colors"
+                aria-label={t('formview.assistant.openAssistant')}
               >
                 {activeTab === 'chat' ? <MessageCircle className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
               </button>
