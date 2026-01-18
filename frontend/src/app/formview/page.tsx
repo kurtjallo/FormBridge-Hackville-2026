@@ -9,6 +9,7 @@ import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
 import { useTranslation } from '@/i18n';
+import { Logo } from '@/components/Logo';
 
 // Helper to resolve PDF URLs - handles both absolute and relative API paths
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -395,10 +396,7 @@ export default function FormViewPage() {
                 <ChevronLeft className="w-5 h-5 text-gray-500" />
               </button>
               <div className="h-5 w-px bg-gray-200 hidden sm:block" />
-              <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                <div className="w-2.5 h-2.5 bg-purple-900 rounded-full"></div>
-                <span className="font-bold text-lg text-gray-900 tracking-tight">{t('common.nav.brand')}</span>
-              </Link>
+              <Logo size="lg" textClassName="font-bold text-xl text-gray-900 tracking-tight" />
             </div>
 
             <div className="text-sm text-gray-500 hidden sm:block">

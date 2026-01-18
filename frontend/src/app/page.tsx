@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/i18n';
 import { useFormStore } from '@/store/formStore';
+import { Logo } from '@/components/Logo';
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,11 +38,8 @@ export default function LandingPage() {
       <div className="relative z-10 max-w-screen-xl mx-auto px-6 sm:px-12 border-x border-dashed border-gray-200 min-h-screen flex flex-col">
         
         {/* Navigation */}
-        <nav className="py-6 border-b border-purple-900 grid grid-cols-2 md:grid-cols-12 gap-8 items-center" aria-label={t('landing.aria.mainNavigation')}>
-          <Link href="/" className="md:col-span-4 font-bold text-xl tracking-tighter flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-3 h-3 bg-purple-900 rounded-full"></div>
-            {t('common.nav.brand')}
-          </Link>
+        <nav className="py-0 border-b border-purple-900 grid grid-cols-2 md:grid-cols-12 gap-8 items-center" aria-label={t('landing.aria.mainNavigation')}>
+          <Logo className="md:col-span-4" size="2xl" textClassName="font-bold text-3xl tracking-tighter text-gray-900" />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex md:col-span-8 justify-end items-center space-x-8 text-sm font-medium">
