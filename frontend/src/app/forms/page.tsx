@@ -71,8 +71,16 @@ export default function FormsPage() {
     };
 
     const handleFormSelect = (form: PDFFormMeta) => {
+        // Store form data in sessionStorage for formview page
+        sessionStorage.setItem('selectedFormId', form.id);
+        sessionStorage.setItem('selectedFormName', form.name);
+        sessionStorage.setItem('selectedFormCode', form.id.toUpperCase());
+
+        // Also update store
         setSelectedForm(form);
-        router.push(`/forms/${form.id}`);
+
+        // Navigate to formview
+        router.push(`/formview`);
     };
 
     const handleUploadSuccess = (result: { id: string; name: string; pdfUrl: string }) => {
