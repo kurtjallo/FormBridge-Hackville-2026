@@ -222,7 +222,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                     <button
                         onClick={goToPrevPage}
                         disabled={viewer.currentPage <= 1}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         {t('pdf.toolbar.prev')}
                     </button>
@@ -235,7 +235,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                     <button
                         onClick={goToNextPage}
                         disabled={viewer.currentPage >= viewer.totalPages}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         {t('pdf.toolbar.next')}
                     </button>
@@ -246,7 +246,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                     <button
                         onClick={zoomOut}
                         disabled={viewer.scale <= 0.5}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         −
                     </button>
@@ -256,13 +256,13 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                     <button
                         onClick={zoomIn}
                         disabled={viewer.scale >= 3}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer"
                     >
                         +
                     </button>
                     <button
                         onClick={() => setScale(1)}
-                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-md text-sm font-medium text-gray-700 transition-colors ml-2"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-md text-sm font-medium text-gray-700 transition-colors cursor-pointer ml-2"
                     >
                         {t('pdf.toolbar.reset')}
                     </button>
@@ -278,7 +278,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                     <button
                         onClick={handleExport}
                         disabled={isExporting || !pdfBytes}
-                        className="flex items-center gap-2 px-4 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+                        className="flex items-center gap-2 px-4 py-1.5 bg-purple-900 text-white rounded-md hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors cursor-pointer"
                     >
                         {isExporting ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
