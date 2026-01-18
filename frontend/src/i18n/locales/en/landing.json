@@ -1,0 +1,37 @@
+{
+  "hero": {
+    "titleLine1": "Essential Services.",
+    "titleLine2": "Simplified.",
+    "subtitle": "A digital clarity system designed to make government forms accessible and understandable. We reduce cognitive load and guide you with precision through every step."
+  },
+  "process": {
+    "heading": "Our Three-Step Process"
+  },
+  "cards": {
+    "purpose": {
+      "label": "Purpose",
+      "title": "Clarity over complexity",
+      "description": "Navigating government assistance shouldn't be overwhelming. We've simplified complex forms with clear language, intuitive design, and immediate help when you need it most.",
+      "feature": "Plain language explanations"
+    },
+    "method": {
+      "label": "Method",
+      "title": "Guided step-by-step",
+      "description": "Each question is presented clearly with context and purpose. Our AI assistant provides instant explanations for any term or requirement, keeping you informed and confident throughout.",
+      "feature": "AI-powered assistance"
+    },
+    "result": {
+      "label": "Result",
+      "title": "Complete with confidence",
+      "description": "Real-time validation ensures your information is accurate before submission. Track your progress and review everything carefully before your final application submission.",
+      "feature": "Instant validation & review"
+    }
+  },
+  "aria": {
+    "mainNavigation": "Main navigation",
+    "startApplication": "Start filling out your application",
+    "learnMore": "Learn more about our process",
+    "toggleMenu": "Toggle menu",
+    "step": "Step"
+  }
+}

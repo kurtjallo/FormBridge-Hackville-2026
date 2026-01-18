@@ -1,0 +1,59 @@
+{
+  "panel": {
+    "title": "Help Assistant",
+    "backToForm": "Back to form",
+    "closeChat": "Close chat",
+    "currentQuestion": "Current Question",
+    "emptyTitle": "Ask me anything about this question!",
+    "emptySubtitle": "I can explain it in simple terms, give examples, or help you figure out your answer.",
+    "inputPlaceholder": "Type your question...",
+    "sendMessage": "Send message",
+    "connectionError": "Sorry, I had trouble connecting. Please check that the backend server is running and try again.",
+    "aiLabel": "AI"
+  },
+  "widget": {
+    "openAssistant": "Open chat assistant",
+    "needHelp": "Need help?",
+    "chatLabel": "Chat",
+    "assistantTitle": "Clarify Assistant",
+    "assistantSubtitle": "Here to help with your application",
+    "minimizeChat": "Minimize chat",
+    "closeChat": "Close chat",
+    "quickQuestions": "Quick questions:",
+    "inputPlaceholder": "Type your question...",
+    "sendMessage": "Send message",
+    "welcomeMessage": "Hi! I'm your Ontario Works assistant. I can help you fill out forms, explain terminology, and navigate the application. What can I help you with?",
+    "contextualWelcome": "Hi! I see you're on the {{title}} section. {{description}}. I can help explain any questions or terms here. What would you like to know?",
+    "fallbackResponses": {
+      "one": "I'm not sure about that specific question, but I can help you navigate the form or explain any terminology. Would you like me to explain a specific term?",
+      "two": "I don't have information about that in my knowledge base. However, I can help with questions about Ontario Works eligibility, the application process, or explain any confusing terms.",
+      "three": "That's outside my area of expertise. For specific questions about your case, I recommend contacting your local Ontario Works office. Is there anything about the application form I can help with?"
+    },
+    "quickSuggestions": {
+      "documents": "What documents do I need?",
+      "eligibility": "Am I eligible?",
+      "timeline": "How long does it take?",
+      "commonLaw": "Explain common-law"
+    },
+    "unknownSuggestions": {
+      "eligibility": "Tell me about eligibility",
+      "assetLimits": "Explain asset limits",
+      "benefitUnit": "What is a benefit unit?"
+    },
+    "basedOn": "Based on:",
+    "relatedLabel": "Related:",
+    "tellMeAbout": "Tell me about {{topic}}"
+  },
+  "quickActions": {
+    "meaningLabel": "What does this mean?",
+    "meaningMessage": "Can you explain what this question is asking in simple terms?",
+    "exampleLabel": "Give me an example",
+    "exampleMessage": "Can you give me an example of how to answer this question?",
+    "applyLabel": "Does my situation apply?",
+    "applyMessage": "How do I know if this question applies to my situation?"
+  },
+  "suggestion": {
+    "applied": "Applied!",
+    "label": "AI Suggestion (click to auto-fill)"
+  }
+}

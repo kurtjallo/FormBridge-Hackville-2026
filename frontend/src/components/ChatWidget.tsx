@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, MessageCircle, Minimize2, Maximize2, HelpCircle, Sparkles } from 'lucide-react';
 import { knowledgeBase, KnowledgeEntry } from '@/lib/knowledgeBase';
+import { useTranslation } from '@/i18n';
 
 // ============================================
 // TYPES
@@ -37,29 +38,12 @@ export interface ChatWidgetProps {
 }
 
 // ============================================
-// CONSTANTS
-// ============================================
-
-const FALLBACK_RESPONSES = [
-  "I'm not sure about that specific question, but I can help you navigate the form or explain any terminology. Would you like me to explain a specific term?",
-  "I don't have information about that in my knowledge base. However, I can help with questions about Ontario Works eligibility, the application process, or explain any confusing terms.",
-  "That's outside my area of expertise. For specific questions about your case, I recommend contacting your local Ontario Works office. Is there anything about the application form I can help with?",
-];
-
-const QUICK_SUGGESTIONS = [
-  'What documents do I need?',
-  'Am I eligible?',
-  'How long does it take?',
-  'Explain common-law',
-];
-
-// ============================================
 // MAIN COMPONENT
 // ============================================
 
 export function ChatWidget({
   pagePath = '/',
-  welcomeMessage = "Hi! I'm your Ontario Works assistant. I can help you fill out forms, explain terminology, and navigate the application. What can I help you with?",
+  welcomeMessage,
   position = 'bottom-right',
   initialOpen = false,
   className = '',
@@ -67,6 +51,29 @@ export function ChatWidget({
   apiEndpoint = '/api/support-chat',
   additionalContext,
 }: ChatWidgetProps) {
+  const { t } = useTranslation();
+
+  const fallbackResponses = [
+    t('chat.widget.fallbackResponses.one'),
+    t('chat.widget.fallbackResponses.two'),
+    t('chat.widget.fallbackResponses.three'),
+  ];
+
+  const quickSuggestions = [
+    t('chat.widget.quickSuggestions.documents'),
+    t('chat.widget.quickSuggestions.eligibility'),
+    t('chat.widget.quickSuggestions.timeline'),
+    t('chat.widget.quickSuggestions.commonLaw'),
+  ];
+
+  const unknownSuggestions = [
+    t('chat.widget.unknownSuggestions.eligibility'),
+    t('chat.widget.unknownSuggestions.assetLimits'),
+    t('chat.widget.unknownSuggestions.benefitUnit'),
+  ];
+
+  const baseWelcomeMessage = welcomeMessage || t('chat.widget.welcomeMessage');
+
   // State
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -107,9 +114,12 @@ export function ChatWidget({
       const pageKnowledge = knowledgeBase.getPageKnowledge(pagePath);
       const pageContext = knowledgeBase.getPageContext(pagePath);
       
-      let contextualWelcome = welcomeMessage;
+      let contextualWelcome = baseWelcomeMessage;
       if (pageContext && pageContext.title !== 'Home') {
-        contextualWelcome = `Hi! I see you're on the ${pageContext.title} section. ${pageContext.description}. I can help explain any questions or terms here. What would you like to know?`;
+        contextualWelcome = t('chat.widget.contextualWelcome', {
+          title: pageContext.title,
+          description: pageContext.description,
+        });
       }
 
       setMessages([{
@@ -117,11 +127,11 @@ export function ChatWidget({
         role: 'assistant',
         content: contextualWelcome,
         timestamp: Date.now(),
-        suggestions: QUICK_SUGGESTIONS,
+        suggestions: quickSuggestions,
         knowledgeUsed: pageKnowledge.map(k => k.id).slice(0, 3),
       }]);
     }
-  }, [isOpen, messages.length, pagePath, welcomeMessage]);
+  }, [isOpen, messages.length, pagePath, baseWelcomeMessage, quickSuggestions, t]);
 
   /**
    * Determine if the bot should admit it doesn't know
@@ -136,8 +146,8 @@ export function ChatWidget({
    * Get a fallback response for unknown questions
    */
   const getFallbackResponse = useCallback((): string => {
-    return FALLBACK_RESPONSES[Math.floor(Math.random() * FALLBACK_RESPONSES.length)];
-  }, []);
+    return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+  }, [fallbackResponses]);
 
   /**
    * Generate local response using knowledge base (fallback if API fails)
@@ -171,7 +181,7 @@ export function ChatWidget({
         role: 'assistant',
         content: getFallbackResponse(),
         timestamp: Date.now(),
-        suggestions: ['Tell me about eligibility', 'Explain asset limits', 'What is a benefit unit?'],
+        suggestions: unknownSuggestions,
       };
     }
 
@@ -181,7 +191,7 @@ export function ChatWidget({
 
     // Add related information if available
     if (results.length > 1 && results[1].category === topResult.category) {
-      content += `\n\nRelated: ${results[1].title} - ${results[1].content.slice(0, 100)}...`;
+      content += `\n\n${t('chat.widget.relatedLabel')} ${results[1].title} - ${results[1].content.slice(0, 100)}...`;
     }
 
     return {
@@ -192,10 +202,10 @@ export function ChatWidget({
       knowledgeUsed: results.map(r => r.id),
       suggestions: results[0].relatedEntries?.slice(0, 2).map(id => {
         const entry = knowledgeBase.getEntry(id);
-        return entry ? `Tell me about ${entry.title.toLowerCase()}` : '';
+        return entry ? t('chat.widget.tellMeAbout', { topic: entry.title.toLowerCase() }) : '';
       }).filter(Boolean),
     };
-  }, [getFallbackResponse]);
+  }, [getFallbackResponse, t, unknownSuggestions]);
 
   /**
    * Send message to AI backend
@@ -287,11 +297,11 @@ export function ChatWidget({
           bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 
           shadow-lg hover:shadow-xl transition-all duration-200
           flex items-center gap-2 group ${className}`}
-        aria-label="Open chat assistant"
+        aria-label={t('chat.widget.openAssistant')}
       >
         <MessageCircle className="w-6 h-6" />
         <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-200 whitespace-nowrap">
-          Need help?
+          {t('chat.widget.needHelp')}
         </span>
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs 
@@ -313,7 +323,7 @@ export function ChatWidget({
             shadow-lg flex items-center gap-2 transition-colors"
         >
           <MessageCircle className="w-5 h-5" />
-          <span>Chat</span>
+          <span>{t('chat.widget.chatLabel')}</span>
           <Maximize2 className="w-4 h-4" />
           {unreadCount > 0 && (
             <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 
@@ -343,22 +353,22 @@ export function ChatWidget({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-semibold">FormBridge Assistant</h3>
-              <p className="text-xs text-blue-100">Here to help with your application</p>
+              <h3 className="font-semibold">{t('chat.widget.assistantTitle')}</h3>
+              <p className="text-xs text-blue-100">{t('chat.widget.assistantSubtitle')}</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setIsMinimized(true)}
               className="p-2 hover:bg-white/10 rounded-full transition-colors hidden md:block"
-              aria-label="Minimize chat"
+              aria-label={t('chat.widget.minimizeChat')}
             >
               <Minimize2 className="w-4 h-4" />
             </button>
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 hover:bg-white/10 rounded-full transition-colors"
-              aria-label="Close chat"
+              aria-label={t('chat.widget.closeChat')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -387,7 +397,7 @@ export function ChatWidget({
                 <div className="mt-2 pt-2 border-t border-gray-200/50">
                   <p className="text-xs text-gray-400 flex items-center gap-1">
                     <HelpCircle className="w-3 h-3" />
-                    Based on: {message.knowledgeUsed.map(id => {
+                    {t('chat.widget.basedOn')} {message.knowledgeUsed.map(id => {
                       const entry = knowledgeBase.getEntry(id);
                       return entry?.title;
                     }).filter(Boolean).slice(0, 2).join(', ')}
@@ -436,9 +446,9 @@ export function ChatWidget({
       {/* Quick suggestions (shown initially) */}
       {showSuggestions && messages.length <= 1 && (
         <div className="px-4 py-2 bg-white border-t border-gray-100">
-          <p className="text-xs text-gray-500 mb-2">Quick questions:</p>
+          <p className="text-xs text-gray-500 mb-2">{t('chat.widget.quickQuestions')}</p>
           <div className="flex flex-wrap gap-2">
-            {QUICK_SUGGESTIONS.map((suggestion, idx) => (
+            {quickSuggestions.map((suggestion, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSuggestionClick(suggestion)}
@@ -463,7 +473,7 @@ export function ChatWidget({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Type your question..."
+            placeholder={t('chat.widget.inputPlaceholder')}
             disabled={isLoading}
             className="flex-1 px-4 py-2.5 bg-gray-100 border-0 rounded-full 
               focus:ring-2 focus:ring-blue-500 focus:bg-white
@@ -475,7 +485,7 @@ export function ChatWidget({
             className="p-2.5 bg-blue-600 text-white rounded-full 
               hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed 
               transition-colors flex items-center justify-center"
-            aria-label="Send message"
+            aria-label={t('chat.widget.sendMessage')}
           >
             <Send className="w-5 h-5" />
           </button>

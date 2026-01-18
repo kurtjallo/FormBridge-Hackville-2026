@@ -1,0 +1,30 @@
+{
+  "assistant": {
+    "title": "AI Assistant",
+    "description": "Click any highlighted text to get help understanding it.",
+    "helpWith": "Help with:",
+    "contextPrefix": "Form field: {{fieldId}}",
+    "emptyTitle": "Click any [?] button to get help",
+    "emptySubtitle": "I'll explain everything in simple terms",
+    "userLabel": "You",
+    "aiLabel": "AI",
+    "inputPlaceholder": "Type a question...",
+    "closeAssistant": "Close assistant",
+    "sendMessage": "Send message",
+    "openAssistant": "Open AI assistant",
+    "connectionError": "I'm having trouble connecting right now. Please try again in a moment, or check that the backend server is running."
+  },
+  "header": {
+    "back": "Go back",
+    "viewerTitle": "PDF Form Viewer"
+  },
+  "formsDetail": {
+    "back": "← Back",
+    "getAiHelp": "Get AI Help",
+    "assistantTitle": "AI Assistant",
+    "assistantSubtitle": "Click on any form field to get help",
+    "emptyTitle": "Select a field in the PDF to get a plain-language explanation",
+    "emptyBadge": "Coming in Phase 6",
+    "xfaBadge": "⚠️ XFA Form"
+  }
+}

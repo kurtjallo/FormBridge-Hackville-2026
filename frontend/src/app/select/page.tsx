@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useFormStore } from '@/store/formStore';
+import { useTranslation } from '@/i18n';
+import { Language } from '@/types';
 
 interface CategoryOption {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   available: boolean;
   icon: React.ReactNode;
 }
@@ -20,40 +23,85 @@ interface FormOption {
   popular?: boolean;
 }
 
-// FormBridge PDF Forms Database (matching actual PDFs in backend)
+// Ontario Government Forms Database (from Central Forms Repository)
 const formsDatabase: FormOption[] = [
-  // Legal - Actual PDF: Basic-Non-Disclosure-Agreement.pdf
-  { id: 'basic-nda', code: 'NDA', name: 'Basic Non-Disclosure Agreement', ministry: 'Standard NDA for protecting confidential information between parties', category: 'legal', popular: true },
+  // Financial Forms - T4 at the top for demo
+  { id: 't4-statement', code: 'T4', name: 'T4 Statement of Remuneration Paid', ministry: 'Canada Revenue Agency', category: 'financial', popular: true },
+  { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'financial', popular: true },
+  { id: '013-0169', code: '013-0169', name: 'Retail Sales Tax Exemption - Addendum to Sworn Statement', ministry: 'Ministry of Finance', category: 'financial', popular: true },
+  { id: '013-9983', code: '013-9983', name: 'Notice of Objection', ministry: 'Ministry of Finance', category: 'financial', popular: true },
+  { id: 'on00646', code: 'on00646', name: 'ODSP - Mandatory Special Necessities Benefit Application', ministry: 'Ministry of Children, Community and Social Services', category: 'financial', popular: true },
+  { id: '014-4819-67', code: '014-4819-67', name: 'Application for Funding Orthotic Devices', ministry: 'Ministry of Health', category: 'financial' },
+  { id: '014-4824-67', code: '014-4824-67', name: 'Application for Funding Visual Aids', ministry: 'Ministry of Health', category: 'financial' },
 
-  // Finance - Actual PDF: 5006-r-24e.pdf (CRA T1 Tax Form)
-  { id: 'cra-t1-tax', code: 'T1-5006', name: 'CRA T1 General Income Tax Form', ministry: 'Canada Revenue Agency - Ontario Tax Return', category: 'finance', popular: true },
+  // Health Forms
+  { id: '014-5048-45', code: '014-5048-45', name: 'AEMCA Examination Application', ministry: 'Ministry of Health', category: 'health', popular: true },
+  { id: 'on00413', code: 'on00413', name: 'Medical Assistance In Dying (MAiD) Death Report', ministry: 'Ministry of Health', category: 'health', popular: true },
+  { id: 'on00843', code: 'on00843', name: 'Tuition Support Program for Nurses - Return of Service Agreement', ministry: 'Ministry of Health', category: 'health' },
+  { id: 'on00817', code: 'on00817', name: 'Northern Health Travel Grant Application', ministry: 'Ministry of Health', category: 'health', popular: true },
+  { id: '014-4872-88', code: '014-4872-88', name: 'Application for Northern Physician Retention Initiative', ministry: 'Ministry of Health', category: 'health' },
+  { id: '014-4422-84', code: '014-4422-84', name: 'Laboratory Requisition - Requisitioning Physician', ministry: 'Ministry of Health', category: 'health' },
+
+  // Labor Forms
+  { id: '022-89-1889', code: '022-89-1889', name: 'Better Jobs Ontario Application', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor', popular: true },
+  { id: 'on00587', code: 'on00587', name: '2026 Summer Employment Opportunities Program Guidelines', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor', popular: true },
+  { id: 'on00905', code: 'on00905', name: 'Apply for an Extended Temporary Lay-Off', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor', popular: true },
+  { id: '016-1973', code: '016-1973', name: 'Application for Employment - Employment Standards Officer', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
+  { id: 'on00597', code: 'on00597', name: 'Apprenticeship TDA Approval Process Guidelines', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
+  { id: 'on00614', code: 'on00614', name: 'Service Provider EOIS-APPR Registration', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
+
+  // Immigration Forms - Work Permits, LMIA, PR, and Provincial Nominee
+  { id: 'lmia-application', code: 'EMP5593', name: 'Labour Market Impact Assessment (LMIA) Application', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'lmia-high-wage', code: 'EMP5626', name: 'LMIA Application - High-Wage Position', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'lmia-low-wage', code: 'EMP5627', name: 'LMIA Application - Low-Wage Position', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'lmia-agricultural', code: 'EMP5389', name: 'LMIA Application - Agricultural Stream', ministry: 'Employment and Social Development Canada', category: 'immigration' },
+  { id: 'lmia-global-talent', code: 'EMP5624', name: 'LMIA Application - Global Talent Stream', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
+  { id: 'work-permit', code: 'IMM1295', name: 'Application for Work Permit Made Outside of Canada', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'work-permit-inside', code: 'IMM5710', name: 'Application to Change Conditions or Extend Stay as a Worker', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pgwp', code: 'IMM5710', name: 'Post-Graduation Work Permit (PGWP) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'open-work-permit', code: 'IMM5710', name: 'Open Work Permit Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'pr-express-entry', code: 'IMM0008', name: 'Generic Application Form for Canada - Express Entry', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pr-family-sponsor', code: 'IMM1344', name: 'Application to Sponsor, Sponsorship Agreement and Undertaking', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pr-family-spouse', code: 'IMM5532', name: 'Relationship Information and Sponsorship Evaluation', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'pr-pnp', code: 'IMM0008', name: 'Provincial Nominee Program (PNP) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'oinp-skilled-worker', code: 'OINP-001', name: 'Ontario Immigrant Nominee Program - Skilled Worker Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration', popular: true },
+  { id: 'oinp-masters-grad', code: 'OINP-002', name: 'Ontario Immigrant Nominee Program - Masters Graduate Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration', popular: true },
+  { id: 'oinp-phd-grad', code: 'OINP-003', name: 'Ontario Immigrant Nominee Program - PhD Graduate Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'oinp-employer-job-offer', code: 'OINP-004', name: 'Ontario Immigrant Nominee Program - Employer Job Offer', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'oinp-entrepreneur', code: 'OINP-005', name: 'Ontario Immigrant Nominee Program - Entrepreneur Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'pr-card-renewal', code: 'IMM5444', name: 'Application for a Permanent Resident Card', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'pr-travel-doc', code: 'IMM5524', name: 'Application for a Permanent Resident Travel Document', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'citizenship-adult', code: 'CIT0002', name: 'Application for Canadian Citizenship - Adults', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'citizenship-minor', code: 'CIT0003', name: 'Application for Canadian Citizenship - Minors', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'study-permit', code: 'IMM1294', name: 'Application for Study Permit Made Outside of Canada', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
+  { id: 'study-permit-extend', code: 'IMM5709', name: 'Application to Change Conditions or Extend Stay as a Student', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'visitor-visa', code: 'IMM5257', name: 'Application for Visitor Visa (Temporary Resident Visa)', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'super-visa', code: 'IMM5257', name: 'Application for Super Visa - Parents and Grandparents', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'eta', code: 'IMM5257', name: 'Electronic Travel Authorization (eTA) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
+  { id: 'on00917', code: 'on00917', name: 'Commissioner and Notary Public Application', ministry: 'Ministry of the Attorney General', category: 'immigration' },
+  { id: 'on00684', code: 'on00684', name: 'EOIS-APPR Initial Application for Access for an Employer Subscriber', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+  { id: 'on00685', code: 'on00685', name: 'EOIS-APPR Application for Access for a Training Delivery Agent', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
+
+  // Children, Community & Social Services Forms
+  { id: 'on00860', code: 'on00860', name: 'Complex Special Needs (CSN) Referral Screener', ministry: 'Ministry of Children, Community and Social Services', category: 'children-community', popular: true },
+  { id: 'on00859', code: 'on00859', name: 'Coordinated Service Plan', ministry: 'Ministry of Children, Community and Social Services', category: 'children-community', popular: true },
+  { id: 'on00910', code: 'on00910', name: 'Seniors Active Living Centres Program Guidelines', ministry: 'Ministry for Seniors and Accessibility', category: 'children-community' },
+  { id: 'on00059', code: 'on00059', name: 'Animal Welfare Services Complaint Form', ministry: 'Ministry of Agriculture, Food and Rural Affairs', category: 'children-community' },
+
+  // Public & Business Services Forms
+  { id: 'on00724', code: 'on00724', name: 'Community Sport and Recreation Infrastructure Fund', ministry: 'Ministry of Public and Business Service Delivery', category: 'public-business', popular: true },
+  { id: 'on00891', code: 'on00891', name: 'OPP Special Constable Public Complaint Form', ministry: 'Ministry of the Solicitor General', category: 'public-business', popular: true },
+  { id: '008-0149', code: '008-0149', name: 'Invoice for Transportation of Dead Body', ministry: 'Ministry of the Solicitor General', category: 'public-business' },
+  { id: 'on00784', code: 'on00784', name: 'Private Gas Well Licence Application', ministry: 'Ministry of Natural Resources and Forestry', category: 'public-business' },
+  { id: '012-2132', code: '012-2132', name: 'Operator-in-Training Certificate and Licence Issuance', ministry: 'Ministry of Environment, Conservation and Parks', category: 'public-business' },
+  { id: '012-2130', code: '012-2130', name: 'Examination Registration', ministry: 'Ministry of Environment, Conservation and Parks', category: 'public-business' },
 ];
-
-// Map form IDs to their PDF URLs (matching actual PDFs in backend)
-const formPdfUrls: Record<string, string> = {
-  'basic-nda': 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf',
-  'cra-t1-tax': 'http://localhost:5001/forms/Finance/5006-r-24e.pdf',
-};
 
 const categoryOptions: CategoryOption[] = [
   {
-    id: 'legal',
-    title: 'Legal',
-    description: 'Non-disclosure agreements, contracts',
-    available: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-      </svg>
-    ),
-  },
-  {
-    id: 'finance',
-    title: 'Finance & Tax',
-    description: 'CRA tax forms, T1 returns',
+    id: 'financial',
+    titleKey: 'onboarding.categories.financial.title',
+    descriptionKey: 'onboarding.categories.financial.description',
     available: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -61,18 +109,70 @@ const categoryOptions: CategoryOption[] = [
       </svg>
     ),
   },
+  {
+    id: 'health',
+    titleKey: 'onboarding.categories.health.title',
+    descriptionKey: 'onboarding.categories.health.description',
+    available: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'labor',
+    titleKey: 'onboarding.categories.labor.title',
+    descriptionKey: 'onboarding.categories.labor.description',
+    available: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20 7h-9M14 17H5" />
+        <circle cx="17" cy="17" r="3" />
+        <circle cx="7" cy="7" r="3" />
+      </svg>
+    ),
+  },
+  {
+    id: 'immigration',
+    titleKey: 'onboarding.categories.immigration.title',
+    descriptionKey: 'onboarding.categories.immigration.description',
+    available: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'children-community',
+    titleKey: 'onboarding.categories.childrenCommunity.title',
+    descriptionKey: 'onboarding.categories.childrenCommunity.description',
+    available: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    id: 'public-business',
+    titleKey: 'onboarding.categories.publicBusiness.title',
+    descriptionKey: 'onboarding.categories.publicBusiness.description',
+    available: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4" />
+        <path d="M5 21V10.85M19 21V10.85" />
+      </svg>
+    ),
+  },
 ];
 
-type Step = 'name' | 'birthday' | 'intro' | 'review' | 'category-select' | 'form-select';
-
-const stepLabels: Record<Step, string> = {
-  'name': 'Your Name',
-  'birthday': 'Birthday',
-  'intro': 'Meet Maple',
-  'review': 'Review',
-  'category-select': 'Category',
-  'form-select': 'Select Form',
-};
+type Step = 'language' | 'name' | 'birthday' | 'intro' | 'review' | 'category-select' | 'form-select';
 
 const STORAGE_KEY = 'formbridge_onboarding';
 
@@ -148,7 +248,10 @@ function useTypewriter(text: string, speed: number = 30, startTyping: boolean = 
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<Step>('name');
+  const { t, language } = useTranslation();
+  const setLanguage = useFormStore((state) => state.setLanguage);
+
+  const [currentStep, setCurrentStep] = useState<Step>('language');
   const [showContent, setShowContent] = useState(true);
   const [hoveredStep, setHoveredStep] = useState<Step | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -162,7 +265,7 @@ export default function OnboardingPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Review inline editing
-  const [editingField, setEditingField] = useState<'name' | 'birthday' | null>(null);
+  const [editingField, setEditingField] = useState<'name' | 'birthday' | 'language' | null>(null);
   const [tempName, setTempName] = useState('');
   const [tempBirthday, setTempBirthday] = useState('');
 
@@ -185,13 +288,34 @@ export default function OnboardingPage() {
   const hasOtherCategoryResults = searchQuery && filteredForms.some(form => form.category !== selectedCategory);
 
   // Helper to get category title by id
-  const getCategoryTitle = (categoryId: string) => categoryOptions.find(c => c.id === categoryId)?.title || categoryId;
+  const getCategoryTitle = (categoryId: string) => {
+    const category = categoryOptions.find(c => c.id === categoryId);
+    return category ? t(category.titleKey) : categoryId;
+  };
+
+  // Steps array
+  const steps: Step[] = ['language', 'name', 'birthday', 'intro', 'review', 'category-select', 'form-select'];
+
+  // Get step labels using translations
+  const getStepLabel = (step: Step): string => {
+    const stepLabelsMap: Record<Step, string> = {
+      'language': t('onboarding.steps.language'),
+      'name': t('onboarding.steps.name'),
+      'birthday': t('onboarding.steps.birthday'),
+      'intro': t('onboarding.steps.intro'),
+      'review': t('onboarding.steps.review'),
+      'category-select': t('onboarding.steps.categorySelect'),
+      'form-select': t('onboarding.steps.formSelect'),
+    };
+    return stepLabelsMap[step];
+  };
 
   // Stagger buttons animation
   useEffect(() => {
-    if ((currentStep === 'category-select' || currentStep === 'form-select') && showContent) {
+    if ((currentStep === 'category-select' || currentStep === 'form-select' || currentStep === 'language') && showContent) {
       setVisibleForms(0);
-      const itemCount = currentStep === 'category-select' ? categoryOptions.length : filteredForms.length;
+      const itemCount = currentStep === 'category-select' ? categoryOptions.length :
+                        currentStep === 'language' ? 2 : filteredForms.length;
       const timer = setInterval(() => {
         setVisibleForms(prev => {
           if (prev >= itemCount) {
@@ -254,7 +378,6 @@ export default function OnboardingPage() {
   }, [currentStep]);
 
   const canNavigateToStep = (step: Step): boolean => {
-    const steps: Step[] = ['name', 'birthday', 'intro', 'review', 'category-select', 'form-select'];
     const targetIndex = steps.indexOf(step);
     const currentIndex = steps.indexOf(currentStep);
 
@@ -274,6 +397,11 @@ export default function OnboardingPage() {
     if (canNavigateToStep(step) && step !== currentStep) {
       transitionToStep(step, false);
     }
+  };
+
+  const handleLanguageSelect = (lang: Language) => {
+    setLanguage(lang);
+    transitionToStep('name');
   };
 
   const handleNameSubmit = (e: React.FormEvent) => {
@@ -314,15 +442,11 @@ export default function OnboardingPage() {
       // Store user data in sessionStorage for the form
       sessionStorage.setItem('userName', name);
       sessionStorage.setItem('userBirthday', birthday);
+      sessionStorage.setItem('userLanguage', language);
       sessionStorage.setItem('selectedCategory', selectedCategory);
-      sessionStorage.setItem('selectedFormId', formId);
+      sessionStorage.setItem('selectedForm', formId);
       sessionStorage.setItem('selectedFormName', form.name);
       sessionStorage.setItem('selectedFormCode', form.code);
-      // Store the PDF URL directly so formview can use it
-      const pdfUrl = formPdfUrls[formId];
-      if (pdfUrl) {
-        sessionStorage.setItem('selectedFormPdfUrl', pdfUrl);
-      }
       // Clear onboarding data after successful completion
       localStorage.removeItem(STORAGE_KEY);
       router.push('/formview');
@@ -330,7 +454,6 @@ export default function OnboardingPage() {
   };
 
   const goBack = () => {
-    const steps: Step[] = ['name', 'birthday', 'intro', 'review', 'category-select', 'form-select'];
     const currentIndex = steps.indexOf(currentStep);
     if (currentIndex > 0) {
       transitionToStep(steps[currentIndex - 1], false);
@@ -363,8 +486,10 @@ export default function OnboardingPage() {
   const formatDisplayDate = (dateStr: string): string => {
     if (!isValidDate(dateStr)) return dateStr;
     const [year, month, day] = dateStr.split('/');
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
+    const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthsFr = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
+    const months = language === 'fr' ? monthsFr : monthsEn;
+    return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -372,12 +497,10 @@ export default function OnboardingPage() {
     setBirthday(formatted);
   };
 
-  const steps: Step[] = ['name', 'birthday', 'intro', 'review', 'category-select', 'form-select'];
-
-  const introMessage = `Hey ${name}! I'm Maple the Moose! Your friendly guide through the paperwork wilderness. I'll help you every step of the way. Let's get started, eh?`;
+  const introMessage = t('onboarding.intro.greeting', { name });
 
   // Get category title for form selection header
-  const selectedCategoryTitle = categoryOptions.find(c => c.id === selectedCategory)?.title || '';
+  const selectedCategoryTitle = getCategoryTitle(selectedCategory);
 
   const { displayedText, isComplete } = useTypewriter(
     introMessage,
@@ -406,7 +529,7 @@ export default function OnboardingPage() {
 
       <div className="relative z-10 h-screen flex flex-col items-center justify-center px-6 py-8">
         {/* Progress indicator with tooltips */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 flex gap-2 items-center">
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 items-center">
           {steps.map((step) => {
             const isActive = currentStep === step;
             const isCompleted = completedSteps.has(step);
@@ -416,8 +539,8 @@ export default function OnboardingPage() {
             return (
               <div key={step} className="relative">
                 {isHovered && (
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md shadow-lg z-50">
-                    {stepLabels[step]}
+                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md shadow-lg z-50">
+                    {getStepLabel(step)}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
                   </div>
                 )}
@@ -426,7 +549,7 @@ export default function OnboardingPage() {
                   onMouseEnter={() => setHoveredStep(step)}
                   onMouseLeave={() => setHoveredStep(null)}
                   disabled={!canClick}
-                  aria-label={`Go to ${stepLabels[step]}${isActive ? ' (current)' : ''}`}
+                  aria-label={`${getStepLabel(step)}${isActive ? ' (current)' : ''}`}
                   aria-current={isActive ? 'step' : undefined}
                   className={`h-2.5 rounded-full transition-all duration-300 ${
                     canClick ? 'cursor-pointer' : 'cursor-not-allowed'
@@ -443,6 +566,11 @@ export default function OnboardingPage() {
           })}
         </div>
 
+        {/* Step label */}
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 text-[10px] font-medium text-gray-400 uppercase tracking-widest">
+          {t('onboarding.stepIndicator', { current: (steps.indexOf(currentStep) + 1).toString(), total: steps.length.toString() })}
+        </div>
+
         {/* Content container */}
         <div
           className={`w-full transition-all duration-300 ease-out ${
@@ -451,34 +579,114 @@ export default function OnboardingPage() {
             showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
+          {/* Step 0: Language Selection */}
+          {currentStep === 'language' && (
+            <div className="text-center">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-2">
+                {t('onboarding.language.title')}
+              </h1>
+              <p className="text-gray-500 text-sm mb-1">
+                {t('onboarding.language.subtitle')}
+              </p>
+              <p className="text-gray-400 text-sm mb-6">
+                {t('onboarding.language.chooseLanguage')}
+              </p>
+
+              <div className="space-y-3 max-w-xs mx-auto">
+                <button
+                  onClick={() => handleLanguageSelect('en')}
+                  style={{
+                    opacity: 0 < visibleForms ? 1 : 0,
+                    transform: 0 < visibleForms ? 'translateY(0)' : 'translateY(10px)',
+                    transition: 'opacity 0.2s ease-out, transform 0.2s ease-out',
+                  }}
+                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center gap-4 ${
+                    language === 'en'
+                      ? 'border-gray-900 bg-gray-50'
+                      : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-xl">
+                    🇬🇧
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">{t('onboarding.language.english')}</h3>
+                    <p className="text-sm text-gray-500">{t('onboarding.language.continueEnglish')}</p>
+                  </div>
+                  {language === 'en' && (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-900">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => handleLanguageSelect('fr')}
+                  style={{
+                    opacity: 1 < visibleForms ? 1 : 0,
+                    transform: 1 < visibleForms ? 'translateY(0)' : 'translateY(10px)',
+                    transition: 'opacity 0.2s ease-out, transform 0.2s ease-out',
+                  }}
+                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center gap-4 ${
+                    language === 'fr'
+                      ? 'border-gray-900 bg-gray-50'
+                      : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-xl">
+                    🇫🇷
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">{t('onboarding.language.french')}</h3>
+                    <p className="text-sm text-gray-500">{t('onboarding.language.continueFrench')}</p>
+                  </div>
+                  {language === 'fr' && (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-900">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Step 1: Name */}
           {currentStep === 'name' && (
             <form onSubmit={handleNameSubmit} className="text-center">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-3">
-                What's your name?
+                {t('onboarding.name.title')}
               </h1>
               <p className="text-gray-500 text-sm mb-6">
-                We'll use this to personalize your experience.
+                {t('onboarding.name.subtitle')}
               </p>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder={t('onboarding.name.placeholder')}
                 autoFocus
                 className="w-full max-w-xs mx-auto block text-center text-base font-medium bg-gray-50 text-gray-900 border-2 border-gray-700 focus:border-gray-900 outline-none py-3 px-4 rounded-xl transition-all duration-200 placeholder:text-gray-400"
               />
-              <button
-                type="submit"
-                disabled={!name.trim()}
-                className={`mt-8 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
-                  name.trim()
-                    ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                Continue
-              </button>
+              <div className="mt-8 flex gap-3 justify-center">
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                >
+                  {t('common.buttons.back')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={!name.trim()}
+                  className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                    name.trim()
+                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {t('common.buttons.continue')}
+                </button>
+              </div>
             </form>
           )}
 
@@ -486,41 +694,41 @@ export default function OnboardingPage() {
           {currentStep === 'birthday' && (
             <form onSubmit={handleBirthdaySubmit} className="text-center">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-3">
-                When's your birthday?
+                {t('onboarding.birthday.title')}
               </h1>
               <p className="text-gray-500 text-sm mb-6">
-                This helps verify eligibility for programs.
+                {t('onboarding.birthday.subtitle')}
               </p>
               <input
                 type="text"
                 value={birthday}
                 onChange={handleDateChange}
-                placeholder="YYYY/MM/DD"
+                placeholder={t('onboarding.birthday.placeholder')}
                 maxLength={10}
                 autoFocus
                 className="w-full max-w-xs mx-auto block text-center text-base font-medium bg-gray-50 text-gray-900 border-2 border-gray-700 focus:border-gray-900 outline-none py-3 px-4 rounded-xl transition-all duration-200 placeholder:text-gray-400 font-mono tracking-wider"
               />
               {birthday && !isValidDate(birthday) && birthday.length === 10 && (
-                <p className="text-red-500 text-xs mt-2">Please enter a valid date</p>
+                <p className="text-red-500 text-xs mt-2">{t('onboarding.birthday.invalidDate')}</p>
               )}
               <div className="mt-8 flex gap-3 justify-center">
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
                 >
-                  Back
+                  {t('common.buttons.back')}
                 </button>
                 <button
                   type="submit"
                   disabled={!isValidDate(birthday)}
                   className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
                     isValidDate(birthday)
-                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  Continue
+                  {t('common.buttons.continue')}
                 </button>
               </div>
             </form>
@@ -544,20 +752,16 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
                 >
-                  Back
+                  {t('common.buttons.back')}
                 </button>
                 <button
                   onClick={handleIntroComplete}
                   disabled={!isComplete}
-                  className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
-                    isComplete
-                      ? 'bg-gray-900 text-white hover:bg-gray-600 cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
+                  className="px-6 py-3 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-600 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Let's do it!
+                  {t('common.buttons.letsDoIt')}
                 </button>
               </div>
             </div>
@@ -567,18 +771,53 @@ export default function OnboardingPage() {
           {currentStep === 'review' && (
             <div className="text-center">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-3">
-                Review your info
+                {t('onboarding.review.title')}
               </h1>
               <p className="text-gray-500 text-sm mb-6">
-                Click any field to edit it directly.
+                {t('onboarding.review.subtitle')}
               </p>
 
               <div className="space-y-3 mb-6">
+                {/* Language Field */}
+                <div className="w-full max-w-xs mx-auto">
+                  <button
+                    onClick={() => setEditingField('language')}
+                    className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 group"
+                  >
+                    <span className="text-xs text-gray-500 uppercase tracking-wider">{t('onboarding.review.languageLabel')}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-900">
+                        {language === 'en' ? t('onboarding.language.english') : t('onboarding.language.french')}
+                      </span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 group-hover:text-gray-600">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </div>
+                  </button>
+                  {editingField === 'language' && (
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        onClick={() => { setLanguage('en'); setEditingField(null); }}
+                        className={`flex-1 p-2 rounded-lg border text-sm font-medium transition-all ${language === 'en' ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 hover:border-gray-400'}`}
+                      >
+                        {t('onboarding.language.english')}
+                      </button>
+                      <button
+                        onClick={() => { setLanguage('fr'); setEditingField(null); }}
+                        className={`flex-1 p-2 rounded-lg border text-sm font-medium transition-all ${language === 'fr' ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 hover:border-gray-400'}`}
+                      >
+                        {t('onboarding.language.french')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 {/* Name Field */}
                 <div className="w-full max-w-xs mx-auto">
                   {editingField === 'name' ? (
                     <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-xl border-2 border-gray-700">
-                      <span className="text-xs text-gray-500 uppercase tracking-wider px-1">Name</span>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider px-1">{t('onboarding.review.nameLabel')}</span>
                       <input
                         type="text"
                         value={tempName}
@@ -625,7 +864,7 @@ export default function OnboardingPage() {
                       }}
                       className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 group"
                     >
-                      <span className="text-xs text-gray-500 uppercase tracking-wider">Name</span>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider">{t('onboarding.review.nameLabel')}</span>
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900">{name}</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 group-hover:text-gray-600">
@@ -641,12 +880,12 @@ export default function OnboardingPage() {
                 <div className="w-full max-w-xs mx-auto">
                   {editingField === 'birthday' ? (
                     <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-xl border-2 border-gray-700">
-                      <span className="text-xs text-gray-500 uppercase tracking-wider px-1">Birthday</span>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider px-1">{t('onboarding.review.birthdayLabel')}</span>
                       <input
                         type="text"
                         value={tempBirthday}
                         onChange={(e) => setTempBirthday(formatDateInput(e.target.value))}
-                        placeholder="YYYY/MM/DD"
+                        placeholder={t('onboarding.birthday.placeholder')}
                         maxLength={10}
                         autoFocus
                         className="flex-1 text-right font-medium text-gray-900 bg-transparent outline-none font-mono"
@@ -691,7 +930,7 @@ export default function OnboardingPage() {
                       }}
                       className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 group"
                     >
-                      <span className="text-xs text-gray-500 uppercase tracking-wider">Birthday</span>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider">{t('onboarding.review.birthdayLabel')}</span>
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900">{formatDisplayDate(birthday)}</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 group-hover:text-gray-600">
@@ -708,9 +947,9 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
                 >
-                  Back
+                  {t('common.buttons.back')}
                 </button>
                 <button
                   onClick={handleReviewComplete}
@@ -718,10 +957,10 @@ export default function OnboardingPage() {
                   className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                     editingField !== null
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-gray-900 text-white hover:bg-gray-600 cursor-pointer'
+                      : 'bg-gray-900 text-white hover:bg-gray-600'
                   }`}
                 >
-                  Looks good!
+                  {t('common.buttons.looksGood')}
                 </button>
               </div>
             </div>
@@ -730,14 +969,14 @@ export default function OnboardingPage() {
           {/* Step 5: Category Selection */}
           {currentStep === 'category-select' && (
             <div className="text-center w-full max-w-xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
-                Select a category
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
+                {t('onboarding.categorySelect.title')}
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mb-6">
-                Which category best fits your form?
+              <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">
+                {t('onboarding.categorySelect.subtitle')}
               </p>
 
-              <div className="space-y-2 sm:space-y-3 mb-6 max-h-[50vh] overflow-y-auto">
+              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-[50vh] overflow-y-auto">
                 {categoryOptions.map((category: CategoryOption, index: number) => (
                   <button
                     key={category.id}
@@ -760,16 +999,16 @@ export default function OnboardingPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className={`font-medium text-sm sm:text-base ${category.available ? 'text-gray-900' : 'text-gray-500'}`}>
-                          {category.title}
+                          {t(category.titleKey)}
                         </h3>
                         {!category.available && (
                           <span className="text-[10px] font-medium px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded">
-                            Soon
+                            {t('onboarding.categorySelect.soon')}
                           </span>
                         )}
                       </div>
                       <p className={`text-xs sm:text-sm ${category.available ? 'text-gray-500' : 'text-gray-400'}`}>
-                        {category.description}
+                        {t(category.descriptionKey)}
                       </p>
                     </div>
                     {category.available && (
@@ -784,9 +1023,9 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200 cursor-pointer"
+                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200"
               >
-                ← Back to review
+                {t('onboarding.categorySelect.backToReview')}
               </button>
             </div>
           )}
@@ -794,15 +1033,15 @@ export default function OnboardingPage() {
           {/* Step 6: Form Selection */}
           {currentStep === 'form-select' && (
             <div className="text-center w-full max-w-xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
-                {searchQuery ? 'Search Results' : `${selectedCategoryTitle} Forms`}
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
+                {searchQuery ? t('onboarding.formSelect.searchTitle') : t('onboarding.formSelect.title', { category: selectedCategoryTitle })}
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mb-6">
-                Search by name or form code
+              <p className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4">
+                {t('onboarding.formSelect.subtitle')}
               </p>
 
               {/* Search Input */}
-              <div className="relative mb-6">
+              <div className="relative mb-4 sm:mb-5">
                 <svg
                   width="18"
                   height="18"
@@ -819,17 +1058,19 @@ export default function OnboardingPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by form name or code..."
+                  placeholder={t('onboarding.formSelect.searchPlaceholder')}
                   className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-sm sm:text-base bg-gray-50 text-gray-900 border-2 border-gray-200 focus:border-gray-400 outline-none rounded-xl transition-all duration-200 placeholder:text-gray-400"
                 />
               </div>
 
               {/* Search results info */}
               {searchQuery && (
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
                   <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    {filteredForms.length} {filteredForms.length === 1 ? 'result' : 'results'} found
-                    {hasOtherCategoryResults && ' across all categories'}
+                    {filteredForms.length === 1
+                      ? t('onboarding.formSelect.resultsFound', { count: filteredForms.length.toString() })
+                      : t('onboarding.formSelect.resultsFoundPlural', { count: filteredForms.length.toString() })}
+                    {hasOtherCategoryResults && t('onboarding.formSelect.acrossCategories')}
                   </span>
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
@@ -837,14 +1078,14 @@ export default function OnboardingPage() {
 
               {/* Popular Forms Label */}
               {!searchQuery && popularForms.length > 0 && (
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">Popular Forms</span>
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">{t('onboarding.formSelect.popularForms')}</span>
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
               )}
 
               {/* Forms List */}
-              <div className="space-y-2 sm:space-y-3 mb-6 max-h-[40vh] sm:max-h-[45vh] overflow-y-auto">
+              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-[40vh] sm:max-h-[45vh] overflow-y-auto">
                 {filteredForms.length > 0 ? (
                   filteredForms.map((form: FormOption, index: number) => (
                     <button
@@ -868,7 +1109,7 @@ export default function OnboardingPage() {
                           </h3>
                           {form.popular && !searchQuery && (
                             <span className="text-[10px] sm:text-xs font-medium px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded flex-shrink-0">
-                              Popular
+                              {t('onboarding.formSelect.popular')}
                             </span>
                           )}
                           {/* Show category badge when searching across all categories */}
@@ -889,12 +1130,12 @@ export default function OnboardingPage() {
                   ))
                 ) : (
                   <div className="py-8 sm:py-10 text-center">
-                    <p className="text-gray-500 text-sm sm:text-base">No forms found matching "{searchQuery}"</p>
+                    <p className="text-gray-500 text-sm sm:text-base">{t('onboarding.formSelect.noResults', { query: searchQuery })}</p>
                     <button
                       onClick={() => setSearchQuery('')}
                       className="mt-2 text-xs sm:text-sm text-gray-400 hover:text-gray-600"
                     >
-                      Clear search
+                      {t('onboarding.formSelect.clearSearch')}
                     </button>
                   </div>
                 )}
@@ -903,9 +1144,9 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200 cursor-pointer"
+                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200"
               >
-                ← Back to categories
+                {t('onboarding.formSelect.backToCategories')}
               </button>
             </div>
           )}
@@ -913,7 +1154,7 @@ export default function OnboardingPage() {
 
         {/* Footer */}
         <div className="absolute bottom-4 text-[10px] text-gray-400">
-          © 2026 Hackville FormBridge
+          {t('common.footer.hackville')}
         </div>
       </div>
     </div>

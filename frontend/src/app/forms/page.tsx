@@ -7,8 +7,10 @@ import { FormList } from '@/components/FormList';
 import { SAMPLE_PDF_FORMS, getFormCountByCategory } from '@/data/sampleForms';
 import { usePDFStore } from '@/store/pdfStore';
 import { PDFFormMeta, FormCategory } from '@/types/pdf';
+import { useTranslation } from '@/i18n';
 
 export default function FormsPage() {
+    const { t } = useTranslation();
     const router = useRouter();
     const { selectedCategory, setSelectedForm } = usePDFStore();
     const [showForms, setShowForms] = useState(false);
@@ -41,15 +43,15 @@ export default function FormsPage() {
                         <div className="flex items-center gap-3">
                             <span className="text-2xl">📋</span>
                             <div>
-                                <h1 className="text-xl font-bold text-white">FormBridge</h1>
-                                <p className="text-gray-400 text-sm">AI-powered form assistance</p>
+                                <h1 className="text-xl font-bold text-white">{t('common.nav.brand')}</h1>
+                                <p className="text-gray-400 text-sm">{t('forms.formsPage.brandSubtitle')}</p>
                             </div>
                         </div>
                         <button
                             onClick={() => router.push('/')}
                             className="text-gray-400 hover:text-white text-sm"
                         >
-                            ← Back to Home
+                            {t('forms.formsPage.backToHome')}
                         </button>
                     </div>
                 </div>
@@ -81,10 +83,10 @@ export default function FormsPage() {
                     <section className="mt-8 pt-8 border-t border-gray-800">
                         <div className="text-center mb-8">
                             <h2 className="text-2xl font-bold text-white mb-2">
-                                Or browse all forms
+                                {t('forms.formsPage.browseAllTitle')}
                             </h2>
                             <p className="text-gray-400">
-                                Select a category above or browse our complete form library
+                                {t('forms.formsPage.browseAllSubtitle')}
                             </p>
                         </div>
                         <FormList
@@ -98,7 +100,7 @@ export default function FormsPage() {
             {/* Footer */}
             <footer className="border-t border-gray-800 mt-12">
                 <div className="max-w-7xl mx-auto px-6 py-6 text-center text-gray-500 text-sm">
-                    FormBridge — Making forms accessible with AI
+                    {t('forms.formsPage.footerTagline')}
                 </div>
             </footer>
         </div>

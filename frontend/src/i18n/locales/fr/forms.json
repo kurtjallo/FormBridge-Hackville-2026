@@ -1,0 +1,49 @@
+{
+  "categorySelector": {
+    "title": "Choisir une catégorie",
+    "subtitle": "Sélectionnez une catégorie de formulaire pour commencer",
+    "clearSelection": "Effacer la sélection",
+    "formCountSingle": "{{count}} formulaire disponible",
+    "formCountPlural": "{{count}} formulaires disponibles"
+  },
+  "formList": {
+    "title": "Formulaires disponibles",
+    "emptyTitle": "Aucun formulaire disponible",
+    "emptySubtitleCategory": "Aucun formulaire dans cette catégorie pour le moment. Revenez bientôt.",
+    "emptySubtitleDefault": "Sélectionnez une catégorie pour voir les formulaires disponibles."
+  },
+  "formCard": {
+    "difficulty": {
+      "easy": "facile",
+      "medium": "moyen",
+      "hard": "difficile"
+    },
+    "estimatedTime": "⏱️ {{time}}",
+    "pages": "📄 {{count}} pages"
+  },
+  "formsPage": {
+    "brandSubtitle": "Assistance aux formulaires propulsée par l’IA",
+    "backToHome": "← Retour à l’accueil",
+    "browseAllTitle": "Ou parcourir tous les formulaires",
+    "browseAllSubtitle": "Sélectionnez une catégorie ci-dessus ou parcourez notre bibliothèque complète",
+    "footerTagline": "Clarify — Rendre les formulaires accessibles grâce à l’IA"
+  },
+  "header": {
+    "subtitle": "Assistant pour la demande Ontario Works"
+  },
+  "formPage": {
+    "sessionAutoSaved": "Session : {{id}}... (enregistrement automatique)"
+  },
+  "progress": {
+    "label": "Progression : {{completed}} sur {{total}} sections terminées"
+  },
+  "section": {
+    "label": "Section {{number}}"
+  },
+  "fields": {
+    "selectPlaceholder": "Sélectionnez une option...",
+    "textPlaceholder": "Saisissez votre réponse...",
+    "numberPlaceholder": "Saisissez un nombre...",
+    "helpTitle": "Obtenir de l’aide pour cette question"
+  }
+}

@@ -9,8 +9,10 @@ import { SuggestionButton } from './SuggestionButton';
 import { chatWithAI } from '@/lib/api';
 import { ChatMessage as ChatMessageType, FormQuestion } from '@/types';
 import { X, Send, MessageCircle, ChevronLeft } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 export function ChatPanel() {
+  const { t } = useTranslation();
   const activeQuestionId = useFormStore((state) => state.activeQuestionId);
   const setActiveQuestion = useFormStore((state) => state.setActiveQuestion);
   const conversations = useFormStore((state) => state.conversations);
@@ -105,7 +107,7 @@ export function ChatPanel() {
       console.error('Chat error:', error);
       const errorMessage: ChatMessageType = {
         role: 'assistant',
-        content: 'Sorry, I had trouble connecting. Please check that the backend server is running and try again.',
+        content: t('chat.panel.connectionError'),
         timestamp: Date.now(),
       };
       addMessage(activeQuestionId, errorMessage);
@@ -136,23 +138,23 @@ export function ChatPanel() {
             <button
               onClick={() => setActiveQuestion(null)}
               className="md:hidden p-1 hover:bg-gray-200 rounded-full transition-colors mr-2"
-              aria-label="Back to form"
+              aria-label={t('chat.panel.backToForm')}
             >
               <ChevronLeft className="w-5 h-5 text-gray-500" />
             </button>
             <MessageCircle className="w-5 h-5 text-blue-600" />
-            <span className="font-medium text-gray-900">Help Assistant</span>
+            <span className="font-medium text-gray-900">{t('chat.panel.title')}</span>
           </div>
           <button
             onClick={() => setActiveQuestion(null)}
             className="hidden md:block p-1 hover:bg-gray-200 rounded-full transition-colors"
-            aria-label="Close chat"
+            aria-label={t('chat.panel.closeChat')}
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-xs text-blue-600 font-medium mb-1">Current Question</p>
+          <p className="text-xs text-blue-600 font-medium mb-1">{t('chat.panel.currentQuestion')}</p>
           <p className="text-sm text-gray-800">{activeQuestion.originalText}</p>
         </div>
       </div>
@@ -162,9 +164,9 @@ export function ChatPanel() {
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
             <MessageCircle className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-            <p className="text-sm">Ask me anything about this question!</p>
+            <p className="text-sm">{t('chat.panel.emptyTitle')}</p>
             <p className="text-xs text-gray-400 mt-1">
-              I can explain it in simple terms, give examples, or help you figure out your answer.
+              {t('chat.panel.emptySubtitle')}
             </p>
           </div>
         ) : (
@@ -177,7 +179,7 @@ export function ChatPanel() {
         {isLoading && (
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-600 text-xs">AI</span>
+              <span className="text-gray-600 text-xs">{t('chat.panel.aiLabel')}</span>
             </div>
             <div className="bg-gray-100 px-4 py-2 rounded-2xl rounded-bl-md">
               <div className="flex gap-1">
@@ -216,7 +218,7 @@ export function ChatPanel() {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Type your question..."
+            placeholder={t('chat.panel.inputPlaceholder')}
             disabled={isLoading}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 text-base"
           />
@@ -224,7 +226,7 @@ export function ChatPanel() {
             type="submit"
             disabled={!inputValue.trim() || isLoading}
             className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Send message"
+            aria-label={t('chat.panel.sendMessage')}
           >
             <Send className="w-5 h-5" />
           </button>
