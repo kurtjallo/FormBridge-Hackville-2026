@@ -3,13 +3,50 @@ import { PDFFormMeta, FormCategory } from '@/types/pdf';
 // Sample PDF forms for demo
 // In production, these would come from the backend API
 export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
-    // Employment
+    // Healthcare
+    {
+        id: 'ohip-registration',
+        name: 'OHIP Registration',
+        description: 'Registration for Ontario Health Coverage - apply for your Ontario Health Insurance Plan card.',
+        category: 'healthcare',
+        pdfUrl: 'http://localhost:5001/forms/OHIP/Registration for Ontario Health Coverage.pdf',
+        estimatedTime: '10-15 minutes',
+        difficulty: 'easy',
+        tags: ['ohip', 'health', 'ontario', 'canada'],
+        pageCount: 2,
+    },
+    {
+        id: 'ohip-change',
+        name: 'OHIP Change of Information',
+        description: 'Update your personal information on your OHIP card - address, name, or other details.',
+        category: 'healthcare',
+        pdfUrl: 'http://localhost:5001/forms/OHIP/Change of Information.pdf',
+        estimatedTime: '5-10 minutes',
+        difficulty: 'easy',
+        tags: ['ohip', 'health', 'ontario', 'update'],
+        pageCount: 1,
+    },
+
+    // Finance
+    {
+        id: 't1-ontario',
+        name: 'Ontario Tax (T1)',
+        description: 'Ontario provincial tax return - file your provincial taxes as part of the T1 General.',
+        category: 'finance',
+        pdfUrl: 'http://localhost:5001/forms/CRA T1/Ontario Tax.pdf',
+        estimatedTime: '30-45 minutes',
+        difficulty: 'hard',
+        tags: ['tax', 'canada', 'ontario', 't1', 'cra'],
+        pageCount: 8,
+    },
+
+    // Employment (Placeholder - no PDFs available yet)
     {
         id: 'ip-assignment',
         name: 'IP Assignment Agreement',
         description: 'Intellectual Property assignment for employees - covers ownership of inventions, prior work disclosure, and work-for-hire clauses.',
         category: 'employment',
-        pdfUrl: '/forms/ip-assignment.pdf',
+        pdfUrl: 'http://localhost:5001/forms/ip-assignment.pdf',
         estimatedTime: '10-15 minutes',
         difficulty: 'hard',
         tags: ['intellectual-property', 'employment', 'startup'],
@@ -20,7 +57,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Mutual NDA',
         description: 'Non-Disclosure Agreement for sharing confidential information between two parties.',
         category: 'employment',
-        pdfUrl: '/forms/nda.pdf',
+        pdfUrl: 'http://localhost:5001/forms/nda.pdf',
         estimatedTime: '5-10 minutes',
         difficulty: 'medium',
         tags: ['confidentiality', 'legal', 'business'],
@@ -31,7 +68,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Employment Contract',
         description: 'Standard employment agreement including compensation, benefits, and termination clauses.',
         category: 'employment',
-        pdfUrl: '/forms/employment-contract.pdf',
+        pdfUrl: 'http://localhost:5001/forms/employment-contract.pdf',
         estimatedTime: '15-20 minutes',
         difficulty: 'medium',
         tags: ['employment', 'contract', 'hr'],
@@ -44,7 +81,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Liability Waiver',
         description: 'General liability waiver and release of claims for activities and events.',
         category: 'legal',
-        pdfUrl: '/forms/liability-waiver.pdf',
+        pdfUrl: 'http://localhost:5001/forms/liability-waiver.pdf',
         estimatedTime: '5 minutes',
         difficulty: 'easy',
         tags: ['waiver', 'liability', 'events'],
@@ -55,35 +92,11 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Power of Attorney',
         description: 'Legal document granting authority to act on behalf of another person.',
         category: 'legal',
-        pdfUrl: '/forms/poa.pdf',
+        pdfUrl: 'http://localhost:5001/forms/poa.pdf',
         estimatedTime: '15-20 minutes',
         difficulty: 'hard',
         tags: ['legal', 'authority', 'representation'],
         pageCount: 5,
-    },
-
-    // Finance
-    {
-        id: 't4-slip',
-        name: 'T4 Statement of Remuneration',
-        description: 'Canadian tax slip showing employment income and deductions for the tax year.',
-        category: 'finance',
-        pdfUrl: '/forms/t4.pdf',
-        estimatedTime: '10 minutes',
-        difficulty: 'medium',
-        tags: ['tax', 'canada', 'income'],
-        pageCount: 1,
-    },
-    {
-        id: 't2200',
-        name: 'T2200 Declaration of Conditions',
-        description: 'Declaration for employees working from home to claim tax deductions.',
-        category: 'finance',
-        pdfUrl: '/forms/t2200.pdf',
-        estimatedTime: '15 minutes',
-        difficulty: 'medium',
-        tags: ['tax', 'remote-work', 'deductions'],
-        pageCount: 2,
     },
 
     // Government
@@ -92,7 +105,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Ontario Works Application',
         description: 'Social assistance application for Ontario residents in financial need.',
         category: 'government',
-        pdfUrl: '/forms/ontario-works.pdf',
+        pdfUrl: 'http://localhost:5001/forms/ontario-works.pdf',
         estimatedTime: '30-45 minutes',
         difficulty: 'hard',
         tags: ['social-assistance', 'ontario', 'benefits'],
