@@ -20,150 +20,44 @@ interface FormOption {
   popular?: boolean;
 }
 
-// Ontario Government Forms Database (from Central Forms Repository)
+// FormBridge PDF Forms Database (matching actual PDFs in backend)
 const formsDatabase: FormOption[] = [
-  // Financial Forms - T4 at the top for demo
-  { id: 't4-statement', code: 'T4', name: 'T4 Statement of Remuneration Paid', ministry: 'Canada Revenue Agency', category: 'financial', popular: true },
-  { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'financial', popular: true },
-  { id: '013-0169', code: '013-0169', name: 'Retail Sales Tax Exemption - Addendum to Sworn Statement', ministry: 'Ministry of Finance', category: 'financial', popular: true },
-  { id: '013-9983', code: '013-9983', name: 'Notice of Objection', ministry: 'Ministry of Finance', category: 'financial', popular: true },
-  { id: 'on00646', code: 'on00646', name: 'ODSP - Mandatory Special Necessities Benefit Application', ministry: 'Ministry of Children, Community and Social Services', category: 'financial', popular: true },
-  { id: '014-4819-67', code: '014-4819-67', name: 'Application for Funding Orthotic Devices', ministry: 'Ministry of Health', category: 'financial' },
-  { id: '014-4824-67', code: '014-4824-67', name: 'Application for Funding Visual Aids', ministry: 'Ministry of Health', category: 'financial' },
+  // Legal - Actual PDF: Basic-Non-Disclosure-Agreement.pdf
+  { id: 'basic-nda', code: 'NDA', name: 'Basic Non-Disclosure Agreement', ministry: 'Standard NDA for protecting confidential information between parties', category: 'legal', popular: true },
 
-  // Health Forms
-  { id: '014-5048-45', code: '014-5048-45', name: 'AEMCA Examination Application', ministry: 'Ministry of Health', category: 'health', popular: true },
-  { id: 'on00413', code: 'on00413', name: 'Medical Assistance In Dying (MAiD) Death Report', ministry: 'Ministry of Health', category: 'health', popular: true },
-  { id: 'on00843', code: 'on00843', name: 'Tuition Support Program for Nurses - Return of Service Agreement', ministry: 'Ministry of Health', category: 'health' },
-  { id: 'on00817', code: 'on00817', name: 'Northern Health Travel Grant Application', ministry: 'Ministry of Health', category: 'health', popular: true },
-  { id: '014-4872-88', code: '014-4872-88', name: 'Application for Northern Physician Retention Initiative', ministry: 'Ministry of Health', category: 'health' },
-  { id: '014-4422-84', code: '014-4422-84', name: 'Laboratory Requisition - Requisitioning Physician', ministry: 'Ministry of Health', category: 'health' },
-
-  // Labor Forms
-  { id: '022-89-1889', code: '022-89-1889', name: 'Better Jobs Ontario Application', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor', popular: true },
-  { id: 'on00587', code: 'on00587', name: '2026 Summer Employment Opportunities Program Guidelines', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor', popular: true },
-  { id: 'on00905', code: 'on00905', name: 'Apply for an Extended Temporary Lay-Off', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor', popular: true },
-  { id: '016-1973', code: '016-1973', name: 'Application for Employment - Employment Standards Officer', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
-  { id: 'on00597', code: 'on00597', name: 'Apprenticeship TDA Approval Process Guidelines', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
-  { id: 'on00614', code: 'on00614', name: 'Service Provider EOIS-APPR Registration', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'labor' },
-
-  // Immigration Forms - Work Permits, LMIA, PR, and Provincial Nominee
-  { id: 'lmia-application', code: 'EMP5593', name: 'Labour Market Impact Assessment (LMIA) Application', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
-  { id: 'lmia-high-wage', code: 'EMP5626', name: 'LMIA Application - High-Wage Position', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
-  { id: 'lmia-low-wage', code: 'EMP5627', name: 'LMIA Application - Low-Wage Position', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
-  { id: 'lmia-agricultural', code: 'EMP5389', name: 'LMIA Application - Agricultural Stream', ministry: 'Employment and Social Development Canada', category: 'immigration' },
-  { id: 'lmia-global-talent', code: 'EMP5624', name: 'LMIA Application - Global Talent Stream', ministry: 'Employment and Social Development Canada', category: 'immigration', popular: true },
-  { id: 'work-permit', code: 'IMM1295', name: 'Application for Work Permit Made Outside of Canada', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'work-permit-inside', code: 'IMM5710', name: 'Application to Change Conditions or Extend Stay as a Worker', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'pgwp', code: 'IMM5710', name: 'Post-Graduation Work Permit (PGWP) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'open-work-permit', code: 'IMM5710', name: 'Open Work Permit Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'pr-express-entry', code: 'IMM0008', name: 'Generic Application Form for Canada - Express Entry', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'pr-family-sponsor', code: 'IMM1344', name: 'Application to Sponsor, Sponsorship Agreement and Undertaking', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'pr-family-spouse', code: 'IMM5532', name: 'Relationship Information and Sponsorship Evaluation', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'pr-pnp', code: 'IMM0008', name: 'Provincial Nominee Program (PNP) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'oinp-skilled-worker', code: 'OINP-001', name: 'Ontario Immigrant Nominee Program - Skilled Worker Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration', popular: true },
-  { id: 'oinp-masters-grad', code: 'OINP-002', name: 'Ontario Immigrant Nominee Program - Masters Graduate Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration', popular: true },
-  { id: 'oinp-phd-grad', code: 'OINP-003', name: 'Ontario Immigrant Nominee Program - PhD Graduate Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
-  { id: 'oinp-employer-job-offer', code: 'OINP-004', name: 'Ontario Immigrant Nominee Program - Employer Job Offer', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
-  { id: 'oinp-entrepreneur', code: 'OINP-005', name: 'Ontario Immigrant Nominee Program - Entrepreneur Stream', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
-  { id: 'pr-card-renewal', code: 'IMM5444', name: 'Application for a Permanent Resident Card', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'pr-travel-doc', code: 'IMM5524', name: 'Application for a Permanent Resident Travel Document', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'citizenship-adult', code: 'CIT0002', name: 'Application for Canadian Citizenship - Adults', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'citizenship-minor', code: 'CIT0003', name: 'Application for Canadian Citizenship - Minors', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'study-permit', code: 'IMM1294', name: 'Application for Study Permit Made Outside of Canada', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', popular: true },
-  { id: 'study-permit-extend', code: 'IMM5709', name: 'Application to Change Conditions or Extend Stay as a Student', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'visitor-visa', code: 'IMM5257', name: 'Application for Visitor Visa (Temporary Resident Visa)', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'super-visa', code: 'IMM5257', name: 'Application for Super Visa - Parents and Grandparents', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'eta', code: 'IMM5257', name: 'Electronic Travel Authorization (eTA) Application', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration' },
-  { id: 'on00917', code: 'on00917', name: 'Commissioner and Notary Public Application', ministry: 'Ministry of the Attorney General', category: 'immigration' },
-  { id: 'on00684', code: 'on00684', name: 'EOIS-APPR Initial Application for Access for an Employer Subscriber', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
-  { id: 'on00685', code: 'on00685', name: 'EOIS-APPR Application for Access for a Training Delivery Agent', ministry: 'Ministry of Labour, Immigration, Training and Skills Development', category: 'immigration' },
-
-  // Children, Community & Social Services Forms
-  { id: 'on00860', code: 'on00860', name: 'Complex Special Needs (CSN) Referral Screener', ministry: 'Ministry of Children, Community and Social Services', category: 'children-community', popular: true },
-  { id: 'on00859', code: 'on00859', name: 'Coordinated Service Plan', ministry: 'Ministry of Children, Community and Social Services', category: 'children-community', popular: true },
-  { id: 'on00910', code: 'on00910', name: 'Seniors Active Living Centres Program Guidelines', ministry: 'Ministry for Seniors and Accessibility', category: 'children-community' },
-  { id: 'on00059', code: 'on00059', name: 'Animal Welfare Services Complaint Form', ministry: 'Ministry of Agriculture, Food and Rural Affairs', category: 'children-community' },
-
-  // Public & Business Services Forms
-  { id: 'on00724', code: 'on00724', name: 'Community Sport and Recreation Infrastructure Fund', ministry: 'Ministry of Public and Business Service Delivery', category: 'public-business', popular: true },
-  { id: 'on00891', code: 'on00891', name: 'OPP Special Constable Public Complaint Form', ministry: 'Ministry of the Solicitor General', category: 'public-business', popular: true },
-  { id: '008-0149', code: '008-0149', name: 'Invoice for Transportation of Dead Body', ministry: 'Ministry of the Solicitor General', category: 'public-business' },
-  { id: 'on00784', code: 'on00784', name: 'Private Gas Well Licence Application', ministry: 'Ministry of Natural Resources and Forestry', category: 'public-business' },
-  { id: '012-2132', code: '012-2132', name: 'Operator-in-Training Certificate and Licence Issuance', ministry: 'Ministry of Environment, Conservation and Parks', category: 'public-business' },
-  { id: '012-2130', code: '012-2130', name: 'Examination Registration', ministry: 'Ministry of Environment, Conservation and Parks', category: 'public-business' },
+  // Finance - Actual PDF: 5006-r-24e.pdf (CRA T1 Tax Form)
+  { id: 'cra-t1-tax', code: 'T1-5006', name: 'CRA T1 General Income Tax Form', ministry: 'Canada Revenue Agency - Ontario Tax Return', category: 'finance', popular: true },
 ];
+
+// Map form IDs to their PDF URLs (matching actual PDFs in backend)
+const formPdfUrls: Record<string, string> = {
+  'basic-nda': 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf',
+  'cra-t1-tax': 'http://localhost:5001/forms/Finance/5006-r-24e.pdf',
+};
 
 const categoryOptions: CategoryOption[] = [
   {
-    id: 'financial',
-    title: 'Financial',
-    description: 'Taxes, benefits, assistance programs',
+    id: 'legal',
+    title: 'Legal',
+    description: 'Non-disclosure agreements, contracts',
+    available: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+      </svg>
+    ),
+  },
+  {
+    id: 'finance',
+    title: 'Finance & Tax',
+    description: 'CRA tax forms, T1 returns',
     available: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
-  },
-  {
-    id: 'health',
-    title: 'Health',
-    description: 'Healthcare, insurance, medical forms',
-    available: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'labor',
-    title: 'Labor',
-    description: 'Employment, workplace, unions',
-    available: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M20 7h-9M14 17H5" />
-        <circle cx="17" cy="17" r="3" />
-        <circle cx="7" cy="7" r="3" />
-      </svg>
-    ),
-  },
-  {
-    id: 'immigration',
-    title: 'Immigration',
-    description: 'Visas, permits, citizenship',
-    available: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'children-community',
-    title: 'Children, Community & Social Services',
-    description: 'Family services, childcare, social support',
-    available: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-  {
-    id: 'public-business',
-    title: 'Public & Business Services',
-    description: 'Licenses, permits, registrations',
-    available: true,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4" />
-        <path d="M5 21V10.85M19 21V10.85" />
       </svg>
     ),
   },
@@ -421,9 +315,14 @@ export default function OnboardingPage() {
       sessionStorage.setItem('userName', name);
       sessionStorage.setItem('userBirthday', birthday);
       sessionStorage.setItem('selectedCategory', selectedCategory);
-      sessionStorage.setItem('selectedForm', formId);
+      sessionStorage.setItem('selectedFormId', formId);
       sessionStorage.setItem('selectedFormName', form.name);
       sessionStorage.setItem('selectedFormCode', form.code);
+      // Store the PDF URL directly so formview can use it
+      const pdfUrl = formPdfUrls[formId];
+      if (pdfUrl) {
+        sessionStorage.setItem('selectedFormPdfUrl', pdfUrl);
+      }
       // Clear onboarding data after successful completion
       localStorage.removeItem(STORAGE_KEY);
       router.push('/formview');
@@ -507,7 +406,7 @@ export default function OnboardingPage() {
 
       <div className="relative z-10 h-screen flex flex-col items-center justify-center px-6 py-8">
         {/* Progress indicator with tooltips */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 items-center">
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 flex gap-2 items-center">
           {steps.map((step) => {
             const isActive = currentStep === step;
             const isCompleted = completedSteps.has(step);
@@ -517,7 +416,7 @@ export default function OnboardingPage() {
             return (
               <div key={step} className="relative">
                 {isHovered && (
-                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md shadow-lg z-50">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-gray-800 text-white text-[10px] px-2 py-1 rounded-md shadow-lg z-50">
                     {stepLabels[step]}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
                   </div>
@@ -542,11 +441,6 @@ export default function OnboardingPage() {
               </div>
             );
           })}
-        </div>
-
-        {/* Step label */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 text-[10px] font-medium text-gray-400 uppercase tracking-widest">
-          Step {steps.indexOf(currentStep) + 1} of {steps.length}
         </div>
 
         {/* Content container */}
@@ -579,7 +473,7 @@ export default function OnboardingPage() {
                 disabled={!name.trim()}
                 className={`mt-8 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
                   name.trim()
-                    ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'
+                    ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
@@ -613,7 +507,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
                 >
                   Back
                 </button>
@@ -622,7 +516,7 @@ export default function OnboardingPage() {
                   disabled={!isValidDate(birthday)}
                   className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
                     isValidDate(birthday)
-                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98]'
+                      ? 'bg-gray-900 text-white hover:bg-gray-600 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -650,14 +544,18 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleIntroComplete}
                   disabled={!isComplete}
-                  className="px-6 py-3 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-600 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                    isComplete
+                      ? 'bg-gray-900 text-white hover:bg-gray-600 cursor-pointer'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
                   Let's do it!
                 </button>
@@ -810,7 +708,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200"
+                  className="px-5 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-xl transition-all duration-200 cursor-pointer"
                 >
                   Back
                 </button>
@@ -820,7 +718,7 @@ export default function OnboardingPage() {
                   className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                     editingField !== null
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-gray-900 text-white hover:bg-gray-600'
+                      : 'bg-gray-900 text-white hover:bg-gray-600 cursor-pointer'
                   }`}
                 >
                   Looks good!
@@ -832,14 +730,14 @@ export default function OnboardingPage() {
           {/* Step 5: Category Selection */}
           {currentStep === 'category-select' && (
             <div className="text-center w-full max-w-xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
                 Select a category
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">
+              <p className="text-gray-500 text-sm sm:text-base mb-6">
                 Which category best fits your form?
               </p>
 
-              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-[50vh] overflow-y-auto">
+              <div className="space-y-2 sm:space-y-3 mb-6 max-h-[50vh] overflow-y-auto">
                 {categoryOptions.map((category: CategoryOption, index: number) => (
                   <button
                     key={category.id}
@@ -886,7 +784,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200"
+                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 ← Back to review
               </button>
@@ -896,15 +794,15 @@ export default function OnboardingPage() {
           {/* Step 6: Form Selection */}
           {currentStep === 'form-select' && (
             <div className="text-center w-full max-w-xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
                 {searchQuery ? 'Search Results' : `${selectedCategoryTitle} Forms`}
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4">
+              <p className="text-gray-500 text-sm sm:text-base mb-6">
                 Search by name or form code
               </p>
 
               {/* Search Input */}
-              <div className="relative mb-4 sm:mb-5">
+              <div className="relative mb-6">
                 <svg
                   width="18"
                   height="18"
@@ -928,7 +826,7 @@ export default function OnboardingPage() {
 
               {/* Search results info */}
               {searchQuery && (
-                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">
                     {filteredForms.length} {filteredForms.length === 1 ? 'result' : 'results'} found
                     {hasOtherCategoryResults && ' across all categories'}
@@ -939,14 +837,14 @@ export default function OnboardingPage() {
 
               {/* Popular Forms Label */}
               {!searchQuery && popularForms.length > 0 && (
-                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">Popular Forms</span>
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
               )}
 
               {/* Forms List */}
-              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 max-h-[40vh] sm:max-h-[45vh] overflow-y-auto">
+              <div className="space-y-2 sm:space-y-3 mb-6 max-h-[40vh] sm:max-h-[45vh] overflow-y-auto">
                 {filteredForms.length > 0 ? (
                   filteredForms.map((form: FormOption, index: number) => (
                     <button
@@ -1005,7 +903,7 @@ export default function OnboardingPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200"
+                className="px-4 py-2 text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 ← Back to categories
               </button>
