@@ -105,8 +105,7 @@ const formsDatabase: FormOption[] = [
   { id: 'gst-hst', code: 'GST34', name: 'GST/HST Return for Registrants', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
 
   // Immigration Forms
-  { id: 'sponsorship-undertaking', code: 'IMM-SP', name: 'Sponsorship Undertaking', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', pdfUrl: 'http://localhost:5001/forms/Immigration/Sponsorship-Undertaking.pdf' },
-  { id: 'document-checklist', code: 'IMM-DC', name: 'Supporting Document Checklist', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', pdfUrl: 'http://localhost:5001/forms/Immigration/Supporting-Document-Checklist.pdf' },
+  { id: 'oinp-application', code: 'OINP-01', name: 'Ontario Immigration Nominee Program', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', pdfUrl: 'http://localhost:5001/forms/Immigration/on00596e-immigration-nominee-program.pdf' },
 ];
 
 export default function OnboardingPage() {

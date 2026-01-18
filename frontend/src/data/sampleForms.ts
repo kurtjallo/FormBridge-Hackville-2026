@@ -79,26 +79,15 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
 
     // Immigration
     {
-        id: 'sponsorship-undertaking',
-        name: 'Sponsorship Undertaking',
-        description: 'Commitment to provide for sponsored family members as required by IRCC. Includes financial obligations and undertaking period.',
+        id: 'oinp-application',
+        name: 'Ontario Immigration Nominee Program',
+        description: 'Application for the Ontario Immigrant Nominee Program (OINP). For skilled workers and entrepreneurs seeking permanent residence in Ontario.',
         category: 'immigration',
-        pdfUrl: 'http://localhost:5001/forms/Immigration/Sponsorship-Undertaking.pdf',
-        estimatedTime: '15-20 minutes',
+        pdfUrl: 'http://localhost:5001/forms/Immigration/on00596e-immigration-nominee-program.pdf',
+        estimatedTime: '30-45 minutes',
         difficulty: 'hard',
-        tags: ['sponsorship', 'immigration', 'family', 'ircc'],
-        pageCount: 3,
-    },
-    {
-        id: 'document-checklist',
-        name: 'Supporting Document Checklist',
-        description: 'Comprehensive checklist for immigration applications. Track identity, financial, relationship, and background documents.',
-        category: 'immigration',
-        pdfUrl: 'http://localhost:5001/forms/Immigration/Supporting-Document-Checklist.pdf',
-        estimatedTime: '10-15 minutes',
-        difficulty: 'easy',
-        tags: ['checklist', 'documents', 'immigration', 'application'],
-        pageCount: 2,
+        tags: ['oinp', 'immigration', 'ontario', 'permanent-residence'],
+        pageCount: 8,
     },
 ];
 
