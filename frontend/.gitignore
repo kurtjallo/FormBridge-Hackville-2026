@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# md
+BACKEND-TASKS.md
+CHATBOT-ARCHITECTURE.md
+CLAUDE.md
+PLAN.md
