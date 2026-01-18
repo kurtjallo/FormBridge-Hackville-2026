@@ -139,12 +139,12 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
     };
 
     return (
-        <div className="bg-gray-800 rounded-xl p-6 max-w-2xl mx-auto">
+        <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-6 max-w-2xl mx-auto">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Upload PDF Form</h2>
+                <h2 className="text-xl font-bold text-gray-900">Upload PDF Form</h2>
                 <button
                     onClick={onCancel}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-500 hover:text-gray-700 transition-colors"
                     disabled={isUploading}
                 >
                     Cancel
@@ -159,22 +159,24 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                     className={`
-                        border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-                        transition-colors duration-200
+                        border-2 border-dashed rounded-xl p-10 text-center cursor-pointer
+                        transition-all duration-200 group
                         ${isDragging
-                            ? 'border-blue-500 bg-blue-500/10'
-                            : 'border-gray-600 hover:border-gray-500 hover:bg-gray-700/50'
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-200 hover:border-blue-400 hover:bg-gray-50'
                         }
                     `}
                 >
-                    <div className="text-4xl mb-4">📄</div>
-                    <p className="text-white font-medium mb-2">
+                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <span className="text-3xl">📄</span>
+                    </div>
+                    <p className="text-gray-900 font-medium mb-2">
                         Drag and drop your PDF here
                     </p>
-                    <p className="text-gray-400 text-sm mb-4">
+                    <p className="text-gray-500 text-sm mb-4">
                         or click to browse
                     </p>
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-gray-400 text-xs">
                         Maximum file size: 50MB
                     </p>
                     <input
@@ -189,15 +191,17 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                 /* File Selected - Show Form */
                 <div className="space-y-4">
                     {/* File Preview */}
-                    <div className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg">
-                        <span className="text-2xl">📄</span>
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-xl">
+                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-100 text-xl shadow-sm">
+                            📄
+                        </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-white font-medium truncate">{file.name}</p>
-                            <p className="text-gray-400 text-sm">{formatFileSize(file.size)}</p>
+                            <p className="text-gray-900 font-medium truncate">{file.name}</p>
+                            <p className="text-gray-500 text-sm">{formatFileSize(file.size)}</p>
                         </div>
                         <button
                             onClick={() => setFile(null)}
-                            className="text-gray-400 hover:text-red-400 px-2"
+                            className="text-gray-400 hover:text-red-500 px-2 transition-colors"
                             disabled={isUploading}
                         >
                             Remove
@@ -207,7 +211,7 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                     {/* Form Fields */}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-gray-300 text-sm font-medium mb-1">
+                            <label className="block text-gray-700 text-sm font-medium mb-1.5">
                                 Form Name *
                             </label>
                             <input
@@ -216,13 +220,13 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 placeholder="e.g., Ontario Works Application"
-                                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                                 disabled={isUploading}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-gray-300 text-sm font-medium mb-1">
+                            <label className="block text-gray-700 text-sm font-medium mb-1.5">
                                 Description
                             </label>
                             <textarea
@@ -231,51 +235,61 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                                 onChange={handleInputChange}
                                 placeholder="Brief description of this form..."
                                 rows={2}
-                                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"
                                 disabled={isUploading}
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-gray-300 text-sm font-medium mb-1">
+                                <label className="block text-gray-700 text-sm font-medium mb-1.5">
                                     Category
                                 </label>
-                                <select
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                                    disabled={isUploading}
-                                >
-                                    {FORM_CATEGORIES.map(cat => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.icon} {cat.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="relative">
+                                    <select
+                                        name="category"
+                                        value={formData.category}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all"
+                                        disabled={isUploading}
+                                    >
+                                        {FORM_CATEGORIES.map(cat => (
+                                            <option key={cat.id} value={cat.id}>
+                                                {cat.icon} {cat.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                        ▼
+                                    </div>
+                                </div>
                             </div>
 
                             <div>
-                                <label className="block text-gray-300 text-sm font-medium mb-1">
+                                <label className="block text-gray-700 text-sm font-medium mb-1.5">
                                     Difficulty
                                 </label>
-                                <select
-                                    name="difficulty"
-                                    value={formData.difficulty}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                                    disabled={isUploading}
-                                >
-                                    <option value="easy">Easy</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="hard">Hard</option>
-                                </select>
+                                <div className="relative">
+                                    <select
+                                        name="difficulty"
+                                        value={formData.difficulty}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all"
+                                        disabled={isUploading}
+                                    >
+                                        <option value="easy">Easy</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="hard">Hard</option>
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                        ▼
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-gray-300 text-sm font-medium mb-1">
+                            <label className="block text-gray-700 text-sm font-medium mb-1.5">
                                 Estimated Time
                             </label>
                             <input
@@ -284,7 +298,7 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                                 value={formData.estimatedTime}
                                 onChange={handleInputChange}
                                 placeholder="e.g., 10-15 minutes"
-                                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                                 disabled={isUploading}
                             />
                         </div>
@@ -294,17 +308,18 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
 
             {/* Error Message */}
             {error && (
-                <div className="mt-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm">
+                <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm flex items-center gap-2">
+                    <span className="text-lg">⚠️</span>
                     {error}
                 </div>
             )}
 
             {/* Upload Button */}
             {file && (
-                <div className="mt-6 flex gap-3">
+                <div className="mt-8 flex gap-3">
                     <button
                         onClick={onCancel}
-                        className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        className="flex-1 px-4 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-colors"
                         disabled={isUploading}
                     >
                         Cancel
@@ -312,7 +327,7 @@ export function FileUpload({ onUploadSuccess, onCancel }: FileUploadProps) {
                     <button
                         onClick={handleUpload}
                         disabled={isUploading || !formData.name.trim()}
-                        className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all shadow-sm shadow-blue-600/20 flex items-center justify-center gap-2"
                     >
                         {isUploading ? (
                             <>

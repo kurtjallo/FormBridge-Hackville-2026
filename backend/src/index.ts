@@ -1,5 +1,8 @@
-import express, { Request, Response, NextFunction } from 'express';
+// Load environment variables FIRST before any other imports
 import dotenv from 'dotenv';
+dotenv.config();
+
+import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import path from 'path';
 import { corsMiddleware } from './middleware/cors';
@@ -13,17 +16,17 @@ import eligibilityRouter from './routes/eligibility';
 import demoRouter from './routes/demo';
 import pdfSessionRouter from './routes/pdfSession';
 import ragRouter from './routes/rag';
+import uploadRouter from './routes/upload';
+import pdfFormsRouter from './routes/pdfForms';
 import { seedKnowledgeBase } from './services/ragService';
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(corsMiddleware);
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve PDF forms as static files
 app.use('/forms', express.static(path.join(__dirname, 'assets/forms')));
@@ -48,6 +51,8 @@ app.use('/api/support-chat', supportChatRouter);
 app.use('/api/demo', demoRouter);
 app.use('/api/pdf-session', pdfSessionRouter);
 app.use('/api/rag', ragRouter);
+app.use('/api/upload', uploadRouter);
+app.use('/api/pdf-forms', pdfFormsRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -100,6 +105,8 @@ app.listen(PORT, () => {
   console.log('  POST /pdf-session/:id/chat - Add chat message');
   console.log('  --- RAG ---');
   console.log('  GET  /rag/search           - Search knowledge base');
+  console.log('  --- UPLOAD ---');
+  console.log('  POST /api/upload           - Upload PDF form to GCS');
 });
 
 export { app };
