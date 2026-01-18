@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useFormStore } from '@/store/formStore';
+import { usePDFStore } from '@/store/pdfStore';
 import { ontarioWorksForm } from '@/data/ontarioWorksForm';
 import { ChatMessage } from './ChatMessage';
 import { QuickActions } from './QuickActions';
@@ -13,6 +14,7 @@ import { useTranslation } from '@/i18n';
 
 export function ChatPanel() {
   const { t } = useTranslation();
+  const { colorblindMode } = usePDFStore();
   const activeQuestionId = useFormStore((state) => state.activeQuestionId);
   const setActiveQuestion = useFormStore((state) => state.setActiveQuestion);
   const conversations = useFormStore((state) => state.conversations);
@@ -130,7 +132,10 @@ export function ChatPanel() {
   }
 
   return (
-    <div className="fixed inset-0 md:inset-auto md:bottom-0 md:right-0 w-full md:w-[420px] h-full md:h-[600px] bg-white border-l border-t border-gray-200 shadow-xl flex flex-col z-50">
+    <div
+      className="fixed inset-0 md:inset-auto md:bottom-0 md:right-0 w-full md:w-[420px] h-full md:h-[600px] bg-white border-l border-t border-gray-200 shadow-xl flex flex-col z-50"
+      data-colorblind-mode={colorblindMode !== 'none' ? colorblindMode : undefined}
+    >
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 pt-safe">
         <div className="flex items-center justify-between mb-2">
@@ -142,7 +147,10 @@ export function ChatPanel() {
             >
               <ChevronLeft className="w-5 h-5 text-gray-500" />
             </button>
-            <MessageCircle className="w-5 h-5 text-blue-600" />
+            <MessageCircle 
+              className="w-5 h-5" 
+              style={{ color: 'var(--highlight-primary)' }}
+            />
             <span className="font-medium text-gray-900">{t('chat.panel.title')}</span>
           </div>
           <button
@@ -153,8 +161,19 @@ export function ChatPanel() {
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-xs text-blue-600 font-medium mb-1">{t('chat.panel.currentQuestion')}</p>
+        <div 
+          className="rounded-lg p-3 border"
+          style={{ 
+            backgroundColor: 'var(--highlight-bg)',
+            borderColor: 'var(--highlight-border)'
+          }}
+        >
+          <p 
+            className="text-xs font-medium mb-1"
+            style={{ color: 'var(--highlight-text)' }}
+          >
+            {t('chat.panel.currentQuestion')}
+          </p>
           <p className="text-sm text-gray-800">{activeQuestion.originalText}</p>
         </div>
       </div>
@@ -225,7 +244,8 @@ export function ChatPanel() {
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2 text-white rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center disabled:bg-gray-300 disabled:cursor-not-allowed"
+            style={{ backgroundColor: !inputValue.trim() || isLoading ? undefined : 'var(--highlight-primary)' }}
             aria-label={t('chat.panel.sendMessage')}
           >
             <Send className="w-5 h-5" />

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, MessageCircle, Minimize2, Maximize2, HelpCircle, Sparkles } from 'lucide-react';
 import { knowledgeBase, KnowledgeEntry } from '@/lib/knowledgeBase';
 import { useTranslation } from '@/i18n';
+import { usePDFStore } from '@/store/pdfStore';
 
 // ============================================
 // TYPES
@@ -52,6 +53,7 @@ export function ChatWidget({
   additionalContext,
 }: ChatWidgetProps) {
   const { t } = useTranslation();
+  const { colorblindMode } = usePDFStore();
 
   const fallbackResponses = [
     t('chat.widget.fallbackResponses.one'),
@@ -293,10 +295,12 @@ export function ChatWidget({
     return (
       <button
         onClick={() => setIsOpen(true)}
+        data-colorblind-mode={colorblindMode !== 'none' ? colorblindMode : undefined}
         className={`fixed bottom-4 md:bottom-6 ${positionClasses} z-50 
-          bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 
+          text-white rounded-full p-4 
           shadow-lg hover:shadow-xl transition-all duration-200
           flex items-center gap-2 group ${className}`}
+        style={{ backgroundColor: 'var(--highlight-primary)' }}
         aria-label={t('chat.widget.openAssistant')}
       >
         <MessageCircle className="w-6 h-6" />
@@ -316,11 +320,15 @@ export function ChatWidget({
   // Minimized state
   if (isMinimized) {
     return (
-      <div className={`fixed bottom-4 md:bottom-6 ${positionClasses} z-50 ${className}`}>
+      <div 
+        className={`fixed bottom-4 md:bottom-6 ${positionClasses} z-50 ${className}`}
+        data-colorblind-mode={colorblindMode !== 'none' ? colorblindMode : undefined}
+      >
         <button
           onClick={() => setIsMinimized(false)}
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-4 py-2 
+          className="text-white rounded-full px-4 py-2 
             shadow-lg flex items-center gap-2 transition-colors"
+          style={{ backgroundColor: 'var(--highlight-primary)' }}
         >
           <MessageCircle className="w-5 h-5" />
           <span>{t('chat.widget.chatLabel')}</span>
@@ -344,9 +352,10 @@ export function ChatWidget({
         w-full md:w-[400px] h-[100dvh] md:h-[550px] md:max-h-[80vh]
         bg-white md:rounded-2xl shadow-2xl flex flex-col overflow-hidden
         border border-gray-200 ${className}`}
+      data-colorblind-mode={colorblindMode !== 'none' ? colorblindMode : undefined}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3">
+      <div className="text-white px-4 py-3" style={{ background: 'var(--highlight-primary)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -386,9 +395,10 @@ export function ChatWidget({
             <div
               className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-br-md'
+                  ? 'text-white rounded-br-md'
                   : 'bg-white text-gray-800 rounded-bl-md shadow-sm border border-gray-100'
               }`}
+              style={message.role === 'user' ? { background: 'var(--highlight-primary)' } : undefined}
             >
               <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               
@@ -412,8 +422,8 @@ export function ChatWidget({
                     <button
                       key={idx}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 
-                        px-3 py-1.5 rounded-full transition-colors"
+                      className="text-xs px-3 py-1.5 rounded-full transition-colors hover:opacity-80"
+                      style={{ backgroundColor: 'var(--highlight-bg)', color: 'var(--highlight-text)' }}
                     >
                       {suggestion}
                     </button>
@@ -482,9 +492,10 @@ export function ChatWidget({
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="p-2.5 bg-blue-600 text-white rounded-full 
-              hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed 
+            className="p-2.5 text-white rounded-full 
+              disabled:bg-gray-300 disabled:cursor-not-allowed 
               transition-colors flex items-center justify-center"
+            style={{ backgroundColor: !inputValue.trim() || isLoading ? undefined : 'var(--highlight-primary)' }}
             aria-label={t('chat.widget.sendMessage')}
           >
             <Send className="w-5 h-5" />
