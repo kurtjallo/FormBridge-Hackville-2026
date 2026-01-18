@@ -51,41 +51,80 @@ function MapleMoose({ className = "w-12 h-12" }: { className?: string }) {
   );
 }
 
-// Typewriter hook
-function useTypewriter(text: string, speed: number = 30, startTyping: boolean = true, skipAnimation: boolean = false) {
-  const [displayedText, setDisplayedText] = useState(skipAnimation ? text : '');
-  const [isComplete, setIsComplete] = useState(skipAnimation);
+// Typewriter hook with persistent progress
+function useTypewriter(text: string, speed: number = 30, startTyping: boolean = true, skipAnimation: boolean = false, storageKey: string = 'typewriter_progress') {
+  // Check if there's saved progress
+  const getSavedProgress = () => {
+    if (typeof window === 'undefined') return null;
+    const saved = sessionStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        // Only use saved progress if text matches
+        if (data.text === text) {
+          return data;
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+    return null;
+  };
+
+  const savedProgress = getSavedProgress();
+  const [displayedText, setDisplayedText] = useState(skipAnimation ? text : (savedProgress?.displayedText || ''));
+  const [isComplete, setIsComplete] = useState(skipAnimation || (savedProgress?.isComplete || false));
+  const startIndexRef = useRef(savedProgress?.currentIndex || 0);
 
   useEffect(() => {
     // If animation should be skipped, show full text immediately
     if (skipAnimation) {
       setDisplayedText(text);
       setIsComplete(true);
+      sessionStorage.setItem(storageKey, JSON.stringify({ text, displayedText: text, isComplete: true, currentIndex: text.length }));
       return;
     }
 
     if (!startTyping) {
-      setDisplayedText('');
-      setIsComplete(false);
       return;
     }
 
-    let index = 0;
-    setDisplayedText('');
-    setIsComplete(false);
+    // Start from saved position or beginning
+    let index = startIndexRef.current;
+
+    // If already complete, don't restart
+    if (index >= text.length) {
+      setDisplayedText(text);
+      setIsComplete(true);
+      return;
+    }
 
     const timer = setInterval(() => {
       if (index < text.length) {
-        setDisplayedText(text.slice(0, index + 1));
+        const newText = text.slice(0, index + 1);
+        setDisplayedText(newText);
+        // Save progress to session storage
+        sessionStorage.setItem(storageKey, JSON.stringify({
+          text,
+          displayedText: newText,
+          isComplete: false,
+          currentIndex: index + 1
+        }));
         index++;
       } else {
         setIsComplete(true);
+        sessionStorage.setItem(storageKey, JSON.stringify({
+          text,
+          displayedText: text,
+          isComplete: true,
+          currentIndex: text.length
+        }));
         clearInterval(timer);
       }
     }, speed);
 
     return () => clearInterval(timer);
-  }, [text, speed, startTyping, skipAnimation]);
+  }, [text, speed, startTyping, skipAnimation, storageKey]);
 
   return { displayedText, isComplete };
 }
@@ -270,13 +309,21 @@ export default function OnboardingPage() {
                 autoFocus
               />
             </div>
-            <button
-              onClick={handleNext}
-              disabled={!name.trim()}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              {t('common.buttons.continue')}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleBack}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.back')}
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={!name.trim()}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.continue')}
+              </button>
+            </div>
           </div>
         );
 
@@ -289,7 +336,8 @@ export default function OnboardingPage() {
             t('onboarding.intro.greeting', { name: name }),
             30,
             true,
-            hasSeenIntro
+            hasSeenIntro,
+            'intro_typewriter_progress'
           );
           
           return (
@@ -309,14 +357,22 @@ export default function OnboardingPage() {
               </div>
 
               {isComplete && (
-                <div className="flex justify-end">
-                    <button
-                      onClick={handleNext}
-                      className="w-full sm:w-auto px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 cursor-pointer"
-                    >
-                      {t('common.buttons.letsDoIt')}
-                      <ChevronRight size={20} />
-                    </button>
+                <div className="flex justify-center">
+                  <div className="flex gap-3">
+                      <button
+                        onClick={handleBack}
+                        className="px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+                      >
+                        {t('common.buttons.back')}
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        className="px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+                      >
+                        {t('common.buttons.letsDoIt')}
+                        <ChevronRight size={20} />
+                      </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -405,12 +461,20 @@ export default function OnboardingPage() {
                 </div>
             </div>
 
-            <button
-              onClick={handleNext}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all mt-4 cursor-pointer"
-            >
-              {t('common.buttons.looksGood')}
-            </button>
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={handleBack}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.back')}
+              </button>
+              <button
+                onClick={handleNext}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.looksGood')}
+              </button>
+            </div>
           </div>
         );
 
@@ -456,6 +520,15 @@ export default function OnboardingPage() {
                  >
                     <Upload size={18} />
                     <span>{t('onboarding.categorySelect.uploadOwnPdf')}</span>
+                 </button>
+             </div>
+
+             <div className="flex justify-center mt-6">
+                 <button
+                    onClick={handleBack}
+                    className="px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+                 >
+                    {t('common.buttons.back')}
                  </button>
              </div>
           </div>

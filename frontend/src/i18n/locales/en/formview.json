@@ -1,10 +1,10 @@
 {
   "assistant": {
-    "title": "AI Assistant",
+    "title": "Maple The Moose",
     "description": "Click any highlighted text to get help understanding it.",
     "helpWith": "Help with:",
     "contextPrefix": "Form field: {{fieldId}}",
-    "emptyTitle": "Click any [?] button to get help",
+    "emptyTitle": "After highlighting click any [?] button to get help",
     "emptySubtitle": "I'll explain everything in simple terms",
     "userLabel": "You",
     "aiLabel": "AI",
