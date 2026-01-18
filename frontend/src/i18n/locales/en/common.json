@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "brand": "FormBridge",
+    "hackville": "Hackville 2026",
+    "startApplication": "Start Application",
+    "navigation": "Navigation",
+    "language": "Language",
+    "selectLanguage": "Select language",
+    "languageOptions": "Language options"
+  },
+  "buttons": {
+    "getStarted": "Get Started",
+    "learnMore": "Learn More"
+  },
+  "footer": {
+    "copyright": "© 2026 FormBridge",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "credits": "Created by: Uzeyr A, Kurt J, Bianca J, Jason T @ Hackville 2026"
+  },
+  "languages": {
+    "english": "English",
+    "french": "Français"
+  }
+}
