@@ -20,9 +20,9 @@ export default function LandingPage() {
       <div className="relative z-10 max-w-screen-xl mx-auto px-6 sm:px-12 border-x border-dashed border-gray-200 min-h-screen flex flex-col">
         
         {/* Navigation */}
-        <nav className="py-6 border-b border-gray-900 grid grid-cols-2 md:grid-cols-12 gap-8 items-center" aria-label="Main Navigation">
+        <nav className="py-6 border-b border-purple-900 grid grid-cols-2 md:grid-cols-12 gap-8 items-center" aria-label="Main Navigation">
           <div className="md:col-span-4 font-bold text-xl tracking-tighter flex items-center gap-2">
-            <div className="w-3 h-3 bg-gray-900 rounded-full"></div>
+            <div className="w-3 h-3 bg-purple-900 rounded-full"></div>
             FormBridge
           </div>
           
@@ -31,9 +31,18 @@ export default function LandingPage() {
             <span className="text-gray-500">Hackville 2026</span>
             <Link
               href="/select"
-              className="text-gray-900 border-b border-transparent hover:border-gray-900 transition-colors "
+              className="group inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white bg-purple-900 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200"
+              aria-label="Start your application process"
             >
-              <b><big>Start Application</big></b> &rarr;
+              <span className="mr-3">Start Application</span>
+              <svg 
+                className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
             </Link>
           </div>
 
@@ -58,8 +67,20 @@ export default function LandingPage() {
             <div className="col-span-2 md:hidden pt-4 pb-2 border-t border-dashed border-gray-200 animate-in slide-in-from-top-1 fade-in duration-200">
               <div className="flex flex-col space-y-4">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Navigation</span>
-                <Link href="/select" className="text-lg font-medium hover:text-gray-600">
-                  Start Application
+                <Link 
+                  href="/select" 
+                  className="group inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white bg-purple-900 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200"
+                  aria-label="Start your application process"
+                >
+                  <span className="mr-3">Start Application</span>
+                  <svg 
+                    className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </Link>
               </div>
             </div>
@@ -67,91 +88,193 @@ export default function LandingPage() {
         </nav>
 
         {/* Header / Orientation */}
-        <header className="py-12 sm:py-20 border-b border-gray-900 grid grid-cols-1 md:grid-cols-12 gap-8">
-          <div className="md:col-span-8">
-            <h1 className="text-6xl sm:text-8xl font-bold tracking-tighter leading-[0.9] mb-6">
-              Essential Services. Simplified.
-            </h1>
-            <p className="text-xl sm:text-2xl font-medium leading-relaxed max-w-2xl text-gray-700">
-              A digital clarity system for Ontario Works applications. Designed to reduce cognitive load and guide you with precision.
-            </p>
-          </div>
-          <div className="md:col-span-4 flex flex-col justify-between items-start md:items-end">
+        <header 
+          className="py-16 sm:py-24 border-b border-purple-900"
+          role="banner"
+          aria-labelledby="main-heading"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div className="lg:col-span-8">
+              
+              <h1 
+                id="main-heading"
+                className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tighter leading-[0.9] mb-8 text-gray-900"
+              >
+                <span className="block">Essential Services.</span>
+                <span className="block text-gray-700">Simplified.</span>
+              </h1>
+              
+              <p 
+                className="text-lg sm:text-xl lg:text-2xl font-medium leading-relaxed max-w-3xl text-gray-700 mb-8"
+                role="text"
+                aria-describedby="main-heading"
+              >
+                A digital clarity system designed to make government forms accessible and understandable. We reduce cognitive load and guide you with precision through every step.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
+                <Link
+                  href="/select"
+                  className="group inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-bold text-white bg-purple-900 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200 w-full sm:w-auto"
+                  aria-label="Start your application process"
+                >
+                  <span className="mr-3">Get Started</span>
+                  <svg 
+                    className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+                
+                <button
+                  className="inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-purple-900 border border-purple-500 rounded-lg hover:border-purple-800 hover:text-black hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200 w-full sm:w-auto"
+                  aria-label="Learn more about our services"
+                  onClick={() => document.getElementById('process-section-heading')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <span>Learn More</span>
+                  <svg 
+                    className="w-4 h-4 ml-2" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </header>
 
         {/* Narrative Section - The Why & How */}
-        <main className="flex-grow">
-          <section className="py-24 grid grid-cols-1 md:grid-cols-12 gap-12">
+        <main className="flex-grow" role="main">
+          <section 
+            className="py-16 sm:py-24" 
+            aria-labelledby="process-section-heading"
+          >
+            <div className="sr-only">
+              <h2 id="process-section-heading">Our Three-Step Process</h2>
+            </div>
             
-            {/* Reassurance */}
-            <div className="md:col-span-4 pr-8 border-r-0 md:border-r border-dashed border-gray-300">
-              <span className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">01. Purpose</span>
-              <h2 className="text-3xl font-semibold mb-4 tracking-tight">Clarity over complexity.</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Navigating social assistance shouldn't be a test of endurance. We have removed the noise to focus entirely on your needs. The interface is calm, the language is plain, and help is always one click away.
-              </p>
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+              {/* Reassurance */}
+              <article 
+                className="flex flex-col h-full focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-purple-800 rounded-lg p-6 lg:p-8 bg-white border border-transparent hover:border-purple-300 transition-all duration-200"
+                role="article"
+                aria-labelledby="purpose-heading"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <span 
+                    className="flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-900 font-bold text-lg rounded-full"
+                    aria-label="Step 1"
+                  >
+                    1
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    Purpose
+                  </span>
+                </div>
+                
+                <h3 id="purpose-heading" className="text-2xl lg:text-3xl font-semibold mb-4 tracking-tight text-gray-900">
+                  Clarity over complexity
+                </h3>
+                
+                <p className="text-gray-700 leading-relaxed text-base lg:text-lg flex-grow mb-6">
+                  Navigating government assistance shouldn't be overwhelming. We've simplified complex forms with clear language, intuitive design, and immediate help when you need it most.
+                </p>
+                
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-600 font-medium">
+                    ✓ Plain language explanations
+                  </span>
+                </div>
+              </article>
 
-            {/* Understanding */}
-            <div className="md:col-span-4 pr-8 border-r-0 md:border-r border-dashed border-gray-300">
-              <span className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">02. Method</span>
-              <h2 className="text-3xl font-semibold mb-4 tracking-tight">Structured guidance.</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Every question is isolated. Every term is explained. Our intelligent assistant is present but never intrusive, offering instant clarification for complex requirements without leaving the page.
-              </p>
-            </div>
+              {/* Understanding */}
+              <article 
+                className="flex flex-col h-full focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-purple-800 rounded-lg p-6 lg:p-8 bg-white border border-transparent hover:border-purple-300 transition-all duration-200"
+                role="article"
+                aria-labelledby="method-heading"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <span 
+                    className="flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-900 font-bold text-lg rounded-full"
+                    aria-label="Step 2"
+                  >
+                    2
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    Method
+                  </span>
+                </div>
+                
+                <h3 id="method-heading" className="text-2xl lg:text-3xl font-semibold mb-4 tracking-tight text-gray-900">
+                  Guided step-by-step
+                </h3>
+                
+                <p className="text-gray-700 leading-relaxed text-base lg:text-lg flex-grow mb-6">
+                  Each question is presented clearly with context and purpose. Our AI assistant provides instant explanations for any term or requirement, keeping you informed and confident throughout.
+                </p>
+                
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-600 font-medium">
+                    ✓ AI-powered assistance
+                  </span>
+                </div>
+              </article>
 
-            {/* Empowerment */}
-            <div className="md:col-span-4">
-              <span className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">03. Result</span>
-              <h2 className="text-3xl font-semibold mb-4 tracking-tight">Submit with confidence.</h2>
-              <p className="text-gray-600 leading-relaxed">
-                Review your progress instantly. Validate your information in real-time. By the time you reach the end, you will know—not just hope—that your application is complete and correct.
-              </p>
+              {/* Empowerment */}
+              <article 
+                className="flex flex-col h-full focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-purple-800 rounded-lg p-6 lg:p-8 bg-white border border-transparent hover:border-purple-300 transition-all duration-200"
+                role="article"
+                aria-labelledby="result-heading"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <span 
+                    className="flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-900 font-bold text-lg rounded-full"
+                    aria-label="Step 3"
+                  >
+                    3
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    Result
+                  </span>
+                </div>
+                
+                <h3 id="result-heading" className="text-2xl lg:text-3xl font-semibold mb-4 tracking-tight text-gray-900">
+                  Complete with confidence
+                </h3>
+                
+                <p className="text-gray-700 leading-relaxed text-base lg:text-lg flex-grow mb-6">
+                  Real-time validation ensures your information is accurate before submission. Track your progress and review everything carefully before your final application submission.
+                </p>
+                
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                  <span className="text-sm text-gray-600 font-medium">
+                    ✓ Instant validation & review
+                  </span>
+                </div>
+              </article>
             </div>
           </section>
 
-          <div className="w-full h-px bg-gray-900 mb-16"></div>
-
-          {/* Call to Action */}
-          <section className="mb-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-             <div className="md:col-span-8">
-               <h3 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
-                 Ready to begin?
-               </h3>
-               <p className="text-lg text-gray-600 max-w-xl">
-                 No account creation required for this demo. Your session is secure and private.
-               </p>
-             </div>
-             <div className="md:col-span-4 flex justify-start md:justify-end">
-               <Link
-                 href="/select"
-                 className="group relative inline-flex items-center justify-center px-8 py-5 text-lg font-bold text-white transition-all duration-200 bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-               >
-                 <span className="mr-3">Start Application</span>
-                 <svg 
-                   className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" 
-                   fill="none" 
-                   viewBox="0 0 24 24" 
-                   stroke="currentColor"
-                 >
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                 </svg>
-               </Link>
-             </div>
-          </section>
         </main>
         
         {/* Footer */}
         <footer className="py-8 border-t border-gray-200 text-sm text-gray-500 flex flex-col sm:flex-row justify-between items-center">
             <div className="space-x-6 mb-4 sm:mb-0">
-                <span>© 2026 Hackville FormBridge</span>
+                <span>© 2026 FormBridge</span>
                 <span>Privacy</span>
                 <span>Terms</span>
+                
             </div>
             <div className="font-mono text-xs">
-                System Status: <span className="text-green-600">● Operational</span>
+                <span>Created by: Uzeyr A, Kurt J, Bianca J , Jason T @ Hackville 2026</span>
             </div>
         </footer>
       </div>
