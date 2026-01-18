@@ -1,10 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
+        setIsLangDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 selection:bg-gray-200 selection:text-black">
@@ -29,6 +43,74 @@ export default function LandingPage() {
           {/* Desktop Nav */}
           <div className="hidden md:flex md:col-span-8 justify-end items-center space-x-8 text-sm font-medium">
             <span className="text-gray-500">Hackville 2026</span>
+
+            {/* Language Toggle */}
+            <div className="relative" ref={langDropdownRef}>
+              <button
+                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:border-purple-900 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200"
+                aria-label="Select language"
+                aria-expanded={isLangDropdownOpen}
+                aria-haspopup="listbox"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+              </button>
+
+              {/* Dropdown */}
+              {isLangDropdownOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 animate-in fade-in slide-in-from-top-1 duration-200"
+                  role="listbox"
+                  aria-label="Language options"
+                >
+                  <button
+                    onClick={() => {
+                      setLanguage('en');
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium flex items-center justify-between hover:bg-purple-50 transition-colors duration-150 ${
+                      language === 'en' ? 'text-purple-900 bg-purple-50' : 'text-gray-700'
+                    }`}
+                    role="option"
+                    aria-selected={language === 'en'}
+                  >
+                    <span>English</span>
+                    {language === 'en' && (
+                      <svg className="w-4 h-4 text-purple-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLanguage('fr');
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className={`w-full px-4 py-2.5 text-left text-sm font-medium flex items-center justify-between hover:bg-purple-50 transition-colors duration-150 ${
+                      language === 'fr' ? 'text-purple-900 bg-purple-50' : 'text-gray-700'
+                    }`}
+                    role="option"
+                    aria-selected={language === 'fr'}
+                  >
+                    <span>Français</span>
+                    {language === 'fr' && (
+                      <svg className="w-4 h-4 text-purple-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+
             <Link
               href="/select"
               className="group inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white bg-purple-900 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200"
@@ -67,21 +149,48 @@ export default function LandingPage() {
             <div className="col-span-2 md:hidden pt-4 pb-2 border-t border-dashed border-gray-200 animate-in slide-in-from-top-1 fade-in duration-200">
               <div className="flex flex-col space-y-4">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Navigation</span>
-                <Link 
-                  href="/select" 
+                <Link
+                  href="/select"
                   className="group inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white bg-purple-900 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-800 transition-all duration-200"
                   aria-label="Start your application process"
                 >
                   <span className="mr-3">Start Application</span>
-                  <svg 
-                    className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
+                  <svg
+                    className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </Link>
+
+                {/* Mobile Language Toggle */}
+                <div className="pt-4 border-t border-dashed border-gray-200">
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Language</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setLanguage('en')}
+                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                        language === 'en'
+                          ? 'bg-purple-900 text-white border-purple-900'
+                          : 'bg-white text-gray-700 border-gray-200 hover:border-purple-900 hover:bg-purple-50'
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => setLanguage('fr')}
+                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                        language === 'fr'
+                          ? 'bg-purple-900 text-white border-purple-900'
+                          : 'bg-white text-gray-700 border-gray-200 hover:border-purple-900 hover:bg-purple-50'
+                      }`}
+                    >
+                      Français
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
