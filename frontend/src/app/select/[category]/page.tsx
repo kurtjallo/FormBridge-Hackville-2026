@@ -7,6 +7,8 @@ import { SAMPLE_PDF_FORMS } from '@/data/sampleForms';
 import { PDFFormMeta, FormCategory } from '@/types/pdf';
 import { Logo } from '@/components/Logo';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
 // Category titles
 const categoryTitles: Record<string, string> = {
   legal: 'Legal Forms',
@@ -15,8 +17,8 @@ const categoryTitles: Record<string, string> = {
 
 // Map form IDs to their PDF URLs (for sample forms)
 const formPdfUrls: Record<string, string> = {
-  'basic-nda': 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf',
-  'cra-td1': 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf',
+  'basic-nda': `${API_URL}/forms/Legal/Basic-Non-Disclosure-Agreement.pdf`,
+  'cra-td1': `${API_URL}/forms/Finance/td1-fill-26e.pdf`,
 };
 
 export default function CategoryFormsPage() {
@@ -68,9 +70,9 @@ export default function CategoryFormsPage() {
   // Filter by search query
   const filteredForms = searchQuery
     ? allForms.filter(form =>
-        form.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        form.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      form.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      form.description.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : allForms;
 
   const handleFormSelect = (form: PDFFormMeta) => {
@@ -186,11 +188,10 @@ export default function CategoryFormsPage() {
                         <span className="text-xs text-gray-400">
                           {form.estimatedTime}
                         </span>
-                        <span className={`text-xs px-2 py-0.5 rounded ${
-                          form.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-                          form.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
+                        <span className={`text-xs px-2 py-0.5 rounded ${form.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                            form.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                          }`}>
                           {form.difficulty}
                         </span>
                       </div>
