@@ -12,7 +12,8 @@
     "closeAssistant": "Close assistant",
     "sendMessage": "Send message",
     "openAssistant": "Open AI assistant",
-    "connectionError": "I'm having trouble connecting right now. Please try again in a moment, or check that the backend server is running."
+    "connectionError": "I'm having trouble connecting right now. Please try again in a moment, or check that the backend server is running.",
+    "helpRequest": "Can you help me understand this text from the form?\n\n\"{{text}}\""
   },
   "header": {
     "back": "Go back",
