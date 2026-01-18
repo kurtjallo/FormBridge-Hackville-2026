@@ -375,8 +375,8 @@ export default function FormViewPage() {
           <PDFFormViewer
             pdfUrl={pdfUrl}
             onFieldClick={(fieldId) => {
-              // Ask for help about this field - strip trailing _0, _1, etc. from field names
-              const cleanFieldId = fieldId.replace(/_\d+$/, '');
+              // Ask for help about this field - strip all trailing _0, _1, _2, etc. from field names
+              const cleanFieldId = fieldId.replace(/(_\d+)+$/, '');
               setActiveContext(t('formview.assistant.contextPrefix', { fieldId: cleanFieldId }));
               setShowMobileSidebar(true);
             }}

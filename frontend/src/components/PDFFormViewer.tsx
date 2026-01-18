@@ -20,6 +20,75 @@ import 'react-pdf/dist/Page/TextLayer.css';
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
+// Circular Progress Indicator Component
+function CircularProgress({ filled, total }: { filled: number; total: number }) {
+    const [mounted, setMounted] = useState(false);
+    const percentage = total > 0 ? Math.round((filled / total) * 100) : 0;
+
+    // Enable transitions after first render
+    useEffect(() => {
+        const timer = setTimeout(() => setMounted(true), 50);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Color based on progress
+    const getColor = (pct: number) => {
+        if (pct === 100) return '#10B981'; // Green
+        if (pct >= 67) return '#7C3AED';   // Purple
+        if (pct >= 34) return '#F59E0B';   // Yellow
+        return '#EF4444';                   // Red
+    };
+
+    const color = getColor(percentage);
+    const size = 40;
+    const strokeWidth = 4;
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+    return (
+        <div className="relative" style={{ width: size, height: size }}>
+            <svg
+                width={size}
+                height={size}
+                className="transform -rotate-90"
+            >
+                {/* Background circle */}
+                <circle
+                    cx={size / 2}
+                    cy={size / 2}
+                    r={radius}
+                    fill="none"
+                    stroke="#E5E7EB"
+                    strokeWidth={strokeWidth}
+                />
+                {/* Progress circle */}
+                <circle
+                    cx={size / 2}
+                    cy={size / 2}
+                    r={radius}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={strokeWidth}
+                    strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    style={{
+                        transition: mounted ? 'stroke-dashoffset 500ms ease-out, stroke 300ms ease-out' : 'none'
+                    }}
+                />
+            </svg>
+            {/* Percentage text */}
+            <div
+                className="absolute inset-0 flex items-center justify-center text-xs font-semibold"
+                style={{ color }}
+            >
+                {percentage}%
+            </div>
+        </div>
+    );
+}
+
 interface PDFFormViewerProps {
     pdfUrl: string;
     onFieldClick?: (fieldId: string) => void;
@@ -69,13 +138,15 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
     useEffect(() => {
         async function initPDF() {
             try {
-                // Reset state when switching PDFs
-                if (prevPdfUrlRef.current !== null && prevPdfUrlRef.current !== pdfUrl) {
-                    console.log('Switching PDF, clearing old fields...');
+                // Always reset state when loading a PDF (fresh start)
+                if (prevPdfUrlRef.current !== pdfUrl) {
+                    console.log('Loading PDF, clearing field values...');
                     setFields([]);
                     clearFieldValues();
                     setActiveField(null);
-                    setCurrentPage(1);
+                    if (prevPdfUrlRef.current !== null) {
+                        setCurrentPage(1);
+                    }
                 }
                 prevPdfUrlRef.current = pdfUrl;
 
@@ -341,9 +412,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                 {/* Export Button */}
                 <div className="flex items-center gap-3">
                     {totalFieldCount > 0 && (
-                        <span className="text-sm text-gray-500">
-                            {filledFieldCount}/{totalFieldCount} fields
-                        </span>
+                        <CircularProgress filled={filledFieldCount} total={totalFieldCount} />
                     )}
                     <button
                         onClick={handleExport}
