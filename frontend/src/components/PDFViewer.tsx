@@ -69,25 +69,25 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
     };
 
     return (
-        <div className="pdf-viewer flex flex-col h-full bg-gray-900">
+        <div className="pdf-viewer flex flex-col h-full bg-gray-50">
             {/* Toolbar */}
-            <div className="pdf-toolbar flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
+            <div className="pdf-toolbar flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200">
                 {/* Page Navigation */}
                 <div className="flex items-center gap-2">
                     <button
                         onClick={goToPrevPage}
                         disabled={viewer.currentPage <= 1}
-                        className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-white transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
                         ← Prev
                     </button>
-                    <span className="text-gray-300 text-sm min-w-[100px] text-center">
+                    <span className="text-gray-600 text-sm min-w-[100px] text-center">
                         Page {viewer.currentPage} of {viewer.totalPages || '...'}
                     </span>
                     <button
                         onClick={goToNextPage}
                         disabled={viewer.currentPage >= viewer.totalPages}
-                        className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-white transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
                         Next →
                     </button>
@@ -98,23 +98,23 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
                     <button
                         onClick={zoomOut}
                         disabled={viewer.scale <= 0.5}
-                        className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-white transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
                         −
                     </button>
-                    <span className="text-gray-300 text-sm min-w-[60px] text-center">
+                    <span className="text-gray-600 text-sm min-w-[60px] text-center">
                         {Math.round(viewer.scale * 100)}%
                     </span>
                     <button
                         onClick={zoomIn}
                         disabled={viewer.scale >= 3}
-                        className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-white transition-colors"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
                         +
                     </button>
                     <button
                         onClick={() => setScale(1)}
-                        className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-medium text-white transition-colors ml-2"
+                        className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-md text-sm font-medium text-gray-700 transition-colors ml-2"
                     >
                         Reset
                     </button>
@@ -137,7 +137,7 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
             )}
 
             {/* PDF Document */}
-            <div className="flex-1 overflow-auto flex justify-center p-4 bg-gray-900">
+            <div className="flex-1 overflow-auto flex justify-center p-4 bg-gray-100">
                 {viewer.isLoading && (
                     <div className="flex items-center justify-center h-64">
                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
