@@ -12,7 +12,8 @@
     "closeAssistant": "Fermer l’assistant",
     "sendMessage": "Envoyer le message",
     "openAssistant": "Ouvrir l’assistant IA",
-    "connectionError": "J’ai des difficultés à me connecter pour le moment. Veuillez réessayer dans un instant ou vérifier que le serveur backend est en cours d’exécution."
+    "connectionError": "J'ai des difficultés à me connecter pour le moment. Veuillez réessayer dans un instant ou vérifier que le serveur backend est en cours d'exécution.",
+    "helpRequest": "Pouvez-vous m'aider à comprendre ce texte du formulaire ?\n\n\"{{text}}\""
   },
   "header": {
     "back": "Retour",

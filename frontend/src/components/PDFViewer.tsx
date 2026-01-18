@@ -13,9 +13,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 interface PDFViewerProps {
     pdfUrl: string;
     onFieldClick?: (fieldId: string) => void;
+    onHelpRequest?: (data: { selectedText: string; page: number }) => void;
 }
 
-export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
+export function PDFViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFViewerProps) {
     const { t } = useTranslation();
     const {
         viewer,
@@ -29,6 +30,28 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
     } = usePDFStore();
 
     const [isXFA, setIsXFA] = useState(false);
+    const [selectionTimeout, setSelectionTimeout] = useState<NodeJS.Timeout | null>(null);
+
+    // Handle text selection for help requests
+    const handleMouseUp = useCallback(() => {
+        if (selectionTimeout) {
+            clearTimeout(selectionTimeout);
+        }
+
+        const timeout = setTimeout(() => {
+            const selection = window.getSelection();
+            const selectedText = selection?.toString().trim() || '';
+
+            if (selectedText.length >= 10 && onHelpRequest) {
+                onHelpRequest({
+                    selectedText,
+                    page: viewer.currentPage,
+                });
+            }
+        }, 600);
+
+        setSelectionTimeout(timeout);
+    }, [selectionTimeout, viewer.currentPage, onHelpRequest]);
 
     const onDocumentLoadSuccess = useCallback(
         async (pdf: { numPages: number; _pdfInfo?: { isXFA?: boolean } }) => {
@@ -142,7 +165,10 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
             )}
 
             {/* PDF Document */}
-            <div className="flex-1 overflow-auto flex justify-center p-4 bg-gray-100">
+            <div
+                className="flex-1 overflow-auto flex justify-center p-4 bg-gray-100"
+                onMouseUp={handleMouseUp}
+            >
                 {viewer.isLoading && (
                     <div className="flex items-center justify-center h-64">
                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
