@@ -9,6 +9,7 @@ const initialState = {
   sessionId: null,
   completedSections: [],
   validationErrors: {},
+  language: 'en' as const,
 };
 
 export const useFormStore = create<FormState>()(
@@ -54,6 +55,9 @@ export const useFormStore = create<FormState>()(
       clearValidationErrors: () =>
         set({ validationErrors: {} }),
 
+      setLanguage: (lang: 'en' | 'fr') =>
+        set({ language: lang }),
+
       reset: () => set(initialState),
     }),
     {
@@ -63,6 +67,7 @@ export const useFormStore = create<FormState>()(
         sessionId: state.sessionId,
         completedSections: state.completedSections,
         conversations: state.conversations,
+        language: state.language,
       }),
     }
   )

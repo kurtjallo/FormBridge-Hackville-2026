@@ -34,6 +34,9 @@ export interface ChatMessage {
   timestamp: number;
 }
 
+// Language type
+export type Language = 'en' | 'fr';
+
 // Store types
 export interface FormState {
   // Form answers
@@ -60,6 +63,10 @@ export interface FormState {
   validationErrors: Record<string, string>;
   setValidationError: (fieldId: string, error: string | null) => void;
   clearValidationErrors: () => void;
+
+  // Language preference
+  language: Language;
+  setLanguage: (lang: Language) => void;
 
   // Reset
   reset: () => void;
