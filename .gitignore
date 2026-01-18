@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Root package files (project uses /frontend and /backend)
+/package.json
+/package-lock.json
+
+# Claude Code settings
+.claude/
+
+# OS files
+.DS_Store
