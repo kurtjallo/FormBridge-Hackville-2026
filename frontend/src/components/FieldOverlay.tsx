@@ -5,6 +5,7 @@ import { usePDFStore } from '@/store/pdfStore';
 import { PDFField } from '@/types/pdf';
 import { TextField } from './fields/TextField';
 import { CheckboxField } from './fields/CheckboxField';
+import { SignatureField } from './fields/SignatureField';
 
 interface FieldOverlayProps {
     fields: PDFField[];
@@ -91,6 +92,8 @@ export function FieldOverlay({
                     case 'radio':
                         // Simplified: treat radio as checkbox for now
                         return <CheckboxField key={field.id} {...fieldProps} />;
+                    case 'signature':
+                        return <SignatureField key={field.id} {...fieldProps} />;
                     default:
                         return <TextField key={field.id} {...fieldProps} />;
                 }

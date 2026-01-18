@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
+import { Send, MessageCircle, ChevronLeft, X, FileText } from 'lucide-react';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
@@ -74,11 +74,13 @@ function AIAssistantPanel({
   onSendMessage,
   isLoading,
   activeContext,
+  onClose,
 }: {
   messages: ChatMessage[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
   activeContext: string | null;
+  onClose?: () => void;
 }) {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
@@ -106,13 +108,15 @@ function AIAssistantPanel({
             <MapleMoose className="w-8 h-8" />
             <span className="font-semibold text-gray-900">{t('formview.assistant.title')}</span>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors lg:hidden"
-            aria-label={t('formview.assistant.closeAssistant')}
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </button>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors lg:hidden"
+              aria-label={t('formview.assistant.closeAssistant')}
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+          )}
         </div>
         <p className="text-sm text-gray-600">
           {t('formview.assistant.description')}
@@ -406,7 +410,7 @@ export default function FormViewPage() {
 
               {/* Mobile Sidebar Toggle */}
               <button
-                onClick={() => setShowMobileChat(true)}
+                onClick={() => setShowMobileSidebar(true)}
                 className="lg:hidden p-2 bg-purple-900 hover:bg-black text-white rounded-lg transition-colors"
                 aria-label={t('formview.assistant.openAssistant')}
               >
