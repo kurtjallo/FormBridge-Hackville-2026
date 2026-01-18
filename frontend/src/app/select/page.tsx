@@ -87,11 +87,11 @@ interface FormOption {
   code: string;
   name: string;
   ministry: string;
-  category: 'legal' | 'finance';
+  category: 'legal' | 'finance' | 'immigration';
   pdfUrl: string;
 }
 
-// Database with ONLY Legal and Finance forms for demo
+// Database with Legal, Finance, and Immigration forms for demo
 // IDs must match SAMPLE_PDF_FORMS in sampleForms.ts for PDF lookup to work
 const formsDatabase: FormOption[] = [
   // Legal Forms
@@ -103,6 +103,10 @@ const formsDatabase: FormOption[] = [
   { id: 'cra-5006', code: 'T1-TAX', name: 'Income Tax and Benefit Return', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
   { id: 'ontario-works', code: 'OW-APP', name: 'Ontario Works Application', ministry: 'Ministry of Children, Community and Social Services', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
   { id: 'gst-hst', code: 'GST34', name: 'GST/HST Return for Registrants', ministry: 'Canada Revenue Agency', category: 'finance', pdfUrl: 'http://localhost:5001/forms/Finance/5006-r-24e.pdf' },
+
+  // Immigration Forms
+  { id: 'sponsorship-undertaking', code: 'IMM-SP', name: 'Sponsorship Undertaking', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', pdfUrl: 'http://localhost:5001/forms/Immigration/Sponsorship-Undertaking.pdf' },
+  { id: 'document-checklist', code: 'IMM-DC', name: 'Supporting Document Checklist', ministry: 'Immigration, Refugees and Citizenship Canada', category: 'immigration', pdfUrl: 'http://localhost:5001/forms/Immigration/Supporting-Document-Checklist.pdf' },
 ];
 
 export default function OnboardingPage() {
@@ -114,7 +118,7 @@ export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState<Step>('language');
   const [name, setName] = useState('');
   const [editingField, setEditingField] = useState<'name' | 'language' | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<'legal' | 'finance' | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<'legal' | 'finance' | 'immigration' | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<Step>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
@@ -402,15 +406,16 @@ export default function OnboardingPage() {
                 <p className="text-gray-500 mt-2">{t('onboarding.categorySelect.subtitle')}</p>
              </div>
 
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                  {[
                      { id: 'legal', icon: '⚖️' },
-                     { id: 'finance', icon: '💰' }
+                     { id: 'finance', icon: '💰' },
+                     { id: 'immigration', icon: '🛂' }
                  ].map((cat) => (
                     <button
                         key={cat.id}
                         onClick={() => {
-                            setSelectedCategory(cat.id as 'legal' | 'finance');
+                            setSelectedCategory(cat.id as 'legal' | 'finance' | 'immigration');
                             handleNext();
                         }}
                         className="group relative p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-purple-500 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300 text-left overflow-hidden"
