@@ -269,13 +269,21 @@ export default function OnboardingPage() {
                 autoFocus
               />
             </div>
-            <button
-              onClick={handleNext}
-              disabled={!name.trim()}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              {t('common.buttons.continue')}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleBack}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.back')}
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={!name.trim()}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.continue')}
+              </button>
+            </div>
           </div>
         );
 
@@ -308,10 +316,16 @@ export default function OnboardingPage() {
               </div>
 
               {isComplete && (
-                <div className="flex justify-end">
+                <div className="flex gap-3">
+                    <button
+                      onClick={handleBack}
+                      className="w-full sm:w-auto px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      {t('common.buttons.back')}
+                    </button>
                     <button
                       onClick={handleNext}
-                      className="w-full sm:w-auto px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 cursor-pointer"
+                      className="w-full sm:w-auto px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
                     >
                       {t('common.buttons.letsDoIt')}
                       <ChevronRight size={20} />
@@ -404,12 +418,20 @@ export default function OnboardingPage() {
                 </div>
             </div>
 
-            <button
-              onClick={handleNext}
-              className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all mt-4 cursor-pointer"
-            >
-              {t('common.buttons.looksGood')}
-            </button>
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={handleBack}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.back')}
+              </button>
+              <button
+                onClick={handleNext}
+                className="w-full py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+              >
+                {t('common.buttons.looksGood')}
+              </button>
+            </div>
           </div>
         );
 
@@ -455,6 +477,15 @@ export default function OnboardingPage() {
                  >
                     <Upload size={18} />
                     <span>{t('onboarding.categorySelect.uploadOwnPdf')}</span>
+                 </button>
+             </div>
+
+             <div className="flex justify-center mt-6">
+                 <button
+                    onClick={handleBack}
+                    className="px-8 py-4 bg-purple-900 text-white rounded-xl font-medium hover:bg-black transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-0.5 cursor-pointer"
+                 >
+                    {t('common.buttons.back')}
                  </button>
              </div>
           </div>
