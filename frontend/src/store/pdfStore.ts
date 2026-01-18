@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { PDFFormMeta, PDFViewerState, PDFField, FormCategory } from '@/types/pdf';
 
+// Colorblind mode types for accessibility
+export type ColorblindMode = 'none' | 'deuteranopia' | 'protanopia' | 'tritanopia';
+
 interface PDFStore {
     // Selected form
     selectedForm: PDFFormMeta | null;
@@ -38,6 +41,10 @@ interface PDFStore {
     // Page dimensions (for coordinate mapping)
     pageDimensions: { width: number; height: number };
     setPageDimensions: (dimensions: { width: number; height: number }) => void;
+
+    // Colorblind accessibility mode
+    colorblindMode: ColorblindMode;
+    setColorblindMode: (mode: ColorblindMode) => void;
 
     // Clear field values
     clearFieldValues: () => void;
@@ -121,6 +128,10 @@ export const usePDFStore = create<PDFStore>()(
             pageDimensions: { width: 612, height: 792 }, // Default letter size
             setPageDimensions: (dimensions) => set({ pageDimensions: dimensions }),
 
+            // Colorblind accessibility mode
+            colorblindMode: 'none',
+            setColorblindMode: (mode) => set({ colorblindMode: mode }),
+
             // Clear field values
             clearFieldValues: () => set({ fieldValues: {} }),
 
@@ -135,6 +146,7 @@ export const usePDFStore = create<PDFStore>()(
                     selectedCategory: null,
                     pdfBytes: null,
                     pageDimensions: { width: 612, height: 792 },
+                    colorblindMode: 'none',
                 }),
         }),
         {
@@ -142,6 +154,7 @@ export const usePDFStore = create<PDFStore>()(
             partialize: (state) => ({
                 fieldValues: state.fieldValues,
                 selectedCategory: state.selectedCategory,
+                colorblindMode: state.colorblindMode,
             }),
         }
     )

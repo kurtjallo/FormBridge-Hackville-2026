@@ -55,3 +55,84 @@ body {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* ===== Colorblind Accessibility Styles ===== */
+/*
+ * Research-backed color palettes for the 3 most common types of colorblindness:
+ * - Deuteranopia (green-weak): Uses blue/orange contrast
+ * - Protanopia (red-weak): Uses blue/yellow contrast
+ * - Tritanopia (blue-yellow): Uses magenta/cyan contrast
+ */
+
+/* Default highlight colors (normal vision) */
+:root {
+  --highlight-primary: #7c3aed; /* purple-600 */
+  --highlight-primary-hover: #000000;
+  --highlight-bg: rgba(124, 58, 237, 0.15);
+  --highlight-border: rgba(124, 58, 237, 0.4);
+  --highlight-text: #5b21b6; /* purple-800 */
+}
+
+/* Deuteranopia (red-green, green-weak) - ~6% of males */
+/* Uses high-contrast blue and orange palette */
+[data-colorblind-mode="deuteranopia"] {
+  --highlight-primary: #0077bb; /* accessible blue */
+  --highlight-primary-hover: #005588;
+  --highlight-bg: rgba(0, 119, 187, 0.2);
+  --highlight-border: rgba(0, 119, 187, 0.5);
+  --highlight-text: #004466;
+}
+
+/* Protanopia (red-green, red-weak) - ~2% of males */
+/* Uses blue and yellow/amber palette */
+[data-colorblind-mode="protanopia"] {
+  --highlight-primary: #0077bb; /* accessible blue */
+  --highlight-primary-hover: #005588;
+  --highlight-bg: rgba(0, 119, 187, 0.2);
+  --highlight-border: rgba(0, 119, 187, 0.5);
+  --highlight-text: #004466;
+}
+
+/* Tritanopia (blue-yellow) - ~0.01% of population */
+/* Uses magenta/pink and teal palette */
+[data-colorblind-mode="tritanopia"] {
+  --highlight-primary: #cc3399; /* magenta/pink */
+  --highlight-primary-hover: #991166;
+  --highlight-bg: rgba(204, 51, 153, 0.18);
+  --highlight-border: rgba(204, 51, 153, 0.45);
+  --highlight-text: #881155;
+}
+
+/* Selection Help Button colorblind-aware styles */
+.colorblind-highlight-btn {
+  background-color: var(--highlight-primary);
+}
+
+.colorblind-highlight-btn:hover {
+  background-color: var(--highlight-primary-hover);
+}
+
+/* Text selection highlight for colorblind modes */
+[data-colorblind-mode="deuteranopia"] ::selection,
+[data-colorblind-mode="protanopia"] ::selection {
+  background-color: rgba(0, 119, 187, 0.35);
+  color: #002244;
+}
+
+[data-colorblind-mode="tritanopia"] ::selection {
+  background-color: rgba(204, 51, 153, 0.35);
+  color: #440033;
+}
+
+/* Color preview swatches in the toggle dropdown */
+.colorblind-highlight-preview-deuteranopia {
+  background: linear-gradient(90deg, #0077bb 0%, #0099dd 100%);
+}
+
+.colorblind-highlight-preview-protanopia {
+  background: linear-gradient(90deg, #0077bb 0%, #0099dd 100%);
+}
+
+.colorblind-highlight-preview-tritanopia {
+  background: linear-gradient(90deg, #cc3399 0%, #ee55bb 100%);
+}

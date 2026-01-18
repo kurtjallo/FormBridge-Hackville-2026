@@ -5,6 +5,38 @@
     "page": "Page {{current}} sur {{total}}",
     "reset": "Réinitialiser"
   },
+  "colorblind": {
+    "title": "Vision",
+    "toggleLabel": "Options d'accessibilité pour daltonisme",
+    "selectLabel": "Sélectionner le type de vision",
+    "menuTitle": "Accessibilité visuelle",
+    "menuDescription": "Ajustez les couleurs de surbrillance selon votre type de vision",
+    "previewLabel": "Aperçu :",
+    "colorPreview": "Aperçu des couleurs",
+    "accessibilityNote": "Les couleurs sont optimisées pour la visibilité",
+    "helpButton": "Aide",
+    "helpButtonLabel": "Obtenir de l'aide sur le texte sélectionné",
+    "chatButton": "Clarify",
+    "chatButtonLabel": "Ouvrir le chat pour obtenir de l'aide sur cet élément",
+    "options": {
+      "none": {
+        "label": "Vision standard",
+        "description": "Couleurs de surbrillance violettes par défaut"
+      },
+      "deuteranopia": {
+        "label": "Deutéranopie",
+        "description": "Déficience verte (type rouge-vert le plus courant)"
+      },
+      "protanopia": {
+        "label": "Protanopie",
+        "description": "Déficience rouge du daltonisme rouge-vert"
+      },
+      "tritanopia": {
+        "label": "Tritanopie",
+        "description": "Daltonisme bleu-jaune"
+      }
+    }
+  },
   "xfa": {
     "limitedSupport": "Ce formulaire XFA offre une prise en charge limitée de l’édition. Certaines fonctionnalités peuvent ne pas fonctionner correctement.",
     "limitedNotice": "⚠️ Il s’agit d’un formulaire XFA. Certaines fonctionnalités interactives peuvent être limitées.",

@@ -14,6 +14,7 @@ import {
 import { Download, Loader2, Check, X } from 'lucide-react';
 import { useTranslation } from '@/i18n';
 import { SignatureModal } from './SignatureModal';
+import { ColorblindToggle } from './ColorblindToggle';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
@@ -60,6 +61,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
         setScale,
         clearFieldValues,
         setActiveField,
+        colorblindMode,
     } = usePDFStore();
 
     // Track previous URL to detect changes
@@ -135,11 +137,13 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                 setSelectionRect(rect);
                 setSelectedText(text);
                 setShowHelpButton(true);
+                // Clear active field when text is selected (only show one label at a time)
+                setActiveField(null);
             }
         } else {
             setShowHelpButton(false);
         }
-    }, []);
+    }, [setActiveField]);
 
     // Handle help button click
     const handleHelpClick = useCallback(
@@ -150,6 +154,18 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
             setShowHelpButton(false);
         },
         [viewer.currentPage, onHelpRequest]
+    );
+
+    // Handle field click - clears text selection to show only one label at a time
+    const handleFieldClick = useCallback(
+        (fieldId: string) => {
+            // Clear text selection when a field is clicked
+            setShowHelpButton(false);
+            window.getSelection()?.removeAllRanges();
+            // Call the original onFieldClick if provided
+            onFieldClick?.(fieldId);
+        },
+        [onFieldClick]
     );
 
     // Click-away to dismiss help button
@@ -284,9 +300,12 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
     const totalFieldCount = fields.length;
 
     return (
-        <div className="pdf-form-viewer flex flex-col h-full bg-gray-50">
+        <div
+            className="pdf-form-viewer flex flex-col h-full bg-gray-50"
+            data-colorblind-mode={colorblindMode !== 'none' ? colorblindMode : undefined}
+        >
             {/* Toolbar */}
-            <div className="pdf-toolbar flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200">
+            <div className="pdf-toolbar flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 flex-wrap gap-2">
                 {/* Page Navigation */}
                 <div className="flex items-center gap-2">
                     <button
@@ -338,10 +357,13 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                     </button>
                 </div>
 
-                {/* Export Button */}
+                {/* Right side controls: Colorblind Toggle + Export */}
                 <div className="flex items-center gap-3">
+                    {/* Colorblind Accessibility Toggle */}
+                    <ColorblindToggle />
+
                     {totalFieldCount > 0 && (
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 hidden sm:inline">
                             {filledFieldCount}/{totalFieldCount} fields
                         </span>
                     )}
@@ -446,7 +468,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                         currentPage={viewer.currentPage}
                         scale={viewer.scale}
                         pageHeight={pageDimensions.height}
-                        onFieldClick={onFieldClick}
+                        onFieldClick={handleFieldClick}
                     />
                 </div>
             </div>
@@ -457,6 +479,7 @@ export function PDFFormViewer({ pdfUrl, onFieldClick, onHelpRequest }: PDFFormVi
                 selectionRect={selectionRect}
                 isVisible={showHelpButton}
                 onHelpClick={handleHelpClick}
+                colorblindMode={colorblindMode}
             />
 
             {/* Signature Modal (for intercepted annotation clicks) */}

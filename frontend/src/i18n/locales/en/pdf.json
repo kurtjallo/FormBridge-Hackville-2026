@@ -5,6 +5,38 @@
     "page": "Page {{current}} of {{total}}",
     "reset": "Reset"
   },
+  "colorblind": {
+    "title": "Vision",
+    "toggleLabel": "Colorblind accessibility options",
+    "selectLabel": "Select vision type",
+    "menuTitle": "Vision Accessibility",
+    "menuDescription": "Adjust highlight colors for your vision type",
+    "previewLabel": "Preview:",
+    "colorPreview": "Color preview",
+    "accessibilityNote": "Colors are optimized for visibility",
+    "helpButton": "Help",
+    "helpButtonLabel": "Get help with selected text",
+    "chatButton": "Clarify",
+    "chatButtonLabel": "Open chat to get help with this item",
+    "options": {
+      "none": {
+        "label": "Standard Vision",
+        "description": "Default purple highlight colors"
+      },
+      "deuteranopia": {
+        "label": "Deuteranopia",
+        "description": "Green-weak (most common red-green type)"
+      },
+      "protanopia": {
+        "label": "Protanopia",
+        "description": "Red-weak red-green color blindness"
+      },
+      "tritanopia": {
+        "label": "Tritanopia",
+        "description": "Blue-yellow color blindness"
+      }
+    }
+  },
   "xfa": {
     "limitedSupport": "This is an XFA form which has limited editing support. Some features may not work correctly.",
     "limitedNotice": "⚠️ This is an XFA form. Some interactive features may be limited.",

@@ -20,7 +20,7 @@ export function SidebarTabs({ activeTab, onTabChange, hasFields }: SidebarTabsPr
                 }`}
             >
                 <MessageCircle className="w-4 h-4" />
-                Chat
+                Clarify
             </button>
             {hasFields && (
                 <button

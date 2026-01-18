@@ -5,6 +5,13 @@ import { PDFField } from '@/types/pdf';
 import { Pen, RotateCcw } from 'lucide-react';
 import { SignatureModal } from '../SignatureModal';
 
+// Colorblind-aware color scheme for form fields
+export interface FieldColorScheme {
+    ring: string;
+    bgActive: string;
+    bgHover: string;
+}
+
 interface SignatureFieldProps {
     field: PDFField;
     value: string;
@@ -12,11 +19,20 @@ interface SignatureFieldProps {
     onFocus: () => void;
     isActive: boolean;
     style: React.CSSProperties;
+    colorScheme?: FieldColorScheme;
 }
 
-export function SignatureField({ field, value, onChange, onFocus, isActive, style }: SignatureFieldProps) {
+// Default colors (purple theme)
+const defaultColors: FieldColorScheme = {
+    ring: '#7c3aed',
+    bgActive: 'rgba(124, 58, 237, 0.15)',
+    bgHover: 'rgba(124, 58, 237, 0.1)',
+};
+
+export function SignatureField({ field, value, onChange, onFocus, isActive, style, colorScheme }: SignatureFieldProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [signatureImage, setSignatureImage] = useState<string | null>(null);
+    const colors = colorScheme || defaultColors;
 
     const height = typeof style.height === 'number' ? style.height : 50;
 
@@ -50,18 +66,24 @@ export function SignatureField({ field, value, onChange, onFocus, isActive, styl
             <>
                 <div
                     onClick={handleOpenModal}
-                    className={`
-                        cursor-pointer group relative
-                        ${isActive ? 'ring-2 ring-purple-500' : ''}
-                        hover:ring-2 hover:ring-purple-300
-                        transition-all rounded bg-white/80
-                    `}
+                    className="cursor-pointer group relative transition-all rounded bg-white/80"
                     style={{
                         ...style,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         overflow: 'hidden',
+                        boxShadow: isActive ? `0 0 0 2px ${colors.ring}` : undefined,
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!isActive) {
+                            e.currentTarget.style.boxShadow = `0 0 0 2px ${colors.ring}50`;
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (!isActive) {
+                            e.currentTarget.style.boxShadow = 'none';
+                        }
                     }}
                     title="Click to change signature"
                 >
@@ -98,19 +120,24 @@ export function SignatureField({ field, value, onChange, onFocus, isActive, styl
             <button
                 onClick={handleOpenModal}
                 onFocus={onFocus}
-                className={`
-                    bg-purple-50/90 border-2 border-dashed
-                    ${isActive ? 'border-purple-500 bg-purple-100/90' : 'border-purple-300'}
-                    hover:border-purple-500 hover:bg-purple-100/90
-                    transition-all rounded
-                    flex items-center justify-center gap-2
-                    text-purple-600 text-sm font-medium
-                    shadow-sm hover:shadow
-                `}
+                className="border-2 border-dashed transition-all rounded flex items-center justify-center gap-2 text-sm font-medium shadow-sm hover:shadow"
                 style={{
                     ...style,
                     cursor: 'pointer',
                     minHeight: Math.max(height, 40),
+                    backgroundColor: isActive ? colors.bgActive : colors.bgHover,
+                    borderColor: isActive ? colors.ring : `${colors.ring}80`,
+                    color: colors.ring,
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = colors.ring;
+                    e.currentTarget.style.backgroundColor = colors.bgActive;
+                }}
+                onMouseLeave={(e) => {
+                    if (!isActive) {
+                        e.currentTarget.style.borderColor = `${colors.ring}80`;
+                        e.currentTarget.style.backgroundColor = colors.bgHover;
+                    }
                 }}
             >
                 <Pen className="w-4 h-4" />

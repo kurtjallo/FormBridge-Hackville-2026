@@ -1,13 +1,24 @@
 'use client';
 
 import { useMemo, useCallback } from 'react';
-import { HelpCircle } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
+import { useTranslation } from '@/i18n';
+import { ColorblindMode } from '@/store/pdfStore';
+
+// Color mappings for each colorblind mode
+const colorblindColors: Record<ColorblindMode, { bg: string; hover: string }> = {
+  none: { bg: '#7c3aed', hover: '#000000' },
+  deuteranopia: { bg: '#0077bb', hover: '#005588' },
+  protanopia: { bg: '#0077bb', hover: '#005588' },
+  tritanopia: { bg: '#cc3399', hover: '#991166' },
+};
 
 interface SelectionHelpButtonProps {
   selectedText: string;
   selectionRect: DOMRect | null;
   isVisible: boolean;
   onHelpClick: (text: string) => void;
+  colorblindMode?: ColorblindMode;
 }
 
 export function SelectionHelpButton({
@@ -15,7 +26,10 @@ export function SelectionHelpButton({
   selectionRect,
   isVisible,
   onHelpClick,
+  colorblindMode = 'none',
 }: SelectionHelpButtonProps) {
+  const { t } = useTranslation();
+  const colors = colorblindColors[colorblindMode];
   // Compute position directly from props
   const position = useMemo(() => {
     if (!isVisible || !selectionRect) {
@@ -90,20 +104,24 @@ export function SelectionHelpButton({
       className="
         fixed z-[100] flex items-center gap-1.5
         px-3 py-2
-        bg-purple-900 hover:bg-black
         text-white text-sm font-medium
         rounded-lg shadow-lg
         animate-in fade-in zoom-in-95 duration-200
         cursor-pointer
+        transition-colors
+        hover:opacity-90
       "
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
+        backgroundColor: colors.bg,
       }}
-      aria-label="Get help with selected text"
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.hover)}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.bg)}
+      aria-label={t('pdf.colorblind.chatButtonLabel')}
     >
-      <HelpCircle className="w-4 h-4" />
-      <span>Help</span>
+      <MessageCircle className="w-4 h-4" />
+      <span>{t('pdf.colorblind.chatButton')}</span>
     </button>
   );
 }
