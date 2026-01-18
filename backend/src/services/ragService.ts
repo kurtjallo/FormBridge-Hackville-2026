@@ -633,6 +633,655 @@ Keep address updated with CRA for payments.`,
             keywords: ['gst', 'hst', 'credit', 'tax', 'rebate', 'benefit'],
             source: 'CRA GST/HST Credit Guide',
         },
+
+        // ==========================================
+        // CANADIAN LAW - Contracts & Legal Terms
+        // ==========================================
+        {
+            category: 'legal',
+            title: 'Contract Basics in Canada',
+            content: `A contract is a legally binding agreement between parties. In Canada, contracts can be written or verbal (though written is better for proof).
+
+ESSENTIAL ELEMENTS:
+- Offer: One party proposes terms
+- Acceptance: Other party agrees to those exact terms
+- Consideration: Something of value exchanged (money, services, goods)
+- Intention: Both parties intend to be legally bound
+- Capacity: Parties are legally able to contract (18+, mentally capable)
+
+WHEN CONTRACTS ARE VOID:
+- Signed under duress or threats
+- One party was deceived (fraud)
+- Illegal purpose
+- Person lacked mental capacity
+- Minor signed without guardian (some exceptions)
+
+COOLING-OFF PERIODS:
+- Door-to-door sales: 10 days in Ontario
+- Gym memberships: 10 days
+- Timeshares: 10 days
+- Payday loans: 2 business days`,
+            keywords: ['contract', 'agreement', 'binding', 'offer', 'acceptance', 'consideration', 'void'],
+            source: 'Canadian Contract Law Principles',
+        },
+        {
+            category: 'legal',
+            title: 'Termination Clauses Explained',
+            content: `A termination clause specifies how and when a contract can be ended.
+
+COMMON TERMINATION TYPES:
+
+1. FOR CAUSE (immediate):
+- Serious breach of contract
+- Fraud or misconduct
+- Usually no notice required
+
+2. FOR CONVENIENCE (without reason):
+- Either party can end with proper notice
+- Usually 30-90 days notice
+- May require payment for work done
+
+3. AUTOMATIC TERMINATION:
+- Contract ends on specific date
+- Upon completion of project
+- When certain conditions are met
+
+WHAT TO LOOK FOR:
+- Notice period required
+- What counts as "cause"
+- Penalties for early termination
+- Whether you can terminate at all
+- Survival clauses (what continues after termination)
+
+In employment, termination clauses must meet minimum standards under the Employment Standards Act.`,
+            keywords: ['termination', 'end contract', 'notice period', 'cancel', 'breach', 'cause'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Force Majeure Clauses',
+            content: `Force majeure ("superior force") excuses contract performance when extraordinary events occur.
+
+TYPICALLY COVERED EVENTS:
+- Natural disasters (floods, earthquakes, fires)
+- War or terrorism
+- Government actions (new laws, embargoes)
+- Pandemics (post-COVID, often explicit)
+- Strikes or labor disputes
+
+WHAT HAPPENS WHEN TRIGGERED:
+- Obligations suspended (not cancelled)
+- No liability for non-performance
+- Must resume when event ends
+- May allow termination if prolonged
+
+NOT USUALLY COVERED:
+- Economic hardship
+- Market changes
+- Poor business decisions
+- Events you could have prevented
+
+IMPORTANT: If no force majeure clause exists, you may still have the common law doctrine of "frustration" - but it's much harder to prove.`,
+            keywords: ['force majeure', 'act of god', 'pandemic', 'disaster', 'impossible', 'frustration'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Limitation of Liability Clauses',
+            content: `Limitation of liability caps how much one party can claim from another if something goes wrong.
+
+COMMON TYPES:
+
+1. CAP ON DAMAGES:
+- "Liability limited to fees paid under this contract"
+- "Maximum liability of $10,000"
+- Protects against unlimited claims
+
+2. EXCLUSION OF DAMAGES:
+- No liability for "indirect" or "consequential" damages
+- No liability for lost profits
+- No liability for data loss
+
+3. TIME LIMITS:
+- Must bring claim within 1-2 years
+- Shorter than normal limitation period
+
+WHAT COURTS WON'T ALLOW:
+- Excluding liability for fraud
+- Excluding liability for gross negligence
+- Clauses that are "unconscionable" (extremely unfair)
+- Limits that violate consumer protection laws
+
+For consumers: Many limitations don't apply - the Consumer Protection Act overrides unfair terms.`,
+            keywords: ['limitation', 'liability', 'damages', 'cap', 'exclude', 'consequential'],
+            source: 'Canadian Contract Law',
+        },
+
+        // ==========================================
+        // CANADIAN LAW - Employment
+        // ==========================================
+        {
+            category: 'employment',
+            title: 'Employment Standards Act (Ontario)',
+            content: `The ESA sets MINIMUM standards for most Ontario workplaces. Contracts cannot go below these.
+
+KEY MINIMUMS (2024):
+
+WAGES:
+- Minimum wage: $16.55/hour (general)
+- Students under 18: $15.60/hour
+- Must be paid at least every 2 weeks
+
+HOURS:
+- Maximum 8 hours/day or 48 hours/week (unless agreed)
+- Overtime after 44 hours/week at 1.5x
+- 11 hours off between shifts
+- 24 hours off per week (or 48 hours per 2 weeks)
+
+VACATION:
+- 2 weeks after 1 year (4% pay)
+- 3 weeks after 5 years (6% pay)
+
+LEAVES:
+- Sick leave: 3 unpaid days/year
+- Family responsibility: 3 unpaid days/year
+- Bereavement: 2 unpaid days
+- Pregnancy: 17 weeks unpaid
+- Parental: 61-63 weeks unpaid
+
+Your contract can give you MORE than the ESA, but never less.`,
+            keywords: ['employment standards', 'esa', 'minimum wage', 'overtime', 'vacation', 'leave', 'ontario'],
+            source: 'Ontario Employment Standards Act, 2000',
+        },
+        {
+            category: 'employment',
+            title: 'Wrongful Dismissal in Canada',
+            content: `Wrongful dismissal occurs when an employer fires you without proper notice or pay.
+
+YOUR RIGHTS:
+
+1. NOTICE OR PAY IN LIEU:
+- ESA minimum: 1 week per year of service (max 8 weeks)
+- Common law: Much more generous (up to 24+ months for senior employees)
+- Factors: age, position, length of service, job market
+
+2. WHAT'S NOT WRONGFUL DISMISSAL:
+- Being fired WITH proper notice/pay
+- Termination for "just cause" (serious misconduct)
+- Layoff with recall rights
+
+3. "JUST CAUSE" EXAMPLES:
+- Theft or fraud
+- Violence or harassment
+- Serious insubordination
+- Repeated misconduct after warnings
+
+4. CONSTRUCTIVE DISMISSAL:
+- Employer fundamentally changes your job
+- Major pay cut, demotion, relocation
+- Treated as if you were fired
+
+WHAT TO DO:
+- Don't sign anything immediately
+- Get legal advice before accepting a package
+- You have 2 years to file a claim`,
+            keywords: ['wrongful dismissal', 'fired', 'termination', 'notice', 'severance', 'just cause'],
+            source: 'Canadian Employment Law',
+        },
+        {
+            category: 'employment',
+            title: 'Probationary Periods Explained',
+            content: `Probation lets employers assess new employees before full commitment.
+
+KEY POINTS:
+
+TYPICAL LENGTH:
+- 3 months is standard
+- Can be up to 6 months
+- Must be in writing to be enforceable
+
+DURING PROBATION:
+- Employer can terminate more easily
+- Still entitled to ESA minimums
+- Still protected from discrimination
+- Cannot waive all rights
+
+WHAT EMPLOYERS CAN DO:
+- End employment with minimal notice
+- Assess performance and fit
+- Extend probation (if contract allows)
+
+WHAT THEY CANNOT DO:
+- Fire you for discriminatory reasons
+- Deny you minimum ESA entitlements
+- Extend indefinitely without agreement
+
+AFTER PROBATION:
+- Full termination notice applies
+- Harder to dismiss without cause
+- All regular employment rights apply
+
+If no probation clause exists, regular termination rules apply from day one.`,
+            keywords: ['probation', 'probationary', 'trial period', 'new employee', '3 months'],
+            source: 'Canadian Employment Law',
+        },
+        {
+            category: 'employment',
+            title: 'Severance Pay vs Termination Pay',
+            content: `These are different things in Ontario - you might be owed both!
+
+TERMINATION PAY (most employees):
+- 1 week per year of service
+- Maximum 8 weeks
+- Applies after 3 months of employment
+
+SEVERANCE PAY (additional, if eligible):
+- 1 week per year of service
+- Maximum 26 weeks
+- Only if: 5+ years employed AND employer payroll is $2.5M+ (or 50+ employees laid off in 6 months)
+
+EXAMPLE (10 years service, large employer):
+- Termination pay: 8 weeks (capped)
+- Severance pay: 10 weeks
+- Total: 18 weeks statutory pay
+
+COMMON LAW (on top of statutory):
+- Can be much higher
+- Based on reasonable notice period
+- Factors: age, position, years, job availability
+- Can reach 24+ months for senior employees
+
+IMPORTANT: Accepting a package may waive your right to sue for more. Get legal advice first!`,
+            keywords: ['severance', 'termination pay', 'package', 'weeks', 'entitled'],
+            source: 'Ontario Employment Standards Act',
+        },
+
+        // ==========================================
+        // CANADIAN LAW - NDAs & Confidentiality
+        // ==========================================
+        {
+            category: 'legal',
+            title: 'NDA (Non-Disclosure Agreement) Explained',
+            content: `An NDA protects confidential information shared between parties.
+
+TYPES OF NDAS:
+
+1. ONE-WAY (unilateral):
+- Only one party shares secrets
+- Common for employees, contractors
+- You receive info, promise not to share
+
+2. TWO-WAY (mutual):
+- Both parties share confidential info
+- Common in business partnerships
+- Both sides have obligations
+
+WHAT'S TYPICALLY COVERED:
+- Trade secrets and formulas
+- Customer lists and data
+- Business strategies
+- Financial information
+- Software code
+- Unreleased products
+
+WHAT'S NOT CONFIDENTIAL:
+- Publicly available information
+- Information you already knew
+- Information from other legitimate sources
+- Information independently developed
+
+DURATION:
+- Often 2-5 years after relationship ends
+- Trade secrets: can be indefinite
+- Must be "reasonable" to be enforceable`,
+            keywords: ['nda', 'non-disclosure', 'confidential', 'secret', 'confidentiality agreement'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Confidentiality Obligations in Employment',
+            content: `Even without an NDA, employees have confidentiality duties.
+
+IMPLIED DUTIES (no contract needed):
+- Duty of good faith while employed
+- Cannot share trade secrets
+- Cannot compete while still employed
+- Must act in employer's interest
+
+WHAT YOU CAN'T SHARE:
+- Customer lists and contacts
+- Pricing strategies
+- Manufacturing processes
+- Software source code
+- Business plans
+- Financial data
+
+WHAT YOU CAN USE:
+- General skills learned
+- General industry knowledge
+- Public information
+- Your own professional contacts (usually)
+
+AFTER YOU LEAVE:
+- Trade secrets: protected indefinitely
+- Confidential info: depends on NDA terms
+- General knowledge: yours to keep
+
+BREACH CONSEQUENCES:
+- Injunction (court order to stop)
+- Damages (compensation)
+- Possibly criminal charges (theft of trade secrets)
+- Account of profits (give back what you gained)`,
+            keywords: ['confidentiality', 'trade secret', 'employee', 'duty', 'share', 'information'],
+            source: 'Canadian Employment Law',
+        },
+
+        // ==========================================
+        // CANADIAN LAW - IP Agreements
+        // ==========================================
+        {
+            category: 'employment',
+            title: 'IP Assignment in Employment',
+            content: `IP (Intellectual Property) assignment transfers ownership of your work to your employer.
+
+THE DEFAULT RULE IN CANADA:
+- Employees: Employer usually owns work-related IP automatically
+- Contractors: Creator usually owns IP unless assigned
+- This is why contracts specify ownership
+
+WHAT'S TYPICALLY ASSIGNED:
+- Inventions made during employment
+- Software code written for employer
+- Documents and materials created
+- Improvements to employer's products
+
+WHAT YOU MAY KEEP:
+- Inventions made entirely on your own time
+- Work unrelated to employer's business
+- Pre-existing IP you brought in (if disclosed)
+- Personal projects (if clearly separated)
+
+MORAL RIGHTS:
+- Canadian copyright includes "moral rights"
+- Right to be credited as author
+- Right to prevent distortion of work
+- Often waived in employment contracts
+- Cannot be assigned, only waived
+
+PRIOR INVENTIONS SCHEDULE:
+- Lists things you created before the job
+- Protects your existing work
+- Fill it out completely!`,
+            keywords: ['ip', 'intellectual property', 'assignment', 'invention', 'ownership', 'moral rights'],
+            source: 'Canadian Intellectual Property Law',
+        },
+        {
+            category: 'legal',
+            title: 'Work for Hire vs Assignment',
+            content: `Understanding who owns creative work in Canada.
+
+WORK FOR HIRE (built into law):
+- Employees: Employer owns copyright by default
+- Must be created "in the course of employment"
+- No separate assignment needed
+
+ASSIGNMENT (contract needed):
+- Contractors: They own unless assigned
+- Must be in writing
+- Should be signed before work begins
+- Can be partial or full transfer
+
+KEY DIFFERENCE:
+- Employee creates logo at work → employer owns it
+- Contractor creates logo → contractor owns it (unless assigned)
+
+WHAT TO LOOK FOR IN CONTRACTS:
+- "All IP shall be assigned to..."
+- "Work made for hire" language
+- "Waiver of moral rights"
+- When assignment happens (on creation? on payment?)
+
+RETAINING RIGHTS:
+- You can negotiate to keep some rights
+- License back for portfolio use
+- Credit/attribution rights
+- Right to use non-confidential parts`,
+            keywords: ['work for hire', 'assignment', 'copyright', 'contractor', 'ownership', 'creative'],
+            source: 'Canadian Copyright Act',
+        },
+
+        // ==========================================
+        // CANADIAN LAW - Common Legal Terms
+        // ==========================================
+        {
+            category: 'legal',
+            title: 'Governing Law and Jurisdiction',
+            content: `These clauses determine which laws apply and where disputes are heard.
+
+GOVERNING LAW:
+- Which province/country's laws interpret the contract
+- Example: "This agreement is governed by Ontario law"
+- Important because laws vary significantly
+
+JURISDICTION:
+- Which courts can hear disputes
+- "Exclusive jurisdiction": only those courts
+- "Non-exclusive jurisdiction": those courts, but others possible too
+
+WHY IT MATTERS:
+- Different provinces have different rules
+- Consumer protection varies
+- Employment standards differ
+- Limitation periods vary
+
+COMMON COMBINATIONS:
+- Ontario company + Ontario employee = Ontario law
+- US company + Canadian employee = often negotiable
+- Online terms = often company's home jurisdiction
+
+TIPS:
+- Prefer your own province's jurisdiction
+- Avoid distant jurisdictions (expensive to litigate)
+- Consumer contracts: often can't waive local protections`,
+            keywords: ['governing law', 'jurisdiction', 'disputes', 'courts', 'applicable law', 'venue'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Warranties and Representations',
+            content: `These are promises and statements of fact in contracts.
+
+REPRESENTATIONS:
+- Statements of fact that induce you to sign
+- "The car has never been in an accident"
+- If false, may allow you to cancel contract
+- Can sue for misrepresentation
+
+WARRANTIES:
+- Promises about quality or condition
+- "The software will function for 12 months"
+- If broken, you can claim damages
+- May allow you to terminate
+
+DISCLAIMERS:
+- "As is" - no promises about condition
+- "No warranties, express or implied"
+- Often limited by consumer protection laws
+
+IMPLIED WARRANTIES (even without writing):
+- Goods are fit for purpose
+- Goods match description
+- Seller has right to sell
+- Consumer goods are durable
+
+LIMITATION:
+- Consumer transactions: can't disclaim implied warranties
+- Business-to-business: more freedom to disclaim`,
+            keywords: ['warranty', 'representation', 'promise', 'as is', 'disclaimer', 'guarantee'],
+            source: 'Canadian Sale of Goods Law',
+        },
+        {
+            category: 'legal',
+            title: 'Assignment and Successors',
+            content: `These clauses control whether contract rights/obligations can be transferred.
+
+ASSIGNMENT:
+- Transferring your contract rights to someone else
+- "You may not assign this agreement without consent"
+- Common in employment (you can't send someone else to do your job)
+
+WHAT CAN BE ASSIGNED:
+- Right to receive payment (usually yes)
+- Right to receive services (depends)
+- Obligations (usually need consent)
+
+SUCCESSORS AND ASSIGNS:
+- "This agreement binds successors and assigns"
+- Means the contract survives if company is sold
+- Your obligations transfer to new owner
+
+CHANGE OF CONTROL:
+- What happens if the other company is bought
+- May trigger termination rights
+- May require notice to you
+
+WHY IT MATTERS:
+- Company you contracted with may be sold
+- Your boss today may not be your boss tomorrow
+- Contract terms should survive ownership changes`,
+            keywords: ['assignment', 'transfer', 'successor', 'change of control', 'assign rights'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Entire Agreement Clause',
+            content: `Also called "integration clause" - says the written contract is the complete deal.
+
+WHAT IT DOES:
+- The signed document is the whole agreement
+- Cancels out prior discussions and promises
+- Verbal promises don't count anymore
+- Previous drafts don't matter
+
+TYPICAL LANGUAGE:
+"This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, and agreements."
+
+WHY IT'S IMPORTANT:
+- Sales rep's verbal promises? Not enforceable
+- Emails discussing different terms? Don't count
+- Earlier draft with better terms? Doesn't apply
+
+LIMITATIONS:
+- Cannot exclude fraudulent misrepresentation
+- May not apply to collateral agreements
+- Consumer protection may override
+
+PRACTICAL TIP:
+- Get ALL promises in writing before signing
+- Don't rely on "we'll work it out later"
+- If it's not in the contract, it doesn't exist`,
+            keywords: ['entire agreement', 'integration', 'whole agreement', 'prior', 'supersede'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Severability Clauses',
+            content: `Severability saves the contract if part of it is found invalid.
+
+HOW IT WORKS:
+- If one clause is illegal/unenforceable
+- That clause is removed ("severed")
+- Rest of contract continues
+
+EXAMPLE:
+- Contract has an unenforceable non-compete
+- Court strikes the non-compete
+- Everything else still applies
+
+WITHOUT SEVERABILITY:
+- Invalid clause might void entire contract
+- Parties left with no agreement
+- Must start over
+
+TYPICAL LANGUAGE:
+"If any provision is found invalid, the remaining provisions shall continue in full force and effect."
+
+LIMITATIONS:
+- Can't save fundamentally flawed contracts
+- Core terms can't usually be severed
+- Courts may refuse if result is unfair
+
+WHY IT'S INCLUDED:
+- Laws change over time
+- Hard to predict what courts will enforce
+- Provides safety net for both parties`,
+            keywords: ['severability', 'invalid', 'unenforceable', 'void', 'strike', 'clause'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Waiver Provisions',
+            content: `Waiver provisions prevent accidental loss of contract rights.
+
+THE PROBLEM:
+- If you don't enforce a right once, do you lose it forever?
+- Example: Late payment accepted once - always allowed?
+
+WAIVER CLAUSE SOLUTION:
+- Failing to enforce once doesn't waive the right
+- Must expressly waive in writing
+- Protects both parties
+
+TYPICAL LANGUAGE:
+"No waiver of any breach shall constitute a waiver of any other breach. Any waiver must be in writing signed by the waiving party."
+
+PRACTICAL MEANING:
+- You can be flexible without losing rights
+- One-time exceptions don't become permanent
+- Must be clear and intentional to give up rights
+
+RELATED CONCEPTS:
+- Estoppel: Can't go back on a clear promise relied upon
+- Course of dealing: Pattern of behavior may imply terms
+- Waiver clause helps prevent these arguments`,
+            keywords: ['waiver', 'enforce', 'breach', 'right', 'give up', 'excuse'],
+            source: 'Canadian Contract Law',
+        },
+        {
+            category: 'legal',
+            title: 'Notice Provisions',
+            content: `Notice clauses specify how parties must communicate formally.
+
+WHY IT MATTERS:
+- Termination notices must be done right
+- Breach notices start cure periods
+- Wrong delivery = notice may be invalid
+
+COMMON REQUIREMENTS:
+- Written notice required
+- Specific addresses listed
+- Acceptable methods (email, courier, registered mail)
+- When notice is "effective"
+
+DELIVERY METHODS:
+- Personal delivery: effective immediately
+- Courier: usually effective on delivery
+- Registered mail: often effective after X days
+- Email: may or may not be acceptable
+
+WHAT TO CHECK:
+- Is email allowed? (often not for important notices)
+- How many days notice required?
+- Address to send notices to
+- Do you need to update address changes?
+
+COMMON TRAP:
+- Sending notice by email when contract requires courier
+- Notice is invalid
+- You may lose rights or miss deadlines`,
+            keywords: ['notice', 'written notice', 'delivery', 'address', 'effective', 'communication'],
+            source: 'Canadian Contract Law',
+        },
     ];
 
     for (const doc of knowledgeDocs) {
