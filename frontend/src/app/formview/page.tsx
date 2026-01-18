@@ -35,24 +35,24 @@ function MapleMoose({ className = "w-8 h-8" }: { className?: string }) {
     <div className={`${className} bg-gradient-to-br from-amber-600 to-amber-800 rounded-full flex items-center justify-center shadow-md flex-shrink-0 border-2 border-white`}>
       <svg viewBox="0 0 100 100" className="w-3/4 h-3/4">
         {/* Antlers */}
-        <path d="M25 35 L20 20 L25 25 L22 10 L28 22 L30 15 L32 25 L35 30" fill="#8B4513" stroke="#5D3A1A" strokeWidth="2"/>
-        <path d="M75 35 L80 20 L75 25 L78 10 L72 22 L70 15 L68 25 L65 30" fill="#8B4513" stroke="#5D3A1A" strokeWidth="2"/>
+        <path d="M25 35 L20 20 L25 25 L22 10 L28 22 L30 15 L32 25 L35 30" fill="#8B4513" stroke="#5D3A1A" strokeWidth="2" />
+        <path d="M75 35 L80 20 L75 25 L78 10 L72 22 L70 15 L68 25 L65 30" fill="#8B4513" stroke="#5D3A1A" strokeWidth="2" />
         {/* Ears */}
-        <ellipse cx="28" cy="42" rx="8" ry="6" fill="#D2691E"/>
-        <ellipse cx="72" cy="42" rx="8" ry="6" fill="#D2691E"/>
+        <ellipse cx="28" cy="42" rx="8" ry="6" fill="#D2691E" />
+        <ellipse cx="72" cy="42" rx="8" ry="6" fill="#D2691E" />
         {/* Face */}
-        <ellipse cx="50" cy="55" rx="25" ry="22" fill="#D2691E"/>
+        <ellipse cx="50" cy="55" rx="25" ry="22" fill="#D2691E" />
         {/* Muzzle */}
-        <ellipse cx="50" cy="65" rx="12" ry="10" fill="#DEB887"/>
+        <ellipse cx="50" cy="65" rx="12" ry="10" fill="#DEB887" />
         {/* Nose */}
-        <ellipse cx="50" cy="62" rx="6" ry="4" fill="#2C1810"/>
+        <ellipse cx="50" cy="62" rx="6" ry="4" fill="#2C1810" />
         {/* Eyes */}
-        <circle cx="40" cy="50" r="4" fill="#2C1810"/>
-        <circle cx="60" cy="50" r="4" fill="#2C1810"/>
-        <circle cx="41" cy="49" r="1.5" fill="white"/>
-        <circle cx="61" cy="49" r="1.5" fill="white"/>
+        <circle cx="40" cy="50" r="4" fill="#2C1810" />
+        <circle cx="60" cy="50" r="4" fill="#2C1810" />
+        <circle cx="41" cy="49" r="1.5" fill="white" />
+        <circle cx="61" cy="49" r="1.5" fill="white" />
         {/* Friendly smile */}
-        <path d="M44 70 Q50 75 56 70" fill="none" stroke="#2C1810" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M44 70 Q50 75 56 70" fill="none" stroke="#2C1810" strokeWidth="2" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -216,7 +216,7 @@ export default function FormViewPage() {
   // PDF Store
   const { selectedForm, setSelectedForm, setCurrentPage } = usePDFStore();
   const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf');
+  const [pdfUrl, setPdfUrl] = useState<string>(`${API_URL}/forms/Legal/Basic-Non-Disclosure-Agreement.pdf`);
 
   // Load PDF logic
   useEffect(() => {

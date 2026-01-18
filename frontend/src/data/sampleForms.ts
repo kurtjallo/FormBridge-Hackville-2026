@@ -1,5 +1,7 @@
 import { PDFFormMeta, FormCategory } from '@/types/pdf';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
 // Sample PDF forms for demo
 // In production, these would come from the backend API
 export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
@@ -9,7 +11,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Basic Non-Disclosure Agreement',
         description: 'Standard NDA for sharing confidential information between two parties. Includes confidentiality obligations, exclusions, and Ontario governing law.',
         category: 'legal',
-        pdfUrl: 'http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf',
+        pdfUrl: `${API_URL}/forms/Legal/Basic-Non-Disclosure-Agreement.pdf`,
         estimatedTime: '10-15 minutes',
         difficulty: 'medium',
         tags: ['nda', 'confidentiality', 'legal', 'business'],
@@ -22,7 +24,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'TD1 - Personal Tax Credits Return',
         description: 'Canada Revenue Agency form for claiming personal tax credits. Used by employees to determine their tax deductions at source.',
         category: 'finance',
-        pdfUrl: 'http://localhost:5001/forms/Finance/td1-fill-26e.pdf',
+        pdfUrl: `${API_URL}/forms/Finance/td1-fill-26e.pdf`,
         estimatedTime: '10-15 minutes',
         difficulty: 'easy',
         tags: ['tax', 'cra', 'tax-credits', 'canada'],
@@ -35,7 +37,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Business License Application',
         description: 'Application to obtain or renew a business license. Includes business information, owner details, and required declarations.',
         category: 'government',
-        pdfUrl: 'http://localhost:5001/forms/Government/Business-License-Application.pdf',
+        pdfUrl: `${API_URL}/forms/Government/Business-License-Application.pdf`,
         estimatedTime: '15-20 minutes',
         difficulty: 'medium',
         tags: ['business', 'license', 'government', 'application'],
@@ -46,7 +48,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Vendor Registration Form',
         description: 'Register as an approved vendor for government or corporate procurement. Includes banking information and business certifications.',
         category: 'government',
-        pdfUrl: 'http://localhost:5001/forms/Government/Vendor-Registration-Form.pdf',
+        pdfUrl: `${API_URL}/forms/Government/Vendor-Registration-Form.pdf`,
         estimatedTime: '10-15 minutes',
         difficulty: 'easy',
         tags: ['vendor', 'procurement', 'government', 'registration'],
@@ -59,7 +61,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Medical Consent Form',
         description: 'Informed consent for medical procedures and treatment. Includes patient acknowledgments, allergies, and PHIPA compliance.',
         category: 'healthcare',
-        pdfUrl: 'http://localhost:5001/forms/Healthcare/Medical-Consent-Form.pdf',
+        pdfUrl: `${API_URL}/forms/Healthcare/Medical-Consent-Form.pdf`,
         estimatedTime: '5-10 minutes',
         difficulty: 'easy',
         tags: ['medical', 'consent', 'healthcare', 'phipa'],
@@ -70,7 +72,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Patient Information Release',
         description: 'Authorization for release of personal health information under PHIPA. Specify records to release and recipient details.',
         category: 'healthcare',
-        pdfUrl: 'http://localhost:5001/forms/Healthcare/Patient-Information-Release.pdf',
+        pdfUrl: `${API_URL}/forms/Healthcare/Patient-Information-Release.pdf`,
         estimatedTime: '5-10 minutes',
         difficulty: 'easy',
         tags: ['health-records', 'privacy', 'phipa', 'authorization'],
@@ -83,7 +85,7 @@ export const SAMPLE_PDF_FORMS: PDFFormMeta[] = [
         name: 'Ontario Immigration Nominee Program',
         description: 'Application for the Ontario Immigrant Nominee Program (OINP). For skilled workers and entrepreneurs seeking permanent residence in Ontario.',
         category: 'immigration',
-        pdfUrl: 'http://localhost:5001/forms/Immigration/on00596e-immigration-nominee-program.pdf',
+        pdfUrl: `${API_URL}/forms/Immigration/on00596e-immigration-nominee-program.pdf`,
         estimatedTime: '30-45 minutes',
         difficulty: 'hard',
         tags: ['oinp', 'immigration', 'ontario', 'permanent-residence'],
