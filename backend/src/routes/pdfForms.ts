@@ -1,23 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { Storage } from '@google-cloud/storage';
 import { PDFForm, IPDFForm, FormCategory } from '../models/PDFForm';
 import { v4 as uuidv4 } from 'uuid';
+import { getGCSClient, getGCSBucket } from '../services/gcsClient';
 
 const router = Router();
-
-// Lazy initialization for GCS
-let storage: Storage | null = null;
-let bucketName: string | null = null;
-
-function getGCS() {
-    if (!storage) {
-        storage = new Storage({
-            keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
-        });
-        bucketName = process.env.GCS_BUCKET_NAME || 'formbridge-pdfs';
-    }
-    return { storage, bucketName: bucketName! };
-}
 
 // Types
 interface UploadFormRequest {
@@ -137,7 +123,7 @@ router.get('/proxy/*', async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'File path is required' });
         }
 
-        const gcs = getGCS();
+        const gcs = getGCSClient();
         const bucket = gcs.storage.bucket(gcs.bucketName);
         const file = bucket.file(gcsPath);
 
@@ -219,7 +205,7 @@ router.post('/upload', async (req: Request, res: Response) => {
         const filename = `forms/${metadata.category}/${formId}.pdf`;
 
         // Upload to GCS
-        const gcs = getGCS();
+        const gcs = getGCSClient();
         const bucket = gcs.storage.bucket(gcs.bucketName);
         const file = bucket.file(filename);
 
@@ -266,7 +252,7 @@ router.post('/upload-url', async (req: Request, res: Response) => {
         const formId = uuidv4();
         const filename = `forms/${category}/${formId}.pdf`;
 
-        const gcs = getGCS();
+        const gcs = getGCSClient();
         const bucket = gcs.storage.bucket(gcs.bucketName);
         const file = bucket.file(filename);
 
@@ -307,7 +293,7 @@ router.post('/confirm-upload', async (req: Request, res: Response) => {
             });
         }
 
-        const gcs = getGCS();
+        const gcs = getGCSClient();
         const pdfUrl = `https://storage.googleapis.com/${gcs.bucketName}/${filename}`;
 
         // Verify file exists in GCS
@@ -362,7 +348,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
         // Delete from GCS
         try {
-            const gcs = getGCS();
+            const gcs = getGCSClient();
             const bucket = gcs.storage.bucket(gcs.bucketName);
             await bucket.file(form.gcsPath).delete();
         } catch (gcsError) {
