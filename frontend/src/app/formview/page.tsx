@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Send, MessageCircle, ChevronLeft, X } from 'lucide-react';
 import { usePDFStore } from '@/store/pdfStore';
 import { getFormById } from '@/data/sampleForms';
 import { sendSupportMessage } from '@/lib/api';
+// Text selection is now handled directly in PDFViewer via onHelpRequest callback
+import { StructuredHelpMessage } from '@/components/StructuredHelpMessage';
 
 // Helper to resolve PDF URLs - handles both absolute and relative API paths
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -32,6 +34,11 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  structured?: {
+    interpretation: string;
+    breakdown: string[];
+    suggestedQuestions: string[];
+  };
 }
 
 // AI Assistant Panel Component
@@ -114,12 +121,25 @@ function AIAssistantPanel({
                 <span className="text-xs font-medium">{message.role === 'user' ? 'You' : 'AI'}</span>
               </div>
               <div
-                className={`max-w-[80%] px-4 py-2 rounded-2xl ${message.role === 'user'
-                  ? 'bg-blue-600 text-white rounded-br-md'
-                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                className={`max-w-[85%] ${message.role === 'user'
+                  ? 'bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-md'
+                  : 'bg-gray-100 rounded-2xl rounded-bl-md overflow-hidden'
                   }`}
               >
-                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                {message.role === 'user' ? (
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                ) : message.structured ? (
+                  <div className="px-4 py-3">
+                    <StructuredHelpMessage
+                      interpretation={message.structured.interpretation}
+                      breakdown={message.structured.breakdown}
+                      suggestedQuestions={message.structured.suggestedQuestions}
+                      onQuestionClick={(question) => onSendMessage(question)}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-sm whitespace-pre-wrap px-4 py-2 text-gray-800">{message.content}</p>
+                )}
               </div>
             </div>
           ))
@@ -176,13 +196,82 @@ export default function FormViewPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [activeContext, setActiveContext] = useState<string | null>(null);
+  const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
+  const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf');
+
+  // PDF container ref for text selection
+  const pdfContainerRef = useRef<HTMLDivElement>(null);
+
+  // Text selection hook with auto-trigger
+  const handleAutoSelectionHelp = useCallback(
+    (text: string) => {
+      // Truncate very long selections for display
+      const displayText = text.length > 200 ? text.substring(0, 200) + '...' : text;
+      setActiveContext(displayText);
+
+      // Create the help request message
+      const helpMessage = `Can you help me understand this text from the form?\n\n"${text}"`;
+
+      // Add user message immediately
+      const userMessage: ChatMessage = {
+        role: 'user',
+        content: helpMessage,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      // Clear the selection
+      window.getSelection()?.removeAllRanges();
+
+      // On mobile, open the chat panel
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setShowMobileChat(true);
+      }
+
+      // Call the API
+      const conversationHistory = messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      const additionalContext = `User selected text: "${displayText}". Form: ${formInfo?.name || 'PDF Form'}`;
+
+      sendSupportMessage({
+        message: helpMessage,
+        conversationHistory,
+        pagePath: '/formview',
+        additionalContext,
+      })
+        .then((response) => {
+          const assistantMessage: ChatMessage = {
+            role: 'assistant',
+            content: response.message,
+            timestamp: Date.now(),
+            structured: response.structured,
+          };
+          setMessages((prev) => [...prev, assistantMessage]);
+        })
+        .catch((error) => {
+          console.error('Chat API error:', error);
+          const errorMessage: ChatMessage = {
+            role: 'assistant',
+            content: "I'm having trouble connecting right now. Please try again in a moment.",
+            timestamp: Date.now(),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    },
+    [messages, formInfo?.name]
+  );
+
+  // Text selection is now handled via onHelpRequest callback in PDFViewer
 
   // PDF store
   const { selectedForm, setSelectedForm, setCurrentPage } = usePDFStore();
-
-  // Get form info from session storage or use default
-  const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf');
 
   useEffect(() => {
     setShowContent(true);
@@ -233,62 +322,66 @@ export default function FormViewPage() {
     }
   }, [selectedForm, setSelectedForm, setCurrentPage]);
 
-  const handleSendMessage = async (messageText: string) => {
-    // Add user message
-    const userMessage: ChatMessage = {
-      role: 'user',
-      content: messageText,
-      timestamp: Date.now(),
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
-      // Build conversation history for context
-      const conversationHistory = messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
-
-      // Build additional context from active field/form
-      const additionalContext = activeContext
-        ? `User is currently looking at: ${activeContext}. Form: ${formInfo?.name || 'PDF Form'}`
-        : `User is viewing: ${formInfo?.name || 'PDF Form'}`;
-
-      // Call the real Gemini-powered API
-      const response = await sendSupportMessage({
-        message: messageText,
-        conversationHistory,
-        pagePath: '/formview',
-        additionalContext,
-      });
-
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: response.message,
+  const handleSendMessage = useCallback(
+    async (messageText: string) => {
+      // Add user message
+      const userMessage: ChatMessage = {
+        role: 'user',
+        content: messageText,
         timestamp: Date.now(),
       };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Chat API error:', error);
-      // Fallback response on error
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: "I'm having trouble connecting right now. Please try again in a moment, or check that the backend server is running.",
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      try {
+        // Build conversation history for context
+        const conversationHistory = messages.map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        }));
+
+        // Build additional context from active field/form
+        const additionalContext = activeContext
+          ? `User is currently looking at: ${activeContext}. Form: ${formInfo?.name || 'PDF Form'}`
+          : `User is viewing: ${formInfo?.name || 'PDF Form'}`;
+
+        // Call the real Gemini-powered API
+        const response = await sendSupportMessage({
+          message: messageText,
+          conversationHistory,
+          pagePath: '/formview',
+          additionalContext,
+        });
+
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: response.message,
+          timestamp: Date.now(),
+          structured: response.structured,
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      } catch (error) {
+        console.error('Chat API error:', error);
+        // Fallback response on error
+        const errorMessage: ChatMessage = {
+          role: 'assistant',
+          content: "I'm having trouble connecting right now. Please try again in a moment, or check that the backend server is running.",
+          timestamp: Date.now(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [messages, activeContext, formInfo?.name]
+  );
 
   const handleCloseChat = () => {
     setShowMobileChat(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-20">
         <div className="px-4 sm:px-6 py-3">
@@ -332,12 +425,13 @@ export default function FormViewPage() {
 
       {/* Main content - Dual Panel */}
       <main
-        className={`flex-1 flex flex-col lg:flex-row transition-all duration-300 ease-out ${showContent ? 'opacity-100' : 'opacity-0'
+        className={`flex-1 min-h-0 flex flex-col lg:flex-row transition-all duration-300 ease-out ${showContent ? 'opacity-100' : 'opacity-0'
           }`}
       >
         {/* Left Panel - PDF Viewer */}
         <div className="flex-1 min-h-0 flex flex-col">
           <PDFViewer
+            ref={pdfContainerRef}
             pdfUrl={pdfUrl}
             onFieldClick={(fieldId) => {
               setActiveContext(`Form field: ${fieldId}`);
@@ -345,11 +439,15 @@ export default function FormViewPage() {
                 setShowMobileChat(true);
               }
             }}
+            onHelpRequest={({ selectedText }) => {
+              console.log('Help requested for:', selectedText);
+              handleAutoSelectionHelp(selectedText);
+            }}
           />
         </div>
 
         {/* Right Panel - AI Assistant (Desktop) */}
-        <div className="hidden lg:flex w-96 border-l border-gray-200 flex-col bg-white">
+        <div className="hidden lg:flex w-96 min-h-0 border-l border-gray-200 flex-col bg-white">
           <AIAssistantPanel
             messages={messages}
             onSendMessage={handleSendMessage}
@@ -372,6 +470,7 @@ export default function FormViewPage() {
           />
         </div>
       )}
+
     </div>
   );
 }

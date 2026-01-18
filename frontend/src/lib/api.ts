@@ -133,6 +133,11 @@ export interface SupportChatResponse {
   suggestions?: string[];
   knowledgeUsed?: string[];
   confidence: 'high' | 'medium' | 'low' | 'unknown';
+  structured?: {
+    interpretation: string;
+    breakdown: string[];
+    suggestedQuestions: string[];
+  };
 }
 
 export async function sendSupportMessage(request: SupportChatRequest): Promise<SupportChatResponse> {

@@ -1,54 +1,176 @@
 import { Router, Request, Response } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { 
-  knowledgeBase, 
-  SupportChatRequest, 
+import {
+  knowledgeBase,
+  SupportChatRequest,
   SupportChatResponse,
-  UNKNOWN_RESPONSES 
 } from '../services/knowledgeBase';
+import { getRAGContext } from '../services/ragService';
 
 const router = Router();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Lazy initialization to ensure env vars are loaded after dotenv.config()
+let genAI: GoogleGenerativeAI | null = null;
 
-// System prompt for the support chatbot
-const SUPPORT_SYSTEM_PROMPT = `You are a helpful customer support assistant for FormBridge, an Ontario Works application helper.
+function getGenAI(): GoogleGenerativeAI {
+  if (!genAI) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY environment variable is not set');
+    }
+    genAI = new GoogleGenerativeAI(apiKey);
+  }
+  return genAI;
+}
+
+// System prompt for the support chatbot - category-agnostic
+const SUPPORT_SYSTEM_PROMPT = `You are a helpful assistant for FormBridge, a platform that helps users understand and complete various documents and forms.
 
 YOUR ROLE:
-- Help users fill out forms by explaining questions in plain language
-- Explain government terminology and jargon
-- Guide users through the application process
-- Answer FAQs about Ontario Works eligibility and process
+- Help users understand forms and documents by explaining content in plain language
+- Explain terminology, jargon, and legal/technical terms
+- Guide users through form completion and document understanding
+- Answer questions using the provided document context and your general knowledge
+
+DOCUMENT TYPES YOU MAY HELP WITH:
+- Government forms (social services, benefits applications, permits)
+- Legal documents (NDAs, contracts, agreements, waivers)
+- Financial forms (tax documents, loan applications, insurance claims)
+- Any other structured document the user is working with
+
+STRICT FORMATTING RULES (FOLLOW THESE EXACTLY):
+1.  **NO BOLD GREETINGS:** Never bold the introductory sentence. Start with normal text (e.g., "Hi there! I can help...").
+2.  **CLEAN LISTS:** Use standard hyphens (-) for lists. Do NOT use asterisks (*) for bullets.
+3.  **HEADERS:** Use bold keys for definitions (e.g., **Indemnification:** The promise to pay...).
+4.  **SPACING:** You MUST put a blank line between every paragraph and list item. Large blocks of text are forbidden.
+5.  **NO RAW ASTERISKS:** Never use independent asterisks. Only use them pairs for **bolding specific terms**.
 
 RESPONSE GUIDELINES:
-1. Keep responses concise (2-3 sentences when possible)
-2. Use simple language (grade 6 reading level)
-3. Be warm, supportive, and non-judgmental
-4. If you're not sure about something, say so honestly
-5. For case-specific questions, recommend contacting a caseworker
+- **Be a Teacher:** Define terms simply.
+- **Context Aware:** If the user provided document text, refer to it.
+- **Limits:** If you don't know, admit it and suggest a professional.
 
-WHEN YOU DON'T KNOW:
-- Admit when something is outside your knowledge
-- Suggest contacting Ontario Works directly for case-specific questions
-- Offer to help with something else you CAN answer
+EXAMPLE OF GOOD FORMAT:
+"Here is what that section means:
 
-FORMAT:
-- Use bullet points for lists
-- Bold important terms or numbers
-- Keep paragraphs short`;
+**Term:** Definition of the term.
+
+- **Point 1:** Explanation of point 1.
+
+- **Point 2:** Explanation of point 2.
+
+I hope that helps!"`;
+
+// Additional prompt for text selection help requests
+const SELECTION_HELP_PROMPT = `
+WHEN THE USER ASKS ABOUT SELECTED/HIGHLIGHTED TEXT FROM A FORM:
+You MUST respond using this EXACT structure with these markers:
+
+INTERPRETATION: [One clear sentence explaining what this text is asking in plain, everyday language]
+
+BREAKDOWN:
+- [First key point about what to consider or include]
+- [Second key point about what to exclude or watch out for]
+- [Third key point if relevant, otherwise omit this line]
+
+SUGGESTED_QUESTIONS:
+- What does this mean?
+- Who should I include?
+- What if I'm not sure?
+
+IMPORTANT RULES FOR SELECTION HELP:
+- The INTERPRETATION line must be ONE sentence that transforms jargon into simple words
+- BREAKDOWN should have 2-4 bullet points maximum, each starting with a hyphen
+- SUGGESTED_QUESTIONS must always include exactly 3 questions, each on its own line with a hyphen
+- Keep your total response under 200 words
+- Do NOT add any text after SUGGESTED_QUESTIONS
+`;
+
+/**
+ * Check if the message is a text selection help request
+ */
+function isSelectionHelpRequest(message: string, additionalContext?: string): boolean {
+  return message.toLowerCase().includes('help me understand this text') ||
+         message.toLowerCase().includes('help understanding') ||
+         (additionalContext?.toLowerCase().includes('selected text') ?? false);
+}
+
+/**
+ * Parse structured response from selection help
+ */
+interface StructuredSelectionResponse {
+  interpretation: string;
+  breakdown: string[];
+  suggestedQuestions: string[];
+}
+
+function parseSelectionHelpResponse(text: string): StructuredSelectionResponse | null {
+  // Check if response has structured format
+  const hasInterpretation = text.includes('INTERPRETATION:');
+  const hasBreakdown = text.includes('BREAKDOWN:');
+  const hasSuggestions = text.includes('SUGGESTED_QUESTIONS:');
+
+  if (!hasInterpretation || !hasBreakdown || !hasSuggestions) {
+    return null; // Not a structured response
+  }
+
+  // Extract INTERPRETATION
+  const interpretationMatch = text.match(/INTERPRETATION:\s*(.+?)(?=\n|BREAKDOWN:)/is);
+  const interpretation = interpretationMatch ? interpretationMatch[1].trim() : '';
+
+  // Extract BREAKDOWN bullet points
+  const breakdownMatch = text.match(/BREAKDOWN:\s*([\s\S]+?)(?=SUGGESTED_QUESTIONS:)/i);
+  const breakdownText = breakdownMatch ? breakdownMatch[1] : '';
+  const breakdown = breakdownText
+    .split(/\n/)
+    .map(line => line.replace(/^[-*]\s*/, '').trim())
+    .filter(line => line.length > 0);
+
+  // Extract SUGGESTED_QUESTIONS
+  const suggestionsMatch = text.match(/SUGGESTED_QUESTIONS:\s*([\s\S]+?)$/i);
+  const suggestionsText = suggestionsMatch ? suggestionsMatch[1] : '';
+  const suggestedQuestions = suggestionsText
+    .split(/\n/)
+    .map(line => line.replace(/^[-*]\s*/, '').trim())
+    .filter(line => line.length > 0 && line.endsWith('?'))
+    .slice(0, 3);
+
+  // Fill default suggestions if parsing failed
+  const defaults = ['What does this mean?', 'Who should I include?', 'What if I\'m not sure?'];
+  while (suggestedQuestions.length < 3) {
+    suggestedQuestions.push(defaults[suggestedQuestions.length]);
+  }
+
+  return {
+    interpretation,
+    breakdown,
+    suggestedQuestions,
+  };
+}
+
 
 /**
  * Build the chat prompt with knowledge context
  */
-function buildSupportChatPrompt(request: SupportChatRequest): string {
+function buildSupportChatPrompt(request: SupportChatRequest, ragContext?: string, isSelectionHelp?: boolean): string {
   const parts: string[] = [SUPPORT_SYSTEM_PROMPT];
+
+  // Add selection help prompt if this is a text selection request
+  if (isSelectionHelp) {
+    parts.push(SELECTION_HELP_PROMPT);
+  }
 
   // Add page context
   if (request.pagePath) {
     parts.push(`\n📍 USER LOCATION: ${request.pagePath}`);
   }
 
-  // Add knowledge base context
+  // Add form-scoped RAG context (highest priority - from ingested PDF)
+  if (ragContext) {
+    parts.push(`\n📄 DOCUMENT CONTEXT (from the form being viewed):\n${ragContext}`);
+  }
+
+  // Add general knowledge base context
   const kbContext = knowledgeBase.buildPromptContext(request.message, request.pagePath);
   if (kbContext) {
     parts.push(`\n${kbContext}`);
@@ -77,16 +199,17 @@ function buildSupportChatPrompt(request: SupportChatRequest): string {
 /**
  * Determine confidence level based on knowledge match
  */
-function determineConfidence(query: string): 'high' | 'medium' | 'low' | 'unknown' {
+function determineConfidence(query: string): 'high' | 'medium' | 'low' {
   const results = knowledgeBase.search(query, 3);
-  
-  if (results.length === 0) return 'unknown';
-  
-  // Check if we have a strong match (terminology or FAQ)
-  const hasStrongMatch = results.some(r => 
-    r.category === 'terminology' || r.category === 'faq'
+
+  // No RAG results - return 'low' to allow LLM to use general knowledge
+  if (results.length === 0) return 'low';
+
+  // Check if we have a strong match (legal, financial, or government terminology)
+  const hasStrongMatch = results.some(r =>
+    r.category === 'legal' || r.category === 'financial' || r.category === 'government'
   );
-  
+
   if (hasStrongMatch && results.length >= 2) return 'high';
   if (hasStrongMatch || results.length >= 2) return 'medium';
   return 'low';
@@ -97,17 +220,17 @@ function determineConfidence(query: string): 'high' | 'medium' | 'low' | 'unknow
  */
 function generateSuggestions(query: string, pagePath: string): string[] {
   const suggestions: string[] = [];
-  
+
   // Get related knowledge entries
   const results = knowledgeBase.search(query, 3);
-  
+
   // Add suggestions based on related entries
   results.forEach(entry => {
     if (entry.relatedEntries) {
       entry.relatedEntries.forEach(relId => {
         const related = knowledgeBase.getEntry(relId);
         if (related && suggestions.length < 3) {
-          suggestions.push(`Tell me about ${related.title.toLowerCase()}`);
+          suggestions.push(`Tell me about ${related.title.toLowerCase()} `);
         }
       });
     }
@@ -150,6 +273,7 @@ router.post('/', async (req: Request, res: Response) => {
       pagePath = '/',
       knowledgeContext,
       additionalContext,
+      formId,
     } = req.body as SupportChatRequest;
 
     // Validate required fields
@@ -160,19 +284,25 @@ router.post('/', async (req: Request, res: Response) => {
       return;
     }
 
+    // Get form-scoped RAG context if formId is provided
+    let ragContext = '';
+    if (formId) {
+      try {
+        ragContext = await getRAGContext(message, undefined, formId);
+        if (ragContext) {
+          console.log(`RAG context retrieved for form ${formId}`);
+        }
+      } catch (ragError) {
+        console.warn(`RAG lookup failed for form ${formId}:`, ragError);
+        // Continue without RAG context - will use general knowledge
+      }
+    }
+
     // Determine confidence before generating response
     const confidence = determineConfidence(message);
-    
-    // If we have no knowledge, provide a graceful fallback
-    if (confidence === 'unknown') {
-      const fallbackResponse: SupportChatResponse = {
-        message: knowledgeBase.getUnknownResponse(),
-        suggestions: generateSuggestions(message, pagePath),
-        confidence: 'unknown',
-      };
-      res.json(fallbackResponse);
-      return;
-    }
+
+    // Check if this is a text selection help request
+    const selectionHelp = isSelectionHelpRequest(message, additionalContext);
 
     // Build prompt with knowledge context
     const prompt = buildSupportChatPrompt({
@@ -181,11 +311,12 @@ router.post('/', async (req: Request, res: Response) => {
       pagePath,
       knowledgeContext,
       additionalContext,
-    });
+      formId,
+    }, ragContext, selectionHelp);
 
     // Generate AI response
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+    const model = getGenAI().getGenerativeModel({
+      model: 'gemini-2.0-flash-lite',
       generationConfig: {
         maxOutputTokens: 300,
         temperature: 0.4,
@@ -199,24 +330,52 @@ router.post('/', async (req: Request, res: Response) => {
     const searchResults = knowledgeBase.search(message, 3);
     const knowledgeUsed = searchResults.map(r => r.id);
 
-    // Generate follow-up suggestions
-    const suggestions = generateSuggestions(message, pagePath);
+    // Try to parse structured response if this was a selection help request
+    const structuredResponse = selectionHelp ? parseSelectionHelpResponse(responseText) : null;
+
+    // Generate follow-up suggestions (use parsed ones if available)
+    const suggestions = structuredResponse
+      ? structuredResponse.suggestedQuestions
+      : generateSuggestions(message, pagePath);
+
+    // Build a clean message for display
+    const displayMessage = structuredResponse
+      ? `${structuredResponse.interpretation}\n\n${structuredResponse.breakdown.map(b => `- ${b}`).join('\n')}`
+      : responseText;
 
     const response: SupportChatResponse = {
-      message: responseText,
+      message: displayMessage,
       suggestions,
       knowledgeUsed,
       confidence,
+      structured: structuredResponse ? {
+        interpretation: structuredResponse.interpretation,
+        breakdown: structuredResponse.breakdown,
+        suggestedQuestions: structuredResponse.suggestedQuestions,
+      } : undefined,
     };
 
     res.json(response);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in /support-chat:', error);
-    
+
+    // Determine error message based on error type
+    let userMessage = "I'm having some technical difficulties right now. Please try again in a moment, or contact Ontario Works directly for urgent questions.";
+
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    if (errorMessage.includes('429') || errorMessage.includes('quota')) {
+      userMessage = "I'm currently experiencing high demand. Please try again in a few moments.";
+    } else if (errorMessage.includes('403') || errorMessage.includes('API Key')) {
+      userMessage = "There's a configuration issue with the AI service. Please contact support.";
+    } else if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+      userMessage = "The AI service is temporarily unavailable. Please try again later.";
+    }
+
     // Provide a graceful error response
     res.status(500).json({
-      message: "I'm having some technical difficulties right now. Please try again in a moment, or contact Ontario Works directly for urgent questions.",
-      confidence: 'unknown',
+      message: userMessage,
+      confidence: 'low',
       suggestions: ['What documents do I need?', 'Am I eligible?'],
     });
   }
@@ -238,7 +397,7 @@ router.get('/knowledge', (req: Request, res: Response) => {
     }
 
     const results = knowledgeBase.search(query, limit);
-    
+
     res.json({
       query,
       count: results.length,
@@ -263,7 +422,7 @@ router.get('/knowledge', (req: Request, res: Response) => {
 router.get('/knowledge/:id', (req: Request, res: Response) => {
   try {
     const entry = knowledgeBase.getEntry(req.params.id);
-    
+
     if (!entry) {
       res.status(404).json({ error: 'Knowledge entry not found' });
       return;

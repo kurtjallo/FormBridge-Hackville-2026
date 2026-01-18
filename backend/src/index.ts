@@ -18,6 +18,7 @@ import pdfSessionRouter from './routes/pdfSession';
 import ragRouter from './routes/rag';
 import uploadRouter from './routes/upload';
 import pdfFormsRouter from './routes/pdfForms';
+import { ingestionRouter } from './routes/ingestion';
 import { seedKnowledgeBase } from './services/ragService';
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/api/pdf-session', pdfSessionRouter);
 app.use('/api/rag', ragRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/pdf-forms', pdfFormsRouter);
+app.use('/api/ingestion', ingestionRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -107,6 +109,10 @@ app.listen(PORT, () => {
   console.log('  GET  /rag/search           - Search knowledge base');
   console.log('  --- UPLOAD ---');
   console.log('  POST /api/upload           - Upload PDF form to GCS');
+  console.log('  --- INGESTION ---');
+  console.log('  POST /api/ingestion/:formId       - Ingest PDF into RAG');
+  console.log('  GET  /api/ingestion/:formId/status - Check ingestion status');
+  console.log('  POST /api/ingestion/batch          - Ingest all pending PDFs');
 });
 
 export { app };

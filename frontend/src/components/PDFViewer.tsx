@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, forwardRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { usePDFStore } from '@/store/pdfStore';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -12,9 +12,13 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 interface PDFViewerProps {
     pdfUrl: string;
     onFieldClick?: (fieldId: string) => void;
+    onHelpRequest?: (data: { selectedText: string; page: number }) => void;
 }
 
-export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
+export const PDFViewer = forwardRef<HTMLDivElement, PDFViewerProps>(function PDFViewer(
+  { pdfUrl, onFieldClick, onHelpRequest },
+  ref
+) {
     const {
         viewer,
         setCurrentPage,
@@ -27,6 +31,32 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
     } = usePDFStore();
 
     const [isXFA, setIsXFA] = useState(false);
+    const [selectionTimeout, setSelectionTimeout] = useState<NodeJS.Timeout | null>(null);
+
+    // Handle text selection for help requests
+    const handleMouseUp = useCallback(() => {
+        // Clear any pending timeout
+        if (selectionTimeout) {
+            clearTimeout(selectionTimeout);
+        }
+
+        const timeout = setTimeout(() => {
+            const selection = window.getSelection();
+            const selectedText = selection?.toString().trim() || '';
+
+            console.log('PDF text selected:', selectedText); // Debug log
+
+            if (selectedText.length >= 10 && onHelpRequest) {
+                console.log('Triggering help request for:', selectedText);
+                onHelpRequest({
+                    selectedText,
+                    page: viewer.currentPage,
+                });
+            }
+        }, 600);
+
+        setSelectionTimeout(timeout);
+    }, [selectionTimeout, viewer.currentPage, onHelpRequest]);
 
     const onDocumentLoadSuccess = useCallback(
         async (pdf: { numPages: number; _pdfInfo?: { isXFA?: boolean } }) => {
@@ -137,7 +167,11 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
             )}
 
             {/* PDF Document */}
-            <div className="flex-1 overflow-auto flex justify-center p-4 bg-gray-100">
+            <div
+                ref={ref}
+                className="flex-1 overflow-auto flex justify-center p-4 bg-gray-100"
+                onMouseUp={handleMouseUp}
+            >
                 {viewer.isLoading && (
                     <div className="flex items-center justify-center h-64">
                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
@@ -166,6 +200,6 @@ export function PDFViewer({ pdfUrl, onFieldClick }: PDFViewerProps) {
             </div>
         </div>
     );
-}
+});
 
 export default PDFViewer;
