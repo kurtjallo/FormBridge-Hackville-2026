@@ -114,7 +114,7 @@ Type: ${request.fieldType} | Required: ${request.required}`);
 
 export async function explainQuestion(request: ExplainRequest): Promise<string> {
   const model = getGenAI().getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       maxOutputTokens: 300,
       temperature: 0.3, // Lower temperature for consistent, factual responses
@@ -216,7 +216,7 @@ export async function chatAboutQuestion(request: ChatRequest): Promise<{
   confidence?: 'low' | 'medium' | 'high';
 }> {
   const model = getGenAI().getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       maxOutputTokens: 200,
       temperature: 0.4, // Slightly higher for conversational responses
