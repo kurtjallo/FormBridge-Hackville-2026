@@ -9,7 +9,19 @@ import {
 
 const router = Router();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Lazy initialization to ensure env vars are loaded
+let genAI: GoogleGenerativeAI | null = null;
+
+function getGenAI(): GoogleGenerativeAI {
+  if (!genAI) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY environment variable is not set');
+    }
+    genAI = new GoogleGenerativeAI(apiKey);
+  }
+  return genAI;
+}
 
 // System prompt for the support chatbot
 const SUPPORT_SYSTEM_PROMPT = `You are a helpful customer support assistant for FormBridge, an Ontario Works application helper.
@@ -184,7 +196,7 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     // Generate AI response
-    const model = genAI.getGenerativeModel({
+    const model = getGenAI().getGenerativeModel({
       model: 'gemini-2.0-flash',
       generationConfig: {
         maxOutputTokens: 300,
