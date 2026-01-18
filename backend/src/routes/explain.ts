@@ -14,6 +14,7 @@ router.post('/', async (req: Request, res: Response) => {
       context,
       commonConfusions,
       userContext,
+      language,
     } = req.body as ExplainRequest;
 
     // Validate required fields
@@ -33,6 +34,7 @@ router.post('/', async (req: Request, res: Response) => {
       context,
       commonConfusions,
       userContext,
+      language,
     });
 
     const response: ExplainResponse = {
