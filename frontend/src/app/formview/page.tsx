@@ -173,7 +173,7 @@ export default function FormViewPage() {
 
   // Get form info from session storage or use default
   const [formInfo, setFormInfo] = useState<{ name: string; code: string } | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/OHIP/Registration for Ontario Health Coverage.pdf');
+  const [pdfUrl, setPdfUrl] = useState<string>('http://localhost:5001/forms/Legal/Basic-Non-Disclosure-Agreement.pdf');
 
   useEffect(() => {
     setShowContent(true);
@@ -183,17 +183,23 @@ export default function FormViewPage() {
     const formCode = sessionStorage.getItem('selectedFormCode');
     const formId = sessionStorage.getItem('selectedFormId');
 
-    if (formName && formCode) {
-      setFormInfo({ name: formName, code: formCode });
-    }
-
     // If we have a form ID, try to load it
     if (formId) {
       const form = getFormById(formId);
       if (form) {
         setSelectedForm(form);
         setPdfUrl(form.pdfUrl);
+        setFormInfo({
+          name: form.name,
+          code: form.id.toUpperCase(),
+        });
+        return; // Exit early to use the selected form
       }
+    }
+
+    // Fallback to session storage values
+    if (formName && formCode) {
+      setFormInfo({ name: formName, code: formCode });
     }
 
     // If we already have a selected form in the store, use it
